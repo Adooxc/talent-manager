@@ -135,3 +135,8 @@
 - [x] Set Kuwait +965 as default country code
 - [x] Display country code with phone number in talent details
 - [x] Support multiple country codes for international talents
+
+
+## Current Issues - Web Platform
+- [x] Fix admin page not accessible from web
+- [x] Fix OAuth login opening in popup instead of main window (redirects to main window on web)

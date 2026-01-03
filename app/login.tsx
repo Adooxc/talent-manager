@@ -29,22 +29,28 @@ export default function LoginScreen() {
       console.log("[Login] Starting OAuth flow...");
       console.log("[Login] Login URL:", loginUrl);
 
-      // Open browser for OAuth
-      const result = await WebBrowser.openAuthSessionAsync(
-        loginUrl,
-        Linking.createURL("/oauth/callback")
-      );
-      console.log("[Login] OAuth result:", result.type);
+      // On web, redirect directly instead of opening popup
+      if (Platform.OS === "web") {
+        console.log("[Login] Web platform detected, redirecting to OAuth...");
+        (window as any).location.href = loginUrl;
+      } else {
+        // On mobile, use WebBrowser
+        const result = await WebBrowser.openAuthSessionAsync(
+          loginUrl,
+          Linking.createURL("/oauth/callback")
+        );
+        console.log("[Login] OAuth result:", result.type);
 
-      if (result.type === "success") {
-        console.log("[Login] OAuth success, redirecting...");
-        router.replace("/(tabs)");
-      } else if (result.type === "cancel") {
-        console.log("[Login] OAuth cancelled");
-        Alert.alert("Cancelled", "Login was cancelled");
-      } else if (result.type === "dismiss") {
-        console.log("[Login] OAuth dismissed");
-        Alert.alert("Dismissed", "Login was dismissed");
+        if (result.type === "success") {
+          console.log("[Login] OAuth success, redirecting...");
+          router.replace("/(tabs)");
+        } else if (result.type === "cancel") {
+          console.log("[Login] OAuth cancelled");
+          Alert.alert("Cancelled", "Login was cancelled");
+        } else if (result.type === "dismiss") {
+          console.log("[Login] OAuth dismissed");
+          Alert.alert("Dismissed", "Login was dismissed");
+        }
       }
     } catch (error) {
       console.error("[Login] Error:", error);
