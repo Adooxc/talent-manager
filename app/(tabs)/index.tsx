@@ -663,6 +663,7 @@ export default function TalentsScreen() {
         horizontal 
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={styles.filterContainer}
+        style={{ maxHeight: 32 }}
       >
         <TouchableOpacity
           onPress={() => setFilterCategoryId("all")}
@@ -1141,20 +1142,22 @@ const styles = StyleSheet.create({
   },
   filterContainer: {
     paddingHorizontal: 20,
-    gap: 8,
-    paddingBottom: 8,
+    gap: 6,
+    paddingBottom: 4,
+    paddingTop: 4,
   },
   filterButton: {
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: 12,
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    borderRadius: 8,
     borderWidth: 1,
-    minHeight: 28,
+    minHeight: 24,
     justifyContent: "center",
   },
   filterButtonText: {
-    fontSize: 11,
+    fontSize: 10,
     fontWeight: "500",
+    lineHeight: 12,
   },
   activeFiltersContainer: {
     paddingBottom: 12,

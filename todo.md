@@ -100,3 +100,6 @@
 - [x] Fix OAuth login not persisting data to cloud (returns to home but data not synced)
 - [x] Reduce height of category filter buttons to match text size
 - [x] Remove font size adjustment settings from Settings screen
+
+## Current Issues - Further UI Fixes
+- [x] Further reduce category button container height - still too tall
