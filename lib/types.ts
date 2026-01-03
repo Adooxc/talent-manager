@@ -268,7 +268,13 @@ export const THEME_COLORS: { value: ThemeColor; label: string; color: string }[]
 ];
 
 // Font size multipliers
-export const FONT_SIZES: { value: FontSize; label: string; multiplier: number }[] = [
+export const FONT_SIZES: Record<FontSize, number> = {
+  'small': 12,
+  'medium': 14,
+  'large': 16,
+};
+
+export const FONT_SIZES_ARRAY: { value: FontSize; label: string; multiplier: number }[] = [
   { value: 'small', label: 'Small', multiplier: 0.85 },
   { value: 'medium', label: 'Medium', multiplier: 1 },
   { value: 'large', label: 'Large', multiplier: 1.15 },

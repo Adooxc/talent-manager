@@ -133,6 +133,13 @@ export async function getMe(): Promise<{
   lastSignedIn: string;
 } | null> {
   try {
+    if (Platform.OS !== "web") {
+      const sessionToken = await Auth.getSessionToken();
+      if (!sessionToken) {
+        console.log("[API] getMe: No session token, returning null");
+        return null;
+      }
+    }
     const result = await apiCall<{ user: any }>("/api/auth/me");
     return result.user || null;
   } catch (error) {

@@ -25,7 +25,7 @@ import {
   AppSettings, 
   DEFAULT_SETTINGS, 
   THEME_COLORS, 
-  FONT_SIZES,
+  FONT_SIZES_ARRAY,
   ThemeColor,
   FontSize,
   AppLanguage,
@@ -452,7 +452,7 @@ export default function SettingsScreen() {
             </View>
           </View>
           <View style={styles.fontSizePicker}>
-            {FONT_SIZES.map((f) => (
+            {FONT_SIZES_ARRAY.map((f) => (
               <TouchableOpacity
                 key={f.value}
                 onPress={() => handleFontSizeChange(f.value)}

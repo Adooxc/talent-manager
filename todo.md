@@ -79,3 +79,7 @@
 - [x] Add file attachments for projects (contracts, documents)
 - [x] Push notifications for booking reminders
 - [x] Push notifications for payment due dates
+
+## Bug Fixes - Priority
+- [x] Fix font size adjustment not working in settings
+- [x] Fix login/authentication not working
