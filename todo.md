@@ -114,4 +114,4 @@
 
 
 ## Current Issues - Spacing
-- [x] Reduce spacing between category filters and talent list to remove large gap
+- [x] Move talent list up to appear immediately below category filters with minimal gap

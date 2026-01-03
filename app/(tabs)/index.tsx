@@ -1186,6 +1186,7 @@ const styles = StyleSheet.create({
   },
   listContent: {
     paddingHorizontal: 20,
+    paddingTop: 8,
     paddingBottom: 100,
   },
   row: {
@@ -1340,10 +1341,10 @@ const styles = StyleSheet.create({
     marginLeft: 8,
   },
   emptyContainer: {
-    flex: 1,
+    minHeight: 200,
     alignItems: "center",
     justifyContent: "center",
-    paddingTop: 20,
+    paddingVertical: 20,
   },
   emptyText: {
     fontSize: 18,
