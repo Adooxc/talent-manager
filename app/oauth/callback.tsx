@@ -6,6 +6,7 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import { ActivityIndicator, Text } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { syncAllDataToCloud } from "@/lib/cloud-sync";
 
 export default function OAuthCallback() {
   const router = useRouter();
@@ -60,10 +61,14 @@ export default function OAuthCallback() {
           }
 
           setStatus("success");
-          console.log("[OAuth] Web authentication successful, redirecting to home...");
-          setTimeout(() => {
-            router.replace("/(tabs)");
-          }, 1000);
+          console.log("[OAuth] Web authentication successful, starting cloud sync...");
+          // Trigger cloud sync after successful authentication
+          syncAllDataToCloud().then((syncSuccess) => {
+            console.log("[OAuth] Cloud sync result:", syncSuccess);
+            setTimeout(() => {
+              router.replace("/(tabs)");
+            }, 1000);
+          });
           return;
         }
 
@@ -210,13 +215,17 @@ export default function OAuthCallback() {
           }
 
           setStatus("success");
-          console.log("[OAuth] Authentication successful, redirecting to home...");
+          console.log("[OAuth] Authentication successful, starting cloud sync...");
 
-          // Redirect to home after a short delay
-          setTimeout(() => {
-            console.log("[OAuth] Executing redirect...");
-            router.replace("/(tabs)");
-          }, 1000);
+          // Trigger cloud sync after successful authentication
+          syncAllDataToCloud().then((syncSuccess) => {
+            console.log("[OAuth] Cloud sync result:", syncSuccess);
+            setTimeout(() => {
+              console.log("[OAuth] Executing redirect...");
+              router.replace("/(tabs)");
+            }, 1000);
+          });
+
         } else {
           console.error("[OAuth] No session token in result:", result);
           setStatus("error");

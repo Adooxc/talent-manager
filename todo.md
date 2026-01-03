@@ -87,3 +87,6 @@
 ## UI Fixes
 - [x] Fix category button sizing and text proportions
 - [x] Fix unmatched route error on login
+
+## Current Issues - Cloud Sync
+- [x] Fix cloud synchronization after OAuth login - data not syncing to database after successful authentication
