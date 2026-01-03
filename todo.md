@@ -90,3 +90,7 @@
 
 ## Current Issues - Cloud Sync
 - [x] Fix cloud synchronization after OAuth login - data not syncing to database after successful authentication
+
+
+## UI Improvements - Category Buttons
+- [x] Reduce size of all category buttons to take less space

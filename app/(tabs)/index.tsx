@@ -1145,13 +1145,13 @@ const styles = StyleSheet.create({
     paddingBottom: 12,
   },
   filterButton: {
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 20,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 16,
     borderWidth: 1,
   },
   filterButtonText: {
-    fontSize: 14,
+    fontSize: 12,
     fontWeight: "500",
   },
   activeFiltersContainer: {
