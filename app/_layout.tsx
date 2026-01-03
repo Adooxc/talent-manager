@@ -88,6 +88,8 @@ export default function RootLayout() {
             <Stack.Screen name="(tabs)" />
             <Stack.Screen name="login" />
             <Stack.Screen name="oauth/callback" />
+            <Stack.Screen name="admin/login" />
+            <Stack.Screen name="admin/panel" />
           </Stack>
           <StatusBar style="auto" />
         </QueryClientProvider>

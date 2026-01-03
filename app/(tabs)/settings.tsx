@@ -709,6 +709,32 @@ export default function SettingsScreen() {
           </TouchableOpacity>
         </View>
 
+        {/* Admin */}
+        <View style={[styles.section, { backgroundColor: colors.surface, borderColor: colors.border }]}>
+          <Text style={[styles.sectionTitle, { color: colors.muted }]}>
+            {t("ADMIN", "المسؤول")}
+          </Text>
+          
+          <TouchableOpacity
+            onPress={() => router.push("/admin/login" as any)}
+            style={[styles.settingRow, { borderBottomWidth: 0 }]}
+            activeOpacity={0.7}
+          >
+            <View style={[styles.iconContainer, { backgroundColor: colors.warning }]}>
+              <IconSymbol name="gearshape.fill" size={20} color="#FFF" />
+            </View>
+            <View style={styles.settingContent}>
+              <Text style={[styles.settingTitle, { color: colors.foreground }]}>
+                {t("Admin Panel", "لوحة التحكم")}
+              </Text>
+              <Text style={[styles.settingSubtitle, { color: colors.muted }]}>
+                {t("Manage app settings and branding", "إدارة إعدادات التطبيق")}
+              </Text>
+            </View>
+            <IconSymbol name="chevron.right" size={20} color={colors.muted} />
+          </TouchableOpacity>
+        </View>
+
         <View style={styles.footer}>
           <Text style={[styles.footerText, { color: colors.muted }]}>
             Talent Manager v1.0.0

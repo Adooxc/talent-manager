@@ -119,3 +119,11 @@
 
 ## Current Issues - Remove Gap Between Filters and Talent Cards
 - [x] Remove unnecessary gap/spacing between category filters and talent card images (moved filters into ListHeaderComponent)
+
+
+## New Features - Admin Control Panel
+- [x] Create admin login screen with username/password (Adoo / 26542654)
+- [x] Create admin control panel for changing logo, colors, app name
+- [x] Add Admin button to Settings screen
+- [x] Implement cloud sync for admin settings changes
+- [x] Test admin functionality across devices
