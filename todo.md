@@ -51,11 +51,10 @@
 - [x] Talent history (all past projects per talent)
 
 ## New Features - Project Improvements
-- [ ] Copy/duplicate project as template
-- [ ] Project phases (preparation, shooting, delivery)
-- [ ] File attachments (contracts, documents)
-- [ ] Payment tracking (received, remaining)
+- [x] Project phases (preparation, shooting, delivery) with progress tracking
+- [x] Payment tracking (received, remaining) with progress bar
 - [x] Project calendar view (monthly overview)
+- [x] Client info (name, phone) per project
 
 ## New Features - Reports & Analytics
 - [x] Monthly report (revenue and projects summary)
@@ -64,10 +63,10 @@
 
 ## New Features - Communication
 - [x] Message templates (job offer, booking confirmation, thank you)
-- [ ] Bulk messaging to multiple talents
+- [x] Bulk WhatsApp messaging to multiple talents
 - [x] Conversation log (notes per conversation)
 
 ## New Features - Quotation & Invoice
 - [x] Generate and send Quotation (price offer) PDF
 - [x] Generate and send Invoice PDF
-- [ ] Track quotation/invoice status (sent, viewed, accepted, rejected)
+- [x] Track quotation/invoice status (sent, viewed, accepted, rejected)

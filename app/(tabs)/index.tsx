@@ -290,13 +290,29 @@ export default function TalentsScreen() {
     clearSelection();
   };
 
+  const sendBulkWhatsApp = async () => {
+    if (selectedIds.size === 0) return;
+    const selectedTalents = talents.filter(t => selectedIds.has(t.id));
+    const message = settings.whatsappMessage || 'مرحباً، أتواصل معك بخصوص فرصة عمل...';
+    
+    for (const talent of selectedTalents) {
+      if (talent.phoneNumbers && talent.phoneNumbers.length > 0) {
+        const phone = talent.phoneNumbers[0].replace(/[^0-9]/g, '');
+        const personalizedMessage = message.replace('{name}', talent.name);
+        const url = `whatsapp://send?phone=${phone}&text=${encodeURIComponent(personalizedMessage)}`;
+        await Linking.openURL(url);
+      }
+    }
+    clearSelection();
+  };
+
   const createWhatsAppGroup = () => {
     if (selectedIds.size === 0) return;
     
     const selectedTalents = talents.filter(t => selectedIds.has(t.id));
     const phoneNumbers = selectedTalents
       .flatMap(t => t.phoneNumbers)
-      .filter(p => p && p.trim())
+      .filter((p): p is string => p != null && p.trim() !== '')
       .map(p => p.replace(/[^0-9+]/g, ''));
     
     if (phoneNumbers.length === 0) {
@@ -306,15 +322,18 @@ export default function TalentsScreen() {
     
     // Show options
     Alert.alert(
-      "WhatsApp Group",
-      `Create a group with ${selectedTalents.length} talents (${phoneNumbers.length} phone numbers)?`,
+      "WhatsApp Options",
+      `${selectedTalents.length} talents selected (${phoneNumbers.length} phone numbers)`,
       [
         { text: "Cancel", style: "cancel" },
+        {
+          text: "Bulk Message",
+          onPress: sendBulkWhatsApp,
+        },
         {
           text: "Copy Numbers",
           onPress: () => {
             const numbersText = phoneNumbers.join('\n');
-            // Copy to clipboard would need expo-clipboard
             Alert.alert(
               "Phone Numbers",
               numbersText + "\n\nCopy these numbers to create a WhatsApp group manually.",
@@ -325,13 +344,11 @@ export default function TalentsScreen() {
         {
           text: "Open WhatsApp",
           onPress: () => {
-            // Open WhatsApp - user can create group from there
             Linking.openURL('whatsapp://');
           },
         },
       ]
     );
-    clearSelection();
   };
 
   const openFiltersModal = () => {

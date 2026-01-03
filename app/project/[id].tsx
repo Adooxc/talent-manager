@@ -18,7 +18,7 @@ import * as Sharing from "expo-sharing";
 import { ScreenContainer } from "@/components/screen-container";
 import { IconSymbol } from "@/components/ui/icon-symbol";
 import { useColors } from "@/hooks/use-colors";
-import { Project, ProjectStatus, Talent, Category } from "@/lib/types";
+import { Project, ProjectStatus, Talent, Category, PROJECT_PHASES, ProjectPayment, generateId } from "@/lib/types";
 import { getProjectById, getTalents, deleteProject, calculateProjectCosts, getCategories, getCurrencySymbol } from "@/lib/storage";
 import { useFocusEffect } from "@react-navigation/native";
 
@@ -360,6 +360,51 @@ export default function ProjectDetailScreen() {
               {formatDate(project.startDate)} - {formatDate(project.endDate)}
             </Text>
           </View>
+
+          {/* Phase Progress */}
+          {project.phase && (
+            <View style={styles.phaseContainer}>
+              <Text style={[styles.phaseLabel, { color: colors.muted }]}>Phase:</Text>
+              <View style={styles.phaseProgress}>
+                {PROJECT_PHASES.map((p, index) => {
+                  const currentIndex = PROJECT_PHASES.findIndex(ph => ph.value === project.phase);
+                  const isActive = index <= currentIndex;
+                  const isCurrent = p.value === project.phase;
+                  return (
+                    <View key={p.value} style={styles.phaseStep}>
+                      <View style={[
+                        styles.phaseDot,
+                        { backgroundColor: isActive ? p.color : colors.border }
+                      ]}>
+                        {isCurrent && <View style={styles.phaseInnerDot} />}
+                      </View>
+                      <Text style={[
+                        styles.phaseStepText,
+                        { color: isActive ? colors.foreground : colors.muted }
+                      ]}>{p.label}</Text>
+                      {index < PROJECT_PHASES.length - 1 && (
+                        <View style={[
+                          styles.phaseLine,
+                          { backgroundColor: isActive ? p.color : colors.border }
+                        ]} />
+                      )}
+                    </View>
+                  );
+                })}
+              </View>
+            </View>
+          )}
+
+          {/* Client Info */}
+          {(project.clientName || project.clientPhone) && (
+            <View style={[styles.clientCard, { backgroundColor: colors.surface, borderColor: colors.border }]}>
+              <IconSymbol name="person.2.fill" size={20} color={colors.primary} />
+              <View style={styles.clientInfo}>
+                {project.clientName && <Text style={[styles.clientName, { color: colors.foreground }]}>{project.clientName}</Text>}
+                {project.clientPhone && <Text style={[styles.clientPhone, { color: colors.muted }]}>{project.clientPhone}</Text>}
+              </View>
+            </View>
+          )}
         </View>
 
         {/* Talents */}
@@ -413,6 +458,34 @@ export default function ProjectDetailScreen() {
             <View style={[styles.costRow, styles.totalRow, { borderTopColor: colors.border }]}>
               <Text style={[styles.totalLabel, { color: colors.foreground }]}>Total</Text>
               <Text style={[styles.totalValue, { color: colors.primary }]}>{getCurrencySymbol(project.currency)} {costs.total.toLocaleString()}</Text>
+            </View>
+            
+            {/* Payment Tracking */}
+            <View style={[styles.costRow, { marginTop: 16, paddingTop: 16, borderTopWidth: 1, borderTopColor: colors.border }]}>
+              <Text style={[styles.costLabel, { color: colors.muted }]}>Amount Paid</Text>
+              <Text style={[styles.costValue, { color: colors.success }]}>{getCurrencySymbol(project.currency)} {(project.totalPaid || 0).toLocaleString()}</Text>
+            </View>
+            <View style={styles.costRow}>
+              <Text style={[styles.costLabel, { color: colors.muted }]}>Remaining</Text>
+              <Text style={[styles.costValue, { color: costs.total - (project.totalPaid || 0) > 0 ? colors.warning : colors.success }]}>
+                {getCurrencySymbol(project.currency)} {(costs.total - (project.totalPaid || 0)).toLocaleString()}
+              </Text>
+            </View>
+            
+            {/* Payment Progress Bar */}
+            <View style={styles.paymentProgressContainer}>
+              <View style={[styles.paymentProgressBg, { backgroundColor: colors.border }]}>
+                <View style={[
+                  styles.paymentProgressBar,
+                  { 
+                    backgroundColor: colors.success,
+                    width: `${Math.min(100, ((project.totalPaid || 0) / costs.total) * 100)}%`
+                  }
+                ]} />
+              </View>
+              <Text style={[styles.paymentProgressText, { color: colors.muted }]}>
+                {Math.round(((project.totalPaid || 0) / costs.total) * 100)}% Paid
+              </Text>
             </View>
           </View>
         </View>
@@ -626,5 +699,83 @@ const styles = StyleSheet.create({
   metadataText: {
     fontSize: 13,
     marginBottom: 4,
+  },
+  phaseContainer: {
+    marginTop: 20,
+  },
+  phaseLabel: {
+    fontSize: 14,
+    marginBottom: 12,
+  },
+  phaseProgress: {
+    flexDirection: "row",
+    alignItems: "flex-start",
+    justifyContent: "space-between",
+  },
+  phaseStep: {
+    alignItems: "center",
+    flex: 1,
+  },
+  phaseDot: {
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  phaseInnerDot: {
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+    backgroundColor: "#FFF",
+  },
+  phaseStepText: {
+    fontSize: 10,
+    marginTop: 6,
+    textAlign: "center",
+  },
+  phaseLine: {
+    position: "absolute",
+    top: 12,
+    left: "60%",
+    right: "-40%",
+    height: 2,
+  },
+  clientCard: {
+    flexDirection: "row",
+    alignItems: "center",
+    padding: 14,
+    borderRadius: 12,
+    borderWidth: 1,
+    marginTop: 16,
+    gap: 12,
+  },
+  clientInfo: {
+    flex: 1,
+  },
+  clientName: {
+    fontSize: 16,
+    fontWeight: "600",
+  },
+  clientPhone: {
+    fontSize: 14,
+    marginTop: 2,
+  },
+  paymentProgressContainer: {
+    marginTop: 16,
+  },
+  paymentProgressBg: {
+    height: 8,
+    borderRadius: 4,
+    overflow: "hidden",
+  },
+  paymentProgressBar: {
+    height: "100%",
+    borderRadius: 4,
+  },
+  paymentProgressText: {
+    fontSize: 12,
+    marginTop: 6,
+    textAlign: "right",
   },
 });

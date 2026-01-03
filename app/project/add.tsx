@@ -20,7 +20,7 @@ import * as Haptics from "expo-haptics";
 import { ScreenContainer } from "@/components/screen-container";
 import { IconSymbol } from "@/components/ui/icon-symbol";
 import { useColors } from "@/hooks/use-colors";
-import { Talent, ProjectStatus, ProjectTalent, CURRENCIES } from "@/lib/types";
+import { Talent, ProjectStatus, ProjectTalent, ProjectPhase, PROJECT_PHASES, CURRENCIES } from "@/lib/types";
 import { saveProject, getTalents, getSettings, calculateProjectCosts, getCurrencySymbol } from "@/lib/storage";
 import { useFocusEffect } from "@react-navigation/native";
 
@@ -43,6 +43,9 @@ export default function AddProjectScreen() {
   const [profitMargin, setProfitMargin] = useState("15");
   const [currency, setCurrency] = useState("KWD");
   const [saving, setSaving] = useState(false);
+  const [phase, setPhase] = useState<ProjectPhase>("preparation");
+  const [clientName, setClientName] = useState("");
+  const [clientPhone, setClientPhone] = useState("");
   
   const [allTalents, setAllTalents] = useState<Talent[]>([]);
   const [showTalentPicker, setShowTalentPicker] = useState(false);
@@ -104,6 +107,11 @@ export default function AddProjectScreen() {
         talents: selectedTalents,
         profitMarginPercent: parseFloat(profitMargin) || 0,
         currency,
+        phase,
+        clientName: clientName.trim(),
+        clientPhone: clientPhone.trim(),
+        payments: [],
+        totalPaid: 0,
       });
 
       if (Platform.OS !== "web") {
@@ -330,28 +338,33 @@ export default function AddProjectScreen() {
           <View style={styles.section}>
             <Text style={[styles.sectionTitle, { color: colors.foreground }]}>Cost Calculation</Text>
             
+            {/* Phase Selector */}
             <View style={styles.inputGroup}>
-              <Text style={[styles.label, { color: colors.foreground }]}>Currency</Text>
-              <View style={styles.currencyPicker}>
-                {CURRENCIES.map((c) => (
+              <Text style={[styles.label, { color: colors.foreground }]}>Project Phase</Text>
+              <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.phaseScroll}>
+                {PROJECT_PHASES.map((p) => (
                   <TouchableOpacity
-                    key={c.code}
-                    onPress={() => setCurrency(c.code)}
+                    key={p.value}
+                    onPress={() => setPhase(p.value)}
                     style={[
-                      styles.currencyButton,
+                      styles.phaseButton,
                       {
-                        backgroundColor: currency === c.code ? colors.primary : colors.surface,
-                        borderColor: currency === c.code ? colors.primary : colors.border,
+                        backgroundColor: phase === p.value ? p.color : colors.surface,
+                        borderColor: phase === p.value ? p.color : colors.border,
                       },
                     ]}
                   >
-                    <Text style={[styles.currencyCode, { color: currency === c.code ? "#FFF" : colors.foreground }]}>
-                      {c.code}
+                    <Text style={[styles.phaseText, { color: phase === p.value ? "#FFF" : colors.foreground }]}>
+                      {p.label}
                     </Text>
                   </TouchableOpacity>
                 ))}
-              </View>
+              </ScrollView>
             </View>
+
+            {/* Client Info */}
+            {renderInput("Client Name", clientName, setClientName, "Enter client name (optional)")}
+            {renderInput("Client Phone", clientPhone, setClientPhone, "Enter client phone (optional)")}
             
             {renderInput("Profit Margin", profitMargin, setProfitMargin, "15", {
               keyboardType: "numeric",
@@ -691,5 +704,19 @@ const styles = StyleSheet.create({
   currencyCode: {
     fontSize: 14,
     fontWeight: "600",
+  },
+  phaseScroll: {
+    marginBottom: 8,
+  },
+  phaseButton: {
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    borderRadius: 20,
+    borderWidth: 1,
+    marginRight: 10,
+  },
+  phaseText: {
+    fontSize: 14,
+    fontWeight: "500",
   },
 });
