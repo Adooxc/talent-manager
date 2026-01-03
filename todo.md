@@ -107,3 +107,7 @@
 ## Current Issues - Button Size Consistency
 - [x] Make category buttons same size and font as Women/Men gender filter buttons
 - [x] Make all category buttons uniform size (not stretched) - same as Women/Men buttons
+
+
+## Current Issues - Button Width Flexibility
+- [x] Make category buttons expand width based on text length instead of fixed width

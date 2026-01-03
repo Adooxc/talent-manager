@@ -674,7 +674,7 @@ export default function TalentsScreen() {
             },
           ]}
         >
-          <Text style={[styles.filterButtonText, { color: filterCategoryId === "all" ? "#FFF" : colors.foreground }]} numberOfLines={1}>
+          <Text style={[styles.filterButtonText, { color: filterCategoryId === "all" ? "#FFF" : colors.foreground }]}>
             All
           </Text>
         </TouchableOpacity>
@@ -690,7 +690,7 @@ export default function TalentsScreen() {
               },
             ]}
           >
-            <Text style={[styles.filterButtonText, { color: filterCategoryId === cat.id ? "#FFF" : colors.foreground }]} numberOfLines={1}>
+            <Text style={[styles.filterButtonText, { color: filterCategoryId === cat.id ? "#FFF" : colors.foreground }]}>
               {cat.name}
             </Text>
           </TouchableOpacity>
@@ -1152,7 +1152,6 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     justifyContent: "center",
     alignItems: "center",
-    width: 80,
     height: 40,
   },
   filterButtonText: {
