@@ -118,4 +118,4 @@
 
 
 ## Current Issues - Remove Gap Between Filters and Talent Cards
-- [x] Remove unnecessary gap/spacing between category filters and talent card images (reduced with negative margin)
+- [x] Remove unnecessary gap/spacing between category filters and talent card images (moved filters into ListHeaderComponent)

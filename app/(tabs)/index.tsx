@@ -599,164 +599,168 @@ export default function TalentsScreen() {
         </View>
       )}
 
-      {/* Search */}
-      <View style={[styles.searchContainer, { backgroundColor: colors.surface, borderColor: colors.border }]}>
-        <IconSymbol name="magnifyingglass" size={20} color={colors.muted} />
-        <TextInput
-          style={[styles.searchInput, { color: colors.foreground }]}
-          placeholder="Search talents..."
-          placeholderTextColor={colors.muted}
-          value={searchQuery}
-          onChangeText={setSearchQuery}
-          returnKeyType="search"
-        />
-      </View>
-
-      {/* Gender Filter */}
-      <View style={styles.genderFilterContainer}>
-        <TouchableOpacity
-          onPress={() => setFilterGender("all")}
-          style={[
-            styles.genderFilterButton,
-            {
-              backgroundColor: filterGender === "all" ? colors.primary : colors.surface,
-              borderColor: filterGender === "all" ? colors.primary : colors.border,
-            },
-          ]}
-        >
-          <Text style={[styles.genderFilterText, { color: filterGender === "all" ? "#FFF" : colors.foreground }]}>
-            All
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => setFilterGender("female")}
-          style={[
-            styles.genderFilterButton,
-            {
-              backgroundColor: filterGender === "female" ? "#EC4899" : colors.surface,
-              borderColor: filterGender === "female" ? "#EC4899" : colors.border,
-            },
-          ]}
-        >
-          <Text style={[styles.genderFilterText, { color: filterGender === "female" ? "#FFF" : colors.foreground }]}>
-            Women
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => setFilterGender("male")}
-          style={[
-            styles.genderFilterButton,
-            {
-              backgroundColor: filterGender === "male" ? "#3B82F6" : colors.surface,
-              borderColor: filterGender === "male" ? "#3B82F6" : colors.border,
-            },
-          ]}
-        >
-          <Text style={[styles.genderFilterText, { color: filterGender === "male" ? "#FFF" : colors.foreground }]}>
-            Men
-          </Text>
-        </TouchableOpacity>
-      </View>
-
-      {/* Category Filter */}
-      <ScrollView 
-        horizontal 
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={styles.filterContainer}
-      >
-        <TouchableOpacity
-          onPress={() => setFilterCategoryId("all")}
-          style={[
-            styles.filterButton,
-            {
-              backgroundColor: filterCategoryId === "all" ? colors.primary : colors.surface,
-              borderColor: filterCategoryId === "all" ? colors.primary : colors.border,
-            },
-          ]}
-        >
-          <Text style={[styles.filterButtonText, { color: filterCategoryId === "all" ? "#FFF" : colors.foreground }]}>
-            All
-          </Text>
-        </TouchableOpacity>
-        {categories.map((cat) => (
-          <TouchableOpacity
-            key={cat.id}
-            onPress={() => setFilterCategoryId(cat.id)}
-            style={[
-              styles.filterButton,
-              {
-                backgroundColor: filterCategoryId === cat.id ? colors.primary : colors.surface,
-                borderColor: filterCategoryId === cat.id ? colors.primary : colors.border,
-              },
-            ]}
-          >
-            <Text style={[styles.filterButtonText, { color: filterCategoryId === cat.id ? "#FFF" : colors.foreground }]}>
-              {cat.name}
-            </Text>
-          </TouchableOpacity>
-        ))}
-      </ScrollView>
-
-      {/* Active Filters Summary */}
-      {hasActiveFilters && (
-        <View style={styles.activeFiltersContainer}>
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.activeFiltersScroll}>
-            {filters.ageMin && (
-              <View style={[styles.activeFilterChip, { backgroundColor: colors.primary + '20' }]}>
-                <Text style={[styles.activeFilterText, { color: colors.primary }]}>Age ≥ {filters.ageMin}</Text>
-              </View>
-            )}
-            {filters.ageMax && (
-              <View style={[styles.activeFilterChip, { backgroundColor: colors.primary + '20' }]}>
-                <Text style={[styles.activeFilterText, { color: colors.primary }]}>Age ≤ {filters.ageMax}</Text>
-              </View>
-            )}
-            {filters.priceMin && (
-              <View style={[styles.activeFilterChip, { backgroundColor: colors.primary + '20' }]}>
-                <Text style={[styles.activeFilterText, { color: colors.primary }]}>Price ≥ {filters.priceMin}</Text>
-              </View>
-            )}
-            {filters.priceMax && (
-              <View style={[styles.activeFilterChip, { backgroundColor: colors.primary + '20' }]}>
-                <Text style={[styles.activeFilterText, { color: colors.primary }]}>Price ≤ {filters.priceMax}</Text>
-              </View>
-            )}
-            {filters.rating && (
-              <View style={[styles.activeFilterChip, { backgroundColor: colors.primary + '20' }]}>
-                <Text style={[styles.activeFilterText, { color: colors.primary }]}>★ ≥ {filters.rating}</Text>
-              </View>
-            )}
-            {filters.location && (
-              <View style={[styles.activeFilterChip, { backgroundColor: colors.primary + '20' }]}>
-                <Text style={[styles.activeFilterText, { color: colors.primary }]}>{filters.location}</Text>
-              </View>
-            )}
-            {filters.nationality && (
-              <View style={[styles.activeFilterChip, { backgroundColor: colors.primary + '20' }]}>
-                <Text style={[styles.activeFilterText, { color: colors.primary }]}>{filters.nationality}</Text>
-              </View>
-            )}
-            {filters.languages.map(lang => (
-              <View key={lang} style={[styles.activeFilterChip, { backgroundColor: colors.primary + '20' }]}>
-                <Text style={[styles.activeFilterText, { color: colors.primary }]}>{lang}</Text>
-              </View>
-            ))}
-            {filters.tags.map(tag => (
-              <View key={tag} style={[styles.activeFilterChip, { backgroundColor: colors.primary + '20' }]}>
-                <Text style={[styles.activeFilterText, { color: colors.primary }]}>{tag}</Text>
-              </View>
-            ))}
-            <TouchableOpacity 
-              onPress={() => setFilters(DEFAULT_FILTERS)}
-              style={[styles.clearFiltersButton, { backgroundColor: colors.error + '20' }]}
-            >
-              <Text style={[styles.clearFiltersText, { color: colors.error }]}>Clear All</Text>
-            </TouchableOpacity>
-          </ScrollView>
-        </View>
-      )}
-
       <FlatList
+        ListHeaderComponent={
+          <>
+            {/* Search */}
+            <View style={[styles.searchContainer, { backgroundColor: colors.surface, borderColor: colors.border }]}>
+              <IconSymbol name="magnifyingglass" size={20} color={colors.muted} />
+              <TextInput
+                style={[styles.searchInput, { color: colors.foreground }]}
+                placeholder="Search talents..."
+                placeholderTextColor={colors.muted}
+                value={searchQuery}
+                onChangeText={setSearchQuery}
+                returnKeyType="search"
+              />
+            </View>
+
+            {/* Gender Filter */}
+            <View style={styles.genderFilterContainer}>
+              <TouchableOpacity
+                onPress={() => setFilterGender("all")}
+                style={[
+                  styles.genderFilterButton,
+                  {
+                    backgroundColor: filterGender === "all" ? colors.primary : colors.surface,
+                    borderColor: filterGender === "all" ? colors.primary : colors.border,
+                  },
+                ]}
+              >
+                <Text style={[styles.genderFilterText, { color: filterGender === "all" ? "#FFF" : colors.foreground }]}>
+                  All
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => setFilterGender("female")}
+                style={[
+                  styles.genderFilterButton,
+                  {
+                    backgroundColor: filterGender === "female" ? "#EC4899" : colors.surface,
+                    borderColor: filterGender === "female" ? "#EC4899" : colors.border,
+                  },
+                ]}
+              >
+                <Text style={[styles.genderFilterText, { color: filterGender === "female" ? "#FFF" : colors.foreground }]}>
+                  Women
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => setFilterGender("male")}
+                style={[
+                  styles.genderFilterButton,
+                  {
+                    backgroundColor: filterGender === "male" ? "#3B82F6" : colors.surface,
+                    borderColor: filterGender === "male" ? "#3B82F6" : colors.border,
+                  },
+                ]}
+              >
+                <Text style={[styles.genderFilterText, { color: filterGender === "male" ? "#FFF" : colors.foreground }]}>
+                  Men
+                </Text>
+              </TouchableOpacity>
+            </View>
+
+            {/* Category Filter */}
+            <ScrollView 
+              horizontal 
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={styles.filterContainer}
+            >
+              <TouchableOpacity
+                onPress={() => setFilterCategoryId("all")}
+                style={[
+                  styles.filterButton,
+                  {
+                    backgroundColor: filterCategoryId === "all" ? colors.primary : colors.surface,
+                    borderColor: filterCategoryId === "all" ? colors.primary : colors.border,
+                  },
+                ]}
+              >
+                <Text style={[styles.filterButtonText, { color: filterCategoryId === "all" ? "#FFF" : colors.foreground }]}>
+                  All
+                </Text>
+              </TouchableOpacity>
+              {categories.map((cat) => (
+                <TouchableOpacity
+                  key={cat.id}
+                  onPress={() => setFilterCategoryId(cat.id)}
+                  style={[
+                    styles.filterButton,
+                    {
+                      backgroundColor: filterCategoryId === cat.id ? colors.primary : colors.surface,
+                      borderColor: filterCategoryId === cat.id ? colors.primary : colors.border,
+                    },
+                  ]}
+                >
+                  <Text style={[styles.filterButtonText, { color: filterCategoryId === cat.id ? "#FFF" : colors.foreground }]}>
+                    {cat.name}
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
+
+            {/* Active Filters Summary */}
+            {hasActiveFilters && (
+              <View style={styles.activeFiltersContainer}>
+                <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.activeFiltersScroll}>
+                  {filters.ageMin && (
+                    <View style={[styles.activeFilterChip, { backgroundColor: colors.primary + '20' }]}>
+                      <Text style={[styles.activeFilterText, { color: colors.primary }]}>Age ≥ {filters.ageMin}</Text>
+                    </View>
+                  )}
+                  {filters.ageMax && (
+                    <View style={[styles.activeFilterChip, { backgroundColor: colors.primary + '20' }]}>
+                      <Text style={[styles.activeFilterText, { color: colors.primary }]}>Age ≤ {filters.ageMax}</Text>
+                    </View>
+                  )}
+                  {filters.priceMin && (
+                    <View style={[styles.activeFilterChip, { backgroundColor: colors.primary + '20' }]}>
+                      <Text style={[styles.activeFilterText, { color: colors.primary }]}>Price ≥ {filters.priceMin}</Text>
+                    </View>
+                  )}
+                  {filters.priceMax && (
+                    <View style={[styles.activeFilterChip, { backgroundColor: colors.primary + '20' }]}>
+                      <Text style={[styles.activeFilterText, { color: colors.primary }]}>Price ≤ {filters.priceMax}</Text>
+                    </View>
+                  )}
+                  {filters.rating && (
+                    <View style={[styles.activeFilterChip, { backgroundColor: colors.primary + '20' }]}>
+                      <Text style={[styles.activeFilterText, { color: colors.primary }]}>★ ≥ {filters.rating}</Text>
+                    </View>
+                  )}
+                  {filters.location && (
+                    <View style={[styles.activeFilterChip, { backgroundColor: colors.primary + '20' }]}>
+                      <Text style={[styles.activeFilterText, { color: colors.primary }]}>{filters.location}</Text>
+                    </View>
+                  )}
+                  {filters.nationality && (
+                    <View style={[styles.activeFilterChip, { backgroundColor: colors.primary + '20' }]}>
+                      <Text style={[styles.activeFilterText, { color: colors.primary }]}>{filters.nationality}</Text>
+                    </View>
+                  )}
+                  {filters.languages.map(lang => (
+                    <View key={lang} style={[styles.activeFilterChip, { backgroundColor: colors.primary + '20' }]}>
+                      <Text style={[styles.activeFilterText, { color: colors.primary }]}>{lang}</Text>
+                    </View>
+                  ))}
+                  {filters.tags.map(tag => (
+                    <View key={tag} style={[styles.activeFilterChip, { backgroundColor: colors.primary + '20' }]}>
+                      <Text style={[styles.activeFilterText, { color: colors.primary }]}>{tag}</Text>
+                    </View>
+                  ))}
+                  <TouchableOpacity 
+                    onPress={() => setFilters(DEFAULT_FILTERS)}
+                    style={[styles.clearFiltersButton, { backgroundColor: colors.error + '20' }]}
+                  >
+                    <Text style={[styles.clearFiltersText, { color: colors.error }]}>Clear All</Text>
+                  </TouchableOpacity>
+                </ScrollView>
+              </View>
+            )}
+          </>
+        }
+        stickyHeaderIndices={[0]}
         data={sortedAndFilteredTalents}
         renderItem={renderTalentCard}
         keyExtractor={(item) => item.id}
@@ -1117,6 +1121,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     borderWidth: 1,
     marginBottom: 6,
+    marginTop: 8,
   },
   searchInput: {
     flex: 1,
@@ -1343,10 +1348,9 @@ const styles = StyleSheet.create({
     marginLeft: 8,
   },
   emptyContainer: {
-    minHeight: 100,
     alignItems: "center",
     justifyContent: "flex-start",
-    paddingVertical: 4,
+    paddingTop: 10,
   },
   emptyText: {
     fontSize: 18,
