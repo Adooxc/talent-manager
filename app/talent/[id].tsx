@@ -101,26 +101,27 @@ export default function TalentDetailScreen() {
     );
   };
 
-  const handleCall = (phone: string) => {
-    Linking.openURL(`tel:${phone}`);
+  const handleCall = (phone: any) => {
+    const phoneNumber = typeof phone === 'string' ? phone : phone.number;
+    Linking.openURL(`tel:${phoneNumber}`);
   };
 
-  const handleWhatsApp = (phone: string) => {
-    // Remove any non-numeric characters except +
-    const cleanPhone = phone.replace(/[^0-9+]/g, '');
-    // Remove leading + if present for WhatsApp URL
+  const handleWhatsApp = (phone: any) => {
+    const phoneData = typeof phone === 'string' ? { number: phone, countryCode: '+965' } : phone;
+    const fullPhone = `${phoneData.countryCode}${phoneData.number}`;
+    const cleanPhone = fullPhone.replace(/[^0-9+]/g, '');
     const whatsappPhone = cleanPhone.startsWith('+') ? cleanPhone.substring(1) : cleanPhone;
-    // Custom message template
     const message = encodeURIComponent(`مرحباً ${talent?.name}، أتواصل معك بخصوص فرصة عمل...`);
     Linking.openURL(`https://wa.me/${whatsappPhone}?text=${message}`);
   };
 
-  const handleCopyPhone = async (phone: string) => {
-    await Clipboard.setStringAsync(phone);
+  const handleCopyPhone = async (phone: any) => {
+    const phoneData = typeof phone === 'string' ? phone : `${phone.countryCode}${phone.number}`;
+    await Clipboard.setStringAsync(phoneData);
     if (Platform.OS !== "web") {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     }
-    Alert.alert("Copied!", `Phone number ${phone} copied to clipboard`);
+    Alert.alert("Copied!", `Phone number ${phoneData} copied to clipboard`);
   };
 
   const handleSocialMedia = (url: string) => {
@@ -345,7 +346,7 @@ export default function TalentDetailScreen() {
                   onPress={() => handleWhatsApp(phone)}
                   style={styles.contactTextContainer}
                 >
-                  <Text style={[styles.contactText, { color: colors.foreground }]}>{phone}</Text>
+                  <Text style={[styles.contactText, { color: colors.foreground }]}>{typeof phone === 'string' ? phone : `${phone.countryCode}${phone.number}`}</Text>
                   <Text style={[styles.contactHint, { color: colors.muted }]}>Tap to WhatsApp</Text>
                 </TouchableOpacity>
                 <TouchableOpacity

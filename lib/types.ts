@@ -48,6 +48,12 @@ export interface TalentBooking {
   createdAt: string;
 }
 
+export interface PhoneNumber {
+  number: string;
+  countryCode: string; // e.g., "+965" for Kuwait
+  country?: string; // e.g., "Kuwait"
+}
+
 export interface Talent {
   id: string;
   name: string;
@@ -55,7 +61,7 @@ export interface Talent {
   gender: Gender;
   photos: string[]; // Array of photo URIs
   profilePhoto: string; // Main profile photo URI
-  phoneNumbers: string[];
+  phoneNumbers: (string | PhoneNumber)[]; // Support both old and new format
   socialMedia: SocialMedia;
   pricePerProject: number;
   currency: string; // KWD only

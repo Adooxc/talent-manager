@@ -127,3 +127,11 @@
 - [x] Add Admin button to Settings screen
 - [x] Implement cloud sync for admin settings changes
 - [x] Test admin functionality across devices
+
+
+## New Features - Country Code for Phone Numbers
+- [x] Add country code field to talent data structure
+- [x] Add country code selector to talent edit screen
+- [x] Set Kuwait +965 as default country code
+- [x] Display country code with phone number in talent details
+- [x] Support multiple country codes for international talents

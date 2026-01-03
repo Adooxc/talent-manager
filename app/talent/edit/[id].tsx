@@ -19,7 +19,7 @@ import { useFocusEffect } from "@react-navigation/native";
 import { ScreenContainer } from "@/components/screen-container";
 import { IconSymbol } from "@/components/ui/icon-symbol";
 import { useColors } from "@/hooks/use-colors";
-import { Gender, SocialMedia, Category, CURRENCIES } from "@/lib/types";
+import { Gender, SocialMedia, Category, CURRENCIES, PhoneNumber } from "@/lib/types";
 import { getTalentById, updateTalent, getCategories } from "@/lib/storage";
 
 const GENDERS: { value: Gender; label: string }[] = [
@@ -36,7 +36,7 @@ export default function EditTalentScreen() {
   const [categoryId, setCategoryId] = useState("");
   const [gender, setGender] = useState<Gender>("male");
   const [photos, setPhotos] = useState<string[]>([]);
-  const [phoneNumbers, setPhoneNumbers] = useState<string[]>([""]);
+  const [phoneNumbers, setPhoneNumbers] = useState<PhoneNumber[]>([{ number: "", countryCode: "+965", country: "Kuwait" }]);
   const [socialMedia, setSocialMedia] = useState<SocialMedia>({});
   const [pricePerProject, setPricePerProject] = useState("");
   const [currency, setCurrency] = useState("KWD");
@@ -54,7 +54,13 @@ export default function EditTalentScreen() {
       setCategoryId(talent.categoryId);
       setGender(talent.gender);
       setPhotos(talent.photos);
-      setPhoneNumbers(talent.phoneNumbers.length > 0 ? talent.phoneNumbers : [""]);
+      const formattedPhones: PhoneNumber[] = talent.phoneNumbers.map(phone => {
+        if (typeof phone === 'string') {
+          return { number: phone, countryCode: "+965", country: "Kuwait" };
+        }
+        return phone;
+      });
+      setPhoneNumbers(formattedPhones.length > 0 ? formattedPhones : [{ number: "", countryCode: "+965", country: "Kuwait" }]);
       setSocialMedia(talent.socialMedia);
       setPricePerProject(talent.pricePerProject.toString());
       setCurrency(talent.currency);
@@ -86,12 +92,18 @@ export default function EditTalentScreen() {
   };
 
   const addPhoneNumber = () => {
-    setPhoneNumbers([...phoneNumbers, ""]);
+    setPhoneNumbers([...phoneNumbers, { number: "", countryCode: "+965", country: "Kuwait" }]);
   };
 
-  const updatePhoneNumber = (index: number, value: string) => {
+  const updatePhoneNumber = (index: number, field: 'number' | 'countryCode' | 'country', value: string) => {
     const updated = [...phoneNumbers];
-    updated[index] = value;
+    updated[index] = { ...updated[index], [field]: value };
+    setPhoneNumbers(updated);
+  };
+
+  const updatePhoneCountryCode = (index: number, countryCode: string, country: string) => {
+    const updated = [...phoneNumbers];
+    updated[index] = { ...updated[index], countryCode, country };
     setPhoneNumbers(updated);
   };
 
@@ -126,7 +138,7 @@ export default function EditTalentScreen() {
         gender,
         photos,
         profilePhoto: photos[0],
-        phoneNumbers: phoneNumbers.filter((p) => p.trim()),
+        phoneNumbers: phoneNumbers.filter((p) => p.number && p.number.trim()),
         socialMedia,
         pricePerProject: price,
         currency,
@@ -354,24 +366,36 @@ export default function EditTalentScreen() {
           <View style={styles.section}>
             <Text style={[styles.sectionTitle, { color: colors.foreground }]}>Contact</Text>
             {phoneNumbers.map((phone, index) => (
-              <View key={index} style={styles.phoneRow}>
-                <View style={{ flex: 1 }}>
-                  {renderInput(
-                    index === 0 ? "Phone Numbers" : "",
-                    phone,
-                    (value) => updatePhoneNumber(index, value),
-                    "Enter phone number",
-                    { keyboardType: "phone-pad" }
+              <View key={index}>
+                <View style={styles.phoneRow}>
+                  <View style={{ flex: 1 }}>
+                    {renderInput(
+                      index === 0 ? "Phone Numbers" : "",
+                      phone.number,
+                      (value) => updatePhoneNumber(index, 'number', value),
+                      "Enter phone number",
+                      { keyboardType: "phone-pad" }
+                    )}
+                  </View>
+                  {phoneNumbers.length > 1 && (
+                    <TouchableOpacity
+                      onPress={() => removePhoneNumber(index)}
+                      style={[styles.removeButton, { marginTop: index === 0 ? 28 : 0 }]}
+                    >
+                      <IconSymbol name="xmark.circle.fill" size={24} color={colors.error} />
+                    </TouchableOpacity>
                   )}
                 </View>
-                {phoneNumbers.length > 1 && (
-                  <TouchableOpacity
-                    onPress={() => removePhoneNumber(index)}
-                    style={[styles.removeButton, { marginTop: index === 0 ? 28 : 0 }]}
-                  >
-                    <IconSymbol name="xmark.circle.fill" size={24} color={colors.error} />
-                  </TouchableOpacity>
-                )}
+                <View style={styles.countryCodeRow}>
+                  <Text style={[styles.label, { color: colors.foreground }]}>Country Code</Text>
+                  <TextInput
+                    style={[styles.input, { color: colors.foreground, borderColor: colors.border }]}
+                    placeholder="+965"
+                    placeholderTextColor={colors.muted}
+                    value={phone.countryCode}
+                    onChangeText={(value) => updatePhoneNumber(index, 'countryCode', value)}
+                  />
+                </View>
               </View>
             ))}
             <TouchableOpacity onPress={addPhoneNumber} style={styles.addButton}>
@@ -559,6 +583,10 @@ const styles = StyleSheet.create({
   phoneRow: {
     flexDirection: "row",
     alignItems: "flex-start",
+  },
+  countryCodeRow: {
+    marginTop: 12,
+    marginBottom: 16,
   },
   removeButton: {
     padding: 8,

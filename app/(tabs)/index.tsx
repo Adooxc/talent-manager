@@ -297,7 +297,9 @@ export default function TalentsScreen() {
     
     for (const talent of selectedTalents) {
       if (talent.phoneNumbers && talent.phoneNumbers.length > 0) {
-        const phone = talent.phoneNumbers[0].replace(/[^0-9]/g, '');
+        const phoneData = talent.phoneNumbers[0];
+        const phoneStr = typeof phoneData === 'string' ? phoneData : `${phoneData.countryCode}${phoneData.number}`;
+        const phone = phoneStr.replace(/[^0-9]/g, '');
         const personalizedMessage = message.replace('{name}', talent.name);
         const url = `whatsapp://send?phone=${phone}&text=${encodeURIComponent(personalizedMessage)}`;
         await Linking.openURL(url);
@@ -312,8 +314,11 @@ export default function TalentsScreen() {
     const selectedTalents = talents.filter(t => selectedIds.has(t.id));
     const phoneNumbers = selectedTalents
       .flatMap(t => t.phoneNumbers)
-      .filter((p): p is string => p != null && p.trim() !== '')
-      .map(p => p.replace(/[^0-9+]/g, ''));
+      .filter((p) => p != null && (typeof p === 'string' ? p.trim() !== '' : p.number.trim() !== ''))
+      .map(p => {
+        const phoneStr = typeof p === 'string' ? p : `${p.countryCode}${p.number}`;
+        return phoneStr.replace(/[^0-9+]/g, '');
+      });
     
     if (phoneNumbers.length === 0) {
       Alert.alert("No Phone Numbers", "Selected talents don't have phone numbers.");
