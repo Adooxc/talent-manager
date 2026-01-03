@@ -763,7 +763,7 @@ export default function TalentsScreen() {
         numColumns={viewMode === 'grid' ? 2 : 1}
         key={viewMode}
         columnWrapperStyle={viewMode === 'grid' ? styles.row : undefined}
-        contentContainerStyle={styles.listContent}
+        contentContainerStyle={[styles.listContent, { marginTop: -40 }]}
         showsVerticalScrollIndicator={false}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.primary} />
@@ -1142,7 +1142,7 @@ const styles = StyleSheet.create({
   filterContainer: {
     paddingHorizontal: 20,
     gap: 10,
-    paddingBottom: 4,
+    paddingBottom: 0,
     paddingTop: 0,
   },
   filterButton: {
@@ -1160,7 +1160,7 @@ const styles = StyleSheet.create({
     lineHeight: 16,
   },
   activeFiltersContainer: {
-    paddingBottom: 12,
+    paddingBottom: 0,
   },
   activeFiltersScroll: {
     paddingHorizontal: 20,
@@ -1341,10 +1341,10 @@ const styles = StyleSheet.create({
     marginLeft: 8,
   },
   emptyContainer: {
-    minHeight: 200,
+    minHeight: 150,
     alignItems: "center",
     justifyContent: "center",
-    paddingVertical: 20,
+    paddingVertical: 8,
   },
   emptyText: {
     fontSize: 18,
