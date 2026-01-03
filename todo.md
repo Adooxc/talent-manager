@@ -83,3 +83,7 @@
 ## Bug Fixes - Priority
 - [x] Fix font size adjustment not working in settings
 - [x] Fix login/authentication not working
+
+## UI Fixes
+- [x] Fix category button sizing and text proportions
+- [x] Fix unmatched route error on login

@@ -526,14 +526,17 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   categoryButton: {
-    paddingHorizontal: 16,
-    paddingVertical: 10,
+    paddingHorizontal: 20,
+    paddingVertical: 14,
     borderRadius: 20,
     borderWidth: 1,
+    minHeight: 44,
+    justifyContent: "center",
+    alignItems: "center",
   },
   categoryButtonText: {
-    fontSize: 14,
-    fontWeight: "500",
+    fontSize: 16,
+    fontWeight: "600",
   },
   priceRow: {
     flexDirection: "row",
