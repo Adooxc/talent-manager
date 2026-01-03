@@ -115,3 +115,7 @@
 
 ## Current Issues - Spacing
 - [x] Move talent list up to appear immediately below category filters with minimal gap
+
+
+## Current Issues - Remove Gap Between Filters and Talent Cards
+- [x] Remove unnecessary gap/spacing between category filters and talent card images
