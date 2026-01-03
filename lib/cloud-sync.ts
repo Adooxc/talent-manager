@@ -1,8 +1,8 @@
-import { getTalents, getProjects, getCategories, getSettings, getBookings } from "@/lib/storage";
-import { Talent, Project, Category, TalentBooking, AppSettings } from "@/lib/types";
+import { getTalents, getProjects, getCategories, getSettings, getBookings } from "./storage";
+import { Talent, Project, Category, TalentBooking, AppSettings } from "./types";
 import { Platform } from "react-native";
-import { getApiBaseUrl } from "@/constants/oauth";
-import * as Auth from "@/lib/_core/auth";
+import { getApiBaseUrl } from "../constants/oauth";
+import * as Auth from "./_core/auth";
 
 /**
  * Cloud Sync Module
