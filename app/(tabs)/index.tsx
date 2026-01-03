@@ -663,7 +663,6 @@ export default function TalentsScreen() {
         horizontal 
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={styles.filterContainer}
-        style={{ maxHeight: 32 }}
       >
         <TouchableOpacity
           onPress={() => setFilterCategoryId("all")}
@@ -675,8 +674,8 @@ export default function TalentsScreen() {
             },
           ]}
         >
-          <Text style={[styles.filterButtonText, { color: filterCategoryId === "all" ? "#FFF" : colors.foreground }]}>
-            All Categories
+          <Text style={[styles.filterButtonText, { color: filterCategoryId === "all" ? "#FFF" : colors.foreground }]} numberOfLines={1}>
+            All
           </Text>
         </TouchableOpacity>
         {categories.map((cat) => (
@@ -691,7 +690,7 @@ export default function TalentsScreen() {
               },
             ]}
           >
-            <Text style={[styles.filterButtonText, { color: filterCategoryId === cat.id ? "#FFF" : colors.foreground }]}>
+            <Text style={[styles.filterButtonText, { color: filterCategoryId === cat.id ? "#FFF" : colors.foreground }]} numberOfLines={1}>
               {cat.name}
             </Text>
           </TouchableOpacity>
@@ -1142,22 +1141,24 @@ const styles = StyleSheet.create({
   },
   filterContainer: {
     paddingHorizontal: 20,
-    gap: 6,
-    paddingBottom: 4,
-    paddingTop: 4,
+    gap: 10,
+    paddingBottom: 12,
+    paddingTop: 0,
   },
   filterButton: {
-    paddingHorizontal: 8,
-    paddingVertical: 2,
-    borderRadius: 8,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 20,
     borderWidth: 1,
-    minHeight: 24,
     justifyContent: "center",
+    alignItems: "center",
+    width: 80,
+    height: 40,
   },
   filterButtonText: {
-    fontSize: 10,
+    fontSize: 14,
     fontWeight: "500",
-    lineHeight: 12,
+    lineHeight: 16,
   },
   activeFiltersContainer: {
     paddingBottom: 12,

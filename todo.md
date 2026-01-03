@@ -103,3 +103,7 @@
 
 ## Current Issues - Further UI Fixes
 - [x] Further reduce category button container height - still too tall
+
+## Current Issues - Button Size Consistency
+- [x] Make category buttons same size and font as Women/Men gender filter buttons
+- [x] Make all category buttons uniform size (not stretched) - same as Women/Men buttons
