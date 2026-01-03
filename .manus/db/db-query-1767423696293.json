@@ -1,0 +1,9 @@
+{
+  "query": "CREATE TABLE IF NOT EXISTS `talents` (\n\t`id` int AUTO_INCREMENT NOT NULL,\n\t`odId` varchar(64) NOT NULL,\n\t`userId` int NOT NULL,\n\t`categoryId` int NOT NULL,\n\t`name` varchar(255) NOT NULL,\n\t`gender` enum('male','female') NOT NULL,\n\t`profilePhoto` text,\n\t`photos` json,\n\t`phoneNumbers` json,\n\t`socialMedia` json,\n\t`pricePerProject` decimal(12,2) NOT NULL DEFAULT '0',\n\t`currency` varchar(10) NOT NULL DEFAULT 'KWD',\n\t`notes` text,\n\t`customFields` json,\n\t`rating` int,\n\t`tags` json,\n\t`isFavorite` boolean NOT NULL DEFAULT false,\n\t`lastPhotoUpdate` timestamp NOT NULL DEFAULT (now()),\n\t`createdAt` timestamp NOT NULL DEFAULT (now()),\n\t`updatedAt` timestamp NOT NULL DEFAULT (now()) ON UPDATE CURRENT_TIMESTAMP,\n\tCONSTRAINT `talents_id` PRIMARY KEY(`id`)\n);",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 3nzMoi2L5c1XM2q.root --database ih2Db87F5PR4VdRJqbqcJZ --execute CREATE TABLE IF NOT EXISTS `talents` (\n\t`id` int AUTO_INCREMENT NOT NULL,\n\t`odId` varchar(64) NOT NULL,\n\t`userId` int NOT NULL,\n\t`categoryId` int NOT NULL,\n\t`name` varchar(255) NOT NULL,\n\t`gender` enum('male','female') NOT NULL,\n\t`profilePhoto` text,\n\t`photos` json,\n\t`phoneNumbers` json,\n\t`socialMedia` json,\n\t`pricePerProject` decimal(12,2) NOT NULL DEFAULT '0',\n\t`currency` varchar(10) NOT NULL DEFAULT 'KWD',\n\t`notes` text,\n\t`customFields` json,\n\t`rating` int,\n\t`tags` json,\n\t`isFavorite` boolean NOT NULL DEFAULT false,\n\t`lastPhotoUpdate` timestamp NOT NULL DEFAULT (now()),\n\t`createdAt` timestamp NOT NULL DEFAULT (now()),\n\t`updatedAt` timestamp NOT NULL DEFAULT (now()) ON UPDATE CURRENT_TIMESTAMP,\n\tCONSTRAINT `talents_id` PRIMARY KEY(`id`)\n);",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 1519
+}

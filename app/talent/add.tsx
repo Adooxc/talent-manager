@@ -19,7 +19,7 @@ import { useFocusEffect } from "@react-navigation/native";
 import { ScreenContainer } from "@/components/screen-container";
 import { IconSymbol } from "@/components/ui/icon-symbol";
 import { useColors } from "@/hooks/use-colors";
-import { Gender, SocialMedia, Category, CURRENCIES } from "@/lib/types";
+import { Gender, SocialMedia, Category, CURRENCIES, TalentCustomFields, PREDEFINED_TAGS } from "@/lib/types";
 import { saveTalent, getCategories, getSettings } from "@/lib/storage";
 
 const GENDERS: { value: Gender; label: string; labelAr: string }[] = [
@@ -42,6 +42,13 @@ export default function AddTalentScreen() {
   const [notes, setNotes] = useState("");
   const [saving, setSaving] = useState(false);
   const [categories, setCategories] = useState<Category[]>([]);
+  
+  // New fields
+  const [customFields, setCustomFields] = useState<TalentCustomFields>({});
+  const [rating, setRating] = useState(0);
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
+  const [customTag, setCustomTag] = useState("");
+  const [showAllCurrencies, setShowAllCurrencies] = useState(false);
 
   const loadData = useCallback(async () => {
     const [cats, settings] = await Promise.all([getCategories(), getSettings()]);
@@ -95,6 +102,25 @@ export default function AddTalentScreen() {
     setSocialMedia({ ...socialMedia, [key]: value });
   };
 
+  const updateCustomField = (key: keyof TalentCustomFields, value: any) => {
+    setCustomFields({ ...customFields, [key]: value });
+  };
+
+  const toggleTag = (tag: string) => {
+    if (selectedTags.includes(tag)) {
+      setSelectedTags(selectedTags.filter(t => t !== tag));
+    } else {
+      setSelectedTags([...selectedTags, tag]);
+    }
+  };
+
+  const addCustomTag = () => {
+    if (customTag.trim() && !selectedTags.includes(customTag.trim())) {
+      setSelectedTags([...selectedTags, customTag.trim()]);
+      setCustomTag("");
+    }
+  };
+
   const handleSave = async () => {
     if (!name.trim()) {
       Alert.alert("Error", "Please enter a name");
@@ -126,6 +152,10 @@ export default function AddTalentScreen() {
         pricePerProject: price,
         currency,
         notes: notes.trim(),
+        customFields,
+        rating: rating > 0 ? rating : undefined,
+        tags: selectedTags.length > 0 ? selectedTags : undefined,
+        isFavorite: false,
       });
 
       if (Platform.OS !== "web") {
@@ -175,6 +205,7 @@ export default function AddTalentScreen() {
   );
 
   const currencySymbol = CURRENCIES.find(c => c.code === currency)?.symbol || currency;
+  const displayCurrencies = showAllCurrencies ? CURRENCIES : CURRENCIES.slice(0, 3);
 
   return (
     <ScreenContainer edges={["top", "left", "right", "bottom"]}>
@@ -301,6 +332,25 @@ export default function AddTalentScreen() {
               </View>
             </View>
 
+            {/* Rating */}
+            <View style={styles.inputGroup}>
+              <Text style={[styles.label, { color: colors.foreground }]}>Rating</Text>
+              <View style={styles.ratingContainer}>
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <TouchableOpacity key={star} onPress={() => setRating(star === rating ? 0 : star)}>
+                    <IconSymbol
+                      name="star.fill"
+                      size={32}
+                      color={star <= rating ? "#F59E0B" : colors.border}
+                    />
+                  </TouchableOpacity>
+                ))}
+                {rating > 0 && (
+                  <Text style={[styles.ratingText, { color: colors.muted }]}>{rating}/5</Text>
+                )}
+              </View>
+            </View>
+
             {/* Price with Currency */}
             <View style={styles.inputGroup}>
               <Text style={[styles.label, { color: colors.foreground }]}>Price per Project</Text>
@@ -317,32 +367,121 @@ export default function AddTalentScreen() {
                     returnKeyType="done"
                   />
                 </View>
-                <View style={styles.currencyPicker}>
-                  {CURRENCIES.slice(0, 2).map((c) => (
-                    <TouchableOpacity
-                      key={c.code}
-                      onPress={() => setCurrency(c.code)}
+              </View>
+              <View style={styles.currencyRow}>
+                {displayCurrencies.map((c) => (
+                  <TouchableOpacity
+                    key={c.code}
+                    onPress={() => setCurrency(c.code)}
+                    style={[
+                      styles.currencyButton,
+                      {
+                        backgroundColor: currency === c.code ? colors.primary : colors.surface,
+                        borderColor: currency === c.code ? colors.primary : colors.border,
+                      },
+                    ]}
+                  >
+                    <Text
                       style={[
-                        styles.currencyButton,
-                        {
-                          backgroundColor: currency === c.code ? colors.primary : colors.surface,
-                          borderColor: currency === c.code ? colors.primary : colors.border,
-                        },
+                        styles.currencyButtonText,
+                        { color: currency === c.code ? "#FFF" : colors.foreground },
                       ]}
                     >
-                      <Text
-                        style={[
-                          styles.currencyButtonText,
-                          { color: currency === c.code ? "#FFF" : colors.foreground },
-                        ]}
-                      >
-                        {c.code}
-                      </Text>
-                    </TouchableOpacity>
-                  ))}
-                </View>
+                      {c.code}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
+                {!showAllCurrencies && (
+                  <TouchableOpacity onPress={() => setShowAllCurrencies(true)} style={styles.moreButton}>
+                    <Text style={[styles.moreButtonText, { color: colors.primary }]}>More</Text>
+                  </TouchableOpacity>
+                )}
               </View>
             </View>
+          </View>
+
+          {/* Tags */}
+          <View style={styles.section}>
+            <Text style={[styles.sectionTitle, { color: colors.foreground }]}>Tags</Text>
+            <View style={styles.tagsContainer}>
+              {PREDEFINED_TAGS.map((tag) => (
+                <TouchableOpacity
+                  key={tag}
+                  onPress={() => toggleTag(tag)}
+                  style={[
+                    styles.tagButton,
+                    {
+                      backgroundColor: selectedTags.includes(tag) ? colors.primary : colors.surface,
+                      borderColor: selectedTags.includes(tag) ? colors.primary : colors.border,
+                    },
+                  ]}
+                >
+                  <Text
+                    style={[
+                      styles.tagButtonText,
+                      { color: selectedTags.includes(tag) ? "#FFF" : colors.foreground },
+                    ]}
+                  >
+                    {tag}
+                  </Text>
+                </TouchableOpacity>
+              ))}
+              {selectedTags.filter(t => !PREDEFINED_TAGS.includes(t)).map((tag) => (
+                <TouchableOpacity
+                  key={tag}
+                  onPress={() => toggleTag(tag)}
+                  style={[styles.tagButton, { backgroundColor: colors.primary, borderColor: colors.primary }]}
+                >
+                  <Text style={[styles.tagButtonText, { color: "#FFF" }]}>{tag}</Text>
+                  <IconSymbol name="xmark" size={12} color="#FFF" />
+                </TouchableOpacity>
+              ))}
+            </View>
+            <View style={styles.customTagRow}>
+              <View style={[styles.inputWrapper, { backgroundColor: colors.surface, borderColor: colors.border, flex: 1 }]}>
+                <TextInput
+                  style={[styles.input, { color: colors.foreground }]}
+                  value={customTag}
+                  onChangeText={setCustomTag}
+                  placeholder="Add custom tag..."
+                  placeholderTextColor={colors.muted}
+                  returnKeyType="done"
+                  onSubmitEditing={addCustomTag}
+                />
+              </View>
+              <TouchableOpacity
+                onPress={addCustomTag}
+                style={[styles.addTagButton, { backgroundColor: colors.primary }]}
+              >
+                <IconSymbol name="plus" size={20} color="#FFF" />
+              </TouchableOpacity>
+            </View>
+          </View>
+
+          {/* Custom Fields */}
+          <View style={styles.section}>
+            <Text style={[styles.sectionTitle, { color: colors.foreground }]}>Details</Text>
+            <View style={styles.fieldsRow}>
+              <View style={{ flex: 1 }}>
+                {renderInput("Height", customFields.height || "", (v) => updateCustomField("height", v), "e.g., 175 cm")}
+              </View>
+              <View style={{ flex: 1 }}>
+                {renderInput("Weight", customFields.weight || "", (v) => updateCustomField("weight", v), "e.g., 70 kg")}
+              </View>
+            </View>
+            <View style={styles.fieldsRow}>
+              <View style={{ flex: 1 }}>
+                {renderInput("Age", customFields.age?.toString() || "", (v) => updateCustomField("age", parseInt(v) || undefined), "e.g., 25", { keyboardType: "numeric" })}
+              </View>
+              <View style={{ flex: 1 }}>
+                {renderInput("Hair Color", customFields.hairColor || "", (v) => updateCustomField("hairColor", v), "e.g., Black")}
+              </View>
+            </View>
+            {renderInput("Eye Color", customFields.eyeColor || "", (v) => updateCustomField("eyeColor", v), "e.g., Brown")}
+            {renderInput("Nationality", customFields.nationality || "", (v) => updateCustomField("nationality", v), "e.g., Kuwaiti")}
+            {renderInput("Location", customFields.location || "", (v) => updateCustomField("location", v), "e.g., Kuwait City")}
+            {renderInput("Languages", customFields.languages?.join(", ") || "", (v) => updateCustomField("languages", v.split(",").map(l => l.trim()).filter(l => l)), "e.g., Arabic, English")}
+            {renderInput("Experience", customFields.experience || "", (v) => updateCustomField("experience", v), "e.g., 5 years")}
           </View>
 
           {/* Contact */}
@@ -530,23 +669,76 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: "500",
   },
+  ratingContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+  },
+  ratingText: {
+    fontSize: 14,
+    marginLeft: 8,
+  },
   priceRow: {
     flexDirection: "row",
     gap: 12,
   },
-  currencyPicker: {
+  currencyRow: {
     flexDirection: "row",
+    flexWrap: "wrap",
     gap: 8,
+    marginTop: 12,
   },
   currencyButton: {
-    paddingHorizontal: 12,
-    paddingVertical: 14,
+    paddingHorizontal: 14,
+    paddingVertical: 10,
     borderRadius: 12,
     borderWidth: 1,
   },
   currencyButtonText: {
     fontSize: 14,
     fontWeight: "600",
+  },
+  moreButton: {
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+  },
+  moreButtonText: {
+    fontSize: 14,
+    fontWeight: "500",
+  },
+  tagsContainer: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 8,
+    marginBottom: 12,
+  },
+  tagButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 16,
+    borderWidth: 1,
+    gap: 6,
+  },
+  tagButtonText: {
+    fontSize: 13,
+    fontWeight: "500",
+  },
+  customTagRow: {
+    flexDirection: "row",
+    gap: 12,
+  },
+  addTagButton: {
+    width: 48,
+    height: 48,
+    borderRadius: 12,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  fieldsRow: {
+    flexDirection: "row",
+    gap: 12,
   },
   phoneRow: {
     flexDirection: "row",

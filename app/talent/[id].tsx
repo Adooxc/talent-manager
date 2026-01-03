@@ -8,6 +8,7 @@ import {
   Alert,
   Linking,
 } from "react-native";
+import * as Clipboard from "expo-clipboard";
 import { Image } from "expo-image";
 import { useRouter, useLocalSearchParams } from "expo-router";
 import * as Haptics from "expo-haptics";
@@ -88,7 +89,17 @@ export default function TalentDetailScreen() {
     const cleanPhone = phone.replace(/[^0-9+]/g, '');
     // Remove leading + if present for WhatsApp URL
     const whatsappPhone = cleanPhone.startsWith('+') ? cleanPhone.substring(1) : cleanPhone;
-    Linking.openURL(`https://wa.me/${whatsappPhone}`);
+    // Custom message template
+    const message = encodeURIComponent(`مرحباً ${talent?.name}، أتواصل معك بخصوص فرصة عمل...`);
+    Linking.openURL(`https://wa.me/${whatsappPhone}?text=${message}`);
+  };
+
+  const handleCopyPhone = async (phone: string) => {
+    await Clipboard.setStringAsync(phone);
+    if (Platform.OS !== "web") {
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+    }
+    Alert.alert("Copied!", `Phone number ${phone} copied to clipboard`);
   };
 
   const handleSocialMedia = (url: string) => {
@@ -190,7 +201,25 @@ export default function TalentDetailScreen() {
 
         {/* Name and Price */}
         <View style={styles.infoSection}>
-          <Text style={[styles.name, { color: colors.foreground }]}>{talent.name}</Text>
+          <View style={styles.nameRow}>
+            <Text style={[styles.name, { color: colors.foreground }]}>{talent.name}</Text>
+            {talent.isFavorite && (
+              <IconSymbol name="heart.fill" size={24} color="#EF4444" />
+            )}
+          </View>
+          {talent.rating && talent.rating > 0 && (
+            <View style={styles.ratingRow}>
+              {[1, 2, 3, 4, 5].map((star) => (
+                <IconSymbol
+                  key={star}
+                  name="star.fill"
+                  size={18}
+                  color={star <= talent.rating! ? "#F59E0B" : colors.border}
+                />
+              ))}
+              <Text style={[styles.ratingText, { color: colors.muted }]}>{talent.rating}/5</Text>
+            </View>
+          )}
           <View style={[styles.priceContainer, { backgroundColor: colors.primary + "15" }]}>
             <IconSymbol name="dollarsign.circle.fill" size={20} color={colors.primary} />
             <Text style={[styles.price, { color: colors.primary }]}>
@@ -198,6 +227,80 @@ export default function TalentDetailScreen() {
             </Text>
           </View>
         </View>
+
+        {/* Tags */}
+        {talent.tags && talent.tags.length > 0 && (
+          <View style={styles.tagsSection}>
+            {talent.tags.map((tag, index) => (
+              <View key={index} style={[styles.tag, { backgroundColor: colors.primary + "20" }]}>
+                <Text style={[styles.tagText, { color: colors.primary }]}>{tag}</Text>
+              </View>
+            ))}
+          </View>
+        )}
+
+        {/* Custom Fields */}
+        {talent.customFields && Object.values(talent.customFields).some(v => v) && (
+          <View style={styles.section}>
+            <Text style={[styles.sectionTitle, { color: colors.foreground }]}>Details</Text>
+            <View style={[styles.detailsGrid, { backgroundColor: colors.surface, borderColor: colors.border }]}>
+              {talent.customFields.age && (
+                <View style={styles.detailItem}>
+                  <Text style={[styles.detailLabel, { color: colors.muted }]}>Age</Text>
+                  <Text style={[styles.detailValue, { color: colors.foreground }]}>{talent.customFields.age} years</Text>
+                </View>
+              )}
+              {talent.customFields.height && (
+                <View style={styles.detailItem}>
+                  <Text style={[styles.detailLabel, { color: colors.muted }]}>Height</Text>
+                  <Text style={[styles.detailValue, { color: colors.foreground }]}>{talent.customFields.height}</Text>
+                </View>
+              )}
+              {talent.customFields.weight && (
+                <View style={styles.detailItem}>
+                  <Text style={[styles.detailLabel, { color: colors.muted }]}>Weight</Text>
+                  <Text style={[styles.detailValue, { color: colors.foreground }]}>{talent.customFields.weight}</Text>
+                </View>
+              )}
+              {talent.customFields.hairColor && (
+                <View style={styles.detailItem}>
+                  <Text style={[styles.detailLabel, { color: colors.muted }]}>Hair Color</Text>
+                  <Text style={[styles.detailValue, { color: colors.foreground }]}>{talent.customFields.hairColor}</Text>
+                </View>
+              )}
+              {talent.customFields.eyeColor && (
+                <View style={styles.detailItem}>
+                  <Text style={[styles.detailLabel, { color: colors.muted }]}>Eye Color</Text>
+                  <Text style={[styles.detailValue, { color: colors.foreground }]}>{talent.customFields.eyeColor}</Text>
+                </View>
+              )}
+              {talent.customFields.nationality && (
+                <View style={styles.detailItem}>
+                  <Text style={[styles.detailLabel, { color: colors.muted }]}>Nationality</Text>
+                  <Text style={[styles.detailValue, { color: colors.foreground }]}>{talent.customFields.nationality}</Text>
+                </View>
+              )}
+              {talent.customFields.location && (
+                <View style={styles.detailItem}>
+                  <Text style={[styles.detailLabel, { color: colors.muted }]}>Location</Text>
+                  <Text style={[styles.detailValue, { color: colors.foreground }]}>{talent.customFields.location}</Text>
+                </View>
+              )}
+              {talent.customFields.experience && (
+                <View style={styles.detailItem}>
+                  <Text style={[styles.detailLabel, { color: colors.muted }]}>Experience</Text>
+                  <Text style={[styles.detailValue, { color: colors.foreground }]}>{talent.customFields.experience}</Text>
+                </View>
+              )}
+              {talent.customFields.languages && talent.customFields.languages.length > 0 && (
+                <View style={[styles.detailItem, { width: '100%' }]}>
+                  <Text style={[styles.detailLabel, { color: colors.muted }]}>Languages</Text>
+                  <Text style={[styles.detailValue, { color: colors.foreground }]}>{talent.customFields.languages.join(', ')}</Text>
+                </View>
+              )}
+            </View>
+          </View>
+        )}
 
         {/* Contact */}
         {talent.phoneNumbers.length > 0 && talent.phoneNumbers[0] && (
@@ -219,8 +322,14 @@ export default function TalentDetailScreen() {
                   <Text style={[styles.contactHint, { color: colors.muted }]}>Tap to WhatsApp</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
+                  onPress={() => handleCopyPhone(phone)}
+                  style={[styles.actionButton, { backgroundColor: colors.primary + "20" }]}
+                >
+                  <IconSymbol name="doc.on.doc.fill" size={16} color={colors.primary} />
+                </TouchableOpacity>
+                <TouchableOpacity
                   onPress={() => handleCall(phone)}
-                  style={[styles.callButton, { backgroundColor: colors.success + "20" }]}
+                  style={[styles.actionButton, { backgroundColor: colors.success + "20" }]}
                 >
                   <IconSymbol name="phone.fill" size={18} color={colors.success} />
                 </TouchableOpacity>
@@ -455,10 +564,61 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingTop: 16,
   },
+  nameRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginBottom: 8,
+  },
   name: {
     fontSize: 28,
     fontWeight: "700",
+    flex: 1,
+  },
+  ratingRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
     marginBottom: 12,
+  },
+  ratingText: {
+    fontSize: 14,
+    marginLeft: 8,
+  },
+  tagsSection: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    paddingHorizontal: 20,
+    paddingTop: 12,
+    gap: 8,
+  },
+  tag: {
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 16,
+  },
+  tagText: {
+    fontSize: 13,
+    fontWeight: "500",
+  },
+  detailsGrid: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    padding: 16,
+    borderRadius: 12,
+    borderWidth: 1,
+  },
+  detailItem: {
+    width: "50%",
+    paddingVertical: 8,
+  },
+  detailLabel: {
+    fontSize: 12,
+    marginBottom: 4,
+  },
+  detailValue: {
+    fontSize: 15,
+    fontWeight: "500",
   },
   priceContainer: {
     flexDirection: "row",
@@ -514,6 +674,14 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     alignItems: "center",
     justifyContent: "center",
+  },
+  actionButton: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    alignItems: "center",
+    justifyContent: "center",
+    marginLeft: 8,
   },
   socialRow: {
     flexDirection: "row",

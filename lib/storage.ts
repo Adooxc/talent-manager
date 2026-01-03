@@ -152,7 +152,7 @@ export async function updateTalent(id: string, updates: Partial<Talent>): Promis
   const index = talents.findIndex(t => t.id === id);
   if (index === -1) return null;
   
-  talents[index] = { ...talents[index], ...updates };
+  talents[index] = { ...talents[index], ...updates, updatedAt: new Date().toISOString() };
   await AsyncStorage.setItem(STORAGE_KEYS.TALENTS, JSON.stringify(talents));
   return talents[index];
 }
@@ -295,4 +295,151 @@ export function getCurrencySymbol(code: string): string {
     AED: 'AED',
   };
   return symbols[code] || code;
+}
+
+
+// ============ BACKUP & RESTORE ============
+
+export interface BackupData {
+  version: string;
+  exportedAt: string;
+  talents: Talent[];
+  projects: Project[];
+  categories: Category[];
+  bookings: TalentBooking[];
+  settings: AppSettings;
+}
+
+export async function exportAllData(): Promise<BackupData> {
+  const [talents, projects, categories, bookings, settings] = await Promise.all([
+    getTalents(),
+    getProjects(),
+    getCategories(),
+    getBookings(),
+    getSettings(),
+  ]);
+
+  return {
+    version: '1.0.0',
+    exportedAt: new Date().toISOString(),
+    talents,
+    projects,
+    categories,
+    bookings,
+    settings,
+  };
+}
+
+export async function importAllData(data: BackupData): Promise<{ success: boolean; error?: string }> {
+  try {
+    // Validate data structure
+    if (!data.version || !data.talents || !data.projects || !data.categories) {
+      return { success: false, error: 'Invalid backup file format' };
+    }
+
+    // Import all data
+    await AsyncStorage.setItem(STORAGE_KEYS.TALENTS, JSON.stringify(data.talents || []));
+    await AsyncStorage.setItem(STORAGE_KEYS.PROJECTS, JSON.stringify(data.projects || []));
+    await AsyncStorage.setItem(STORAGE_KEYS.CATEGORIES, JSON.stringify(data.categories || []));
+    await AsyncStorage.setItem(STORAGE_KEYS.BOOKINGS, JSON.stringify(data.bookings || []));
+    
+    if (data.settings) {
+      await AsyncStorage.setItem(STORAGE_KEYS.SETTINGS, JSON.stringify(data.settings));
+    }
+
+    return { success: true };
+  } catch (error) {
+    console.error('Error importing data:', error);
+    return { success: false, error: 'Failed to import data' };
+  }
+}
+
+// ============ STATISTICS ============
+
+export interface AppStatistics {
+  totalTalents: number;
+  totalProjects: number;
+  activeProjects: number;
+  completedProjects: number;
+  totalRevenue: number;
+  totalProfit: number;
+  talentsByCategory: { categoryId: string; categoryName: string; count: number }[];
+  talentsByGender: { male: number; female: number };
+  averageTalentPrice: number;
+  topRatedTalents: Talent[];
+  recentProjects: Project[];
+  upcomingBookings: TalentBooking[];
+}
+
+export async function getStatistics(): Promise<AppStatistics> {
+  const [talents, projects, categories, bookings] = await Promise.all([
+    getTalents(),
+    getProjects(),
+    getCategories(),
+    getBookings(),
+  ]);
+
+  const now = new Date();
+
+  // Calculate revenue and profit
+  let totalRevenue = 0;
+  let totalProfit = 0;
+  
+  projects.forEach(project => {
+    if (project.status === 'completed') {
+      const costs = calculateProjectCosts(talents, project.talents, project.profitMarginPercent);
+      totalRevenue += costs.total;
+      totalProfit += costs.profit;
+    }
+  });
+
+  // Talents by category
+  const talentsByCategory = categories.map(cat => ({
+    categoryId: cat.id,
+    categoryName: cat.name,
+    count: talents.filter(t => t.categoryId === cat.id).length,
+  }));
+
+  // Talents by gender
+  const talentsByGender = {
+    male: talents.filter(t => t.gender === 'male').length,
+    female: talents.filter(t => t.gender === 'female').length,
+  };
+
+  // Average talent price
+  const averageTalentPrice = talents.length > 0 
+    ? talents.reduce((sum, t) => sum + t.pricePerProject, 0) / talents.length 
+    : 0;
+
+  // Top rated talents
+  const topRatedTalents = [...talents]
+    .filter(t => t.rating)
+    .sort((a, b) => (b.rating || 0) - (a.rating || 0))
+    .slice(0, 5);
+
+  // Recent projects
+  const recentProjects = [...projects]
+    .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+    .slice(0, 5);
+
+  // Upcoming bookings
+  const upcomingBookings = bookings
+    .filter(b => new Date(b.startDate) > now)
+    .sort((a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime())
+    .slice(0, 5);
+
+  return {
+    totalTalents: talents.length,
+    totalProjects: projects.length,
+    activeProjects: projects.filter(p => p.status === 'active').length,
+    completedProjects: projects.filter(p => p.status === 'completed').length,
+    totalRevenue,
+    totalProfit,
+    talentsByCategory,
+    talentsByGender,
+    averageTalentPrice,
+    topRatedTalents,
+    recentProjects,
+    upcomingBookings,
+  };
 }

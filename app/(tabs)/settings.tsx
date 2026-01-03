@@ -8,8 +8,13 @@ import {
   StyleSheet,
   TextInput,
   Alert,
+  Share,
+  ActivityIndicator,
 } from "react-native";
 import * as Haptics from "expo-haptics";
+import * as FileSystem from "expo-file-system/legacy";
+import * as Sharing from "expo-sharing";
+import * as DocumentPicker from "expo-document-picker";
 import { Platform } from "react-native";
 import { useRouter } from "expo-router";
 
@@ -17,15 +22,20 @@ import { ScreenContainer } from "@/components/screen-container";
 import { IconSymbol } from "@/components/ui/icon-symbol";
 import { useColors } from "@/hooks/use-colors";
 import { AppSettings, DEFAULT_SETTINGS, CURRENCIES } from "@/lib/types";
-import { getSettings, saveSettings, clearAllData, getCategories } from "@/lib/storage";
+import { getSettings, saveSettings, clearAllData, getCategories, exportAllData, importAllData } from "@/lib/storage";
 import { useFocusEffect } from "@react-navigation/native";
+import { useAuth } from "@/hooks/use-auth";
 
 export default function SettingsScreen() {
   const router = useRouter();
   const colors = useColors();
+  const { user, loading: authLoading } = useAuth();
   const [settings, setSettings] = useState<AppSettings>(DEFAULT_SETTINGS);
   const [profitMarginInput, setProfitMarginInput] = useState("");
   const [categoryCount, setCategoryCount] = useState(0);
+  const [isSyncing, setIsSyncing] = useState(false);
+  const [isExporting, setIsExporting] = useState(false);
+  const [isImporting, setIsImporting] = useState(false);
 
   const loadSettings = useCallback(async () => {
     const [data, cats] = await Promise.all([getSettings(), getCategories()]);
@@ -65,6 +75,106 @@ export default function SettingsScreen() {
     setSettings(updated);
   };
 
+  const handleExportBackup = async () => {
+    setIsExporting(true);
+    try {
+      const data = await exportAllData();
+      const jsonString = JSON.stringify(data, null, 2);
+      const fileName = `talent_manager_backup_${new Date().toISOString().split("T")[0]}.json`;
+      
+      if (Platform.OS === "web") {
+        // Web: Download file
+        const blob = new Blob([jsonString], { type: "application/json" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = fileName;
+        a.click();
+        URL.revokeObjectURL(url);
+        Alert.alert("Success", "Backup file downloaded successfully.");
+      } else {
+        // Mobile: Save and share
+        const filePath = `${FileSystem.cacheDirectory}${fileName}`;
+        await FileSystem.writeAsStringAsync(filePath, jsonString);
+        
+        if (await Sharing.isAvailableAsync()) {
+          await Sharing.shareAsync(filePath, {
+            mimeType: "application/json",
+            dialogTitle: "Export Backup",
+          });
+        } else {
+          Alert.alert("Error", "Sharing is not available on this device.");
+        }
+      }
+      
+      if (Platform.OS !== "web") {
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+      }
+    } catch (error) {
+      console.error("Export error:", error);
+      Alert.alert("Error", "Failed to export backup.");
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
+  const handleImportBackup = async () => {
+    try {
+      const result = await DocumentPicker.getDocumentAsync({
+        type: "application/json",
+        copyToCacheDirectory: true,
+      });
+
+      if (result.canceled || !result.assets || result.assets.length === 0) {
+        return;
+      }
+
+      const file = result.assets[0];
+      setIsImporting(true);
+
+      let jsonString: string;
+      
+      if (Platform.OS === "web") {
+        const response = await fetch(file.uri);
+        jsonString = await response.text();
+      } else {
+        jsonString = await FileSystem.readAsStringAsync(file.uri);
+      }
+
+      const data = JSON.parse(jsonString);
+      
+      Alert.alert(
+        "Import Backup",
+        "This will replace all existing data with the backup. Continue?",
+        [
+          { text: "Cancel", style: "cancel", onPress: () => setIsImporting(false) },
+          {
+            text: "Import",
+            style: "destructive",
+            onPress: async () => {
+              const importResult = await importAllData(data);
+              setIsImporting(false);
+              
+              if (importResult.success) {
+                if (Platform.OS !== "web") {
+                  Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+                }
+                Alert.alert("Success", "Backup imported successfully.");
+                await loadSettings();
+              } else {
+                Alert.alert("Error", importResult.error || "Failed to import backup.");
+              }
+            },
+          },
+        ]
+      );
+    } catch (error) {
+      console.error("Import error:", error);
+      setIsImporting(false);
+      Alert.alert("Error", "Failed to read backup file. Make sure it's a valid JSON file.");
+    }
+  };
+
   const handleClearData = () => {
     Alert.alert(
       "Clear All Data",
@@ -92,9 +202,16 @@ export default function SettingsScreen() {
     title: string,
     subtitle: string,
     rightComponent: React.ReactNode,
-    iconBgColor?: string
+    iconBgColor?: string,
+    onPress?: () => void,
+    isLast?: boolean
   ) => (
-    <View style={[styles.settingRow, { borderBottomColor: colors.border }]}>
+    <TouchableOpacity
+      onPress={onPress}
+      disabled={!onPress}
+      style={[styles.settingRow, { borderBottomColor: colors.border }, isLast && { borderBottomWidth: 0 }]}
+      activeOpacity={onPress ? 0.7 : 1}
+    >
       <View style={[styles.iconContainer, { backgroundColor: iconBgColor || colors.primary + "20" }]}>
         <IconSymbol name={icon} size={20} color={iconBgColor ? "#FFF" : colors.primary} />
       </View>
@@ -103,7 +220,7 @@ export default function SettingsScreen() {
         <Text style={[styles.settingSubtitle, { color: colors.muted }]}>{subtitle}</Text>
       </View>
       {rightComponent}
-    </View>
+    </TouchableOpacity>
   );
 
   return (
@@ -116,6 +233,49 @@ export default function SettingsScreen() {
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
+        {/* Account Section */}
+        <View style={[styles.section, { backgroundColor: colors.surface, borderColor: colors.border }]}>
+          <Text style={[styles.sectionTitle, { color: colors.muted }]}>ACCOUNT</Text>
+          
+          {authLoading ? (
+            <View style={styles.loadingRow}>
+              <ActivityIndicator size="small" color={colors.primary} />
+              <Text style={[styles.loadingText, { color: colors.muted }]}>Loading...</Text>
+            </View>
+          ) : user ? (
+            <View style={[styles.settingRow, { borderBottomWidth: 0 }]}>
+              <View style={[styles.iconContainer, { backgroundColor: colors.success }]}>
+                <IconSymbol name="checkmark.circle.fill" size={20} color="#FFF" />
+              </View>
+              <View style={styles.settingContent}>
+                <Text style={[styles.settingTitle, { color: colors.foreground }]}>
+                  {user.name || "Signed In"}
+                </Text>
+                <Text style={[styles.settingSubtitle, { color: colors.muted }]}>
+                  {user.email || "Cloud sync enabled"}
+                </Text>
+              </View>
+            </View>
+          ) : (
+            <TouchableOpacity
+              onPress={() => router.push("/login" as any)}
+              style={[styles.settingRow, { borderBottomWidth: 0 }]}
+              activeOpacity={0.7}
+            >
+              <View style={[styles.iconContainer, { backgroundColor: colors.primary }]}>
+                <IconSymbol name="person.crop.circle.badge.plus" size={20} color="#FFF" />
+              </View>
+              <View style={styles.settingContent}>
+                <Text style={[styles.settingTitle, { color: colors.foreground }]}>Sign In</Text>
+                <Text style={[styles.settingSubtitle, { color: colors.muted }]}>
+                  Enable cloud sync across devices
+                </Text>
+              </View>
+              <IconSymbol name="chevron.right" size={20} color={colors.muted} />
+            </TouchableOpacity>
+          )}
+        </View>
+
         {/* Categories Management */}
         <View style={[styles.section, { backgroundColor: colors.surface, borderColor: colors.border }]}>
           <Text style={[styles.sectionTitle, { color: colors.muted }]}>CATEGORIES</Text>
@@ -151,7 +311,10 @@ export default function SettingsScreen() {
               onValueChange={handleToggleReminder}
               trackColor={{ false: colors.border, true: colors.primary }}
               thumbColor="#FFF"
-            />
+            />,
+            undefined,
+            undefined,
+            true
           )}
         </View>
 
@@ -220,6 +383,38 @@ export default function SettingsScreen() {
               </TouchableOpacity>
             ))}
           </View>
+        </View>
+
+        {/* Backup & Restore */}
+        <View style={[styles.section, { backgroundColor: colors.surface, borderColor: colors.border }]}>
+          <Text style={[styles.sectionTitle, { color: colors.muted }]}>BACKUP & RESTORE</Text>
+          
+          {renderSettingRow(
+            "square.and.arrow.up",
+            "Export Backup",
+            "Save all data to a JSON file",
+            isExporting ? (
+              <ActivityIndicator size="small" color={colors.primary} />
+            ) : (
+              <IconSymbol name="chevron.right" size={20} color={colors.muted} />
+            ),
+            colors.success,
+            isExporting ? undefined : handleExportBackup
+          )}
+
+          {renderSettingRow(
+            "square.and.arrow.down",
+            "Import Backup",
+            "Restore data from a backup file",
+            isImporting ? (
+              <ActivityIndicator size="small" color={colors.primary} />
+            ) : (
+              <IconSymbol name="chevron.right" size={20} color={colors.muted} />
+            ),
+            colors.primary,
+            isImporting ? undefined : handleImportBackup,
+            true
+          )}
         </View>
 
         {/* Data */}
@@ -357,5 +552,15 @@ const styles = StyleSheet.create({
   footerText: {
     fontSize: 13,
     marginTop: 4,
+  },
+  loadingRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: 20,
+    gap: 10,
+  },
+  loadingText: {
+    fontSize: 14,
   },
 });

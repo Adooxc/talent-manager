@@ -24,14 +24,20 @@ import { useFocusEffect } from "@react-navigation/native";
 
 const STATUS_LABELS: Record<ProjectStatus, string> = {
   draft: "Draft",
+  negotiating: "Negotiating",
   active: "Active",
   completed: "Completed",
+  postponed: "Postponed",
+  cancelled: "Cancelled",
 };
 
 const STATUS_COLORS: Record<ProjectStatus, string> = {
-  draft: "#64748B",
-  active: "#22C55E",
-  completed: "#6366F1",
+  draft: "#9CA3AF",
+  negotiating: "#F59E0B",
+  active: "#3B82F6",
+  completed: "#22C55E",
+  postponed: "#8B5CF6",
+  cancelled: "#EF4444",
 };
 
 export default function ProjectDetailScreen() {

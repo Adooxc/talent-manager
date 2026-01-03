@@ -1,0 +1,9 @@
+{
+  "query": "CREATE TABLE IF NOT EXISTS `projects` (\n\t`id` int AUTO_INCREMENT NOT NULL,\n\t`odId` varchar(64) NOT NULL,\n\t`userId` int NOT NULL,\n\t`name` varchar(255) NOT NULL,\n\t`description` text,\n\t`startDate` timestamp,\n\t`endDate` timestamp,\n\t`status` enum('draft','active','completed','negotiating','cancelled','postponed') NOT NULL DEFAULT 'draft',\n\t`talents` json,\n\t`profitMarginPercent` decimal(5,2) NOT NULL DEFAULT '15',\n\t`currency` varchar(10) NOT NULL DEFAULT 'KWD',\n\t`pdfTemplate` enum('client','internal','invoice') DEFAULT 'client',\n\t`createdAt` timestamp NOT NULL DEFAULT (now()),\n\t`updatedAt` timestamp NOT NULL DEFAULT (now()) ON UPDATE CURRENT_TIMESTAMP,\n\tCONSTRAINT `projects_id` PRIMARY KEY(`id`)\n);",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 3nzMoi2L5c1XM2q.root --database ih2Db87F5PR4VdRJqbqcJZ --execute CREATE TABLE IF NOT EXISTS `projects` (\n\t`id` int AUTO_INCREMENT NOT NULL,\n\t`odId` varchar(64) NOT NULL,\n\t`userId` int NOT NULL,\n\t`name` varchar(255) NOT NULL,\n\t`description` text,\n\t`startDate` timestamp,\n\t`endDate` timestamp,\n\t`status` enum('draft','active','completed','negotiating','cancelled','postponed') NOT NULL DEFAULT 'draft',\n\t`talents` json,\n\t`profitMarginPercent` decimal(5,2) NOT NULL DEFAULT '15',\n\t`currency` varchar(10) NOT NULL DEFAULT 'KWD',\n\t`pdfTemplate` enum('client','internal','invoice') DEFAULT 'client',\n\t`createdAt` timestamp NOT NULL DEFAULT (now()),\n\t`updatedAt` timestamp NOT NULL DEFAULT (now()) ON UPDATE CURRENT_TIMESTAMP,\n\tCONSTRAINT `projects_id` PRIMARY KEY(`id`)\n);",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 1533
+}
