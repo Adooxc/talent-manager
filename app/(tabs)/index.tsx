@@ -763,7 +763,7 @@ export default function TalentsScreen() {
         numColumns={viewMode === 'grid' ? 2 : 1}
         key={viewMode}
         columnWrapperStyle={viewMode === 'grid' ? styles.row : undefined}
-        contentContainerStyle={[styles.listContent, { marginTop: -25 }]}
+        contentContainerStyle={styles.listContent}
         showsVerticalScrollIndicator={false}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.primary} />
@@ -1025,7 +1025,7 @@ const styles = StyleSheet.create({
   header: {
     paddingHorizontal: 20,
     paddingTop: 8,
-    paddingBottom: 12,
+    paddingBottom: 6,
   },
   headerTop: {
     flexDirection: "row",
@@ -1116,7 +1116,7 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     borderRadius: 12,
     borderWidth: 1,
-    marginBottom: 12,
+    marginBottom: 6,
   },
   searchInput: {
     flex: 1,
@@ -1127,7 +1127,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     paddingHorizontal: 20,
     gap: 10,
-    marginBottom: 12,
+    marginBottom: 6,
   },
   genderFilterButton: {
     paddingHorizontal: 16,
@@ -1144,6 +1144,7 @@ const styles = StyleSheet.create({
     gap: 10,
     paddingBottom: 0,
     paddingTop: 0,
+    marginBottom: 4,
   },
   filterButton: {
     paddingHorizontal: 16,
@@ -1188,6 +1189,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingTop: 0,
     paddingBottom: 100,
+    gap: 0,
   },
   row: {
     justifyContent: "space-between",
@@ -1341,10 +1343,10 @@ const styles = StyleSheet.create({
     marginLeft: 8,
   },
   emptyContainer: {
-    minHeight: 150,
+    minHeight: 100,
     alignItems: "center",
-    justifyContent: "center",
-    paddingVertical: 8,
+    justifyContent: "flex-start",
+    paddingVertical: 4,
   },
   emptyText: {
     fontSize: 18,
