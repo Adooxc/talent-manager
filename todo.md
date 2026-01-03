@@ -94,3 +94,9 @@
 
 ## UI Improvements - Category Buttons
 - [x] Reduce size of all category buttons to take less space
+
+
+## Current Issues - New Fixes Needed
+- [x] Fix OAuth login not persisting data to cloud (returns to home but data not synced)
+- [x] Reduce height of category filter buttons to match text size
+- [x] Remove font size adjustment settings from Settings screen

@@ -438,46 +438,7 @@ export default function SettingsScreen() {
             ))}
           </View>
 
-          <View style={[styles.settingRow, { borderBottomColor: colors.border }]}>
-            <View style={[styles.iconContainer, { backgroundColor: colors.primary + "20" }]}>
-              <IconSymbol name="doc.fill" size={20} color={colors.primary} />
-            </View>
-            <View style={styles.settingContent}>
-              <Text style={[styles.settingTitle, { color: colors.foreground }]}>
-                {t("Font Size", "حجم الخط")}
-              </Text>
-              <Text style={[styles.settingSubtitle, { color: colors.muted }]}>
-                {t("Adjust text size for readability", "ضبط حجم النص")}
-              </Text>
-            </View>
-          </View>
-          <View style={styles.fontSizePicker}>
-            {FONT_SIZES_ARRAY.map((f) => (
-              <TouchableOpacity
-                key={f.value}
-                onPress={() => handleFontSizeChange(f.value)}
-                style={[
-                  styles.fontSizeButton,
-                  {
-                    backgroundColor: settings.fontSize === f.value ? colors.primary : colors.background,
-                    borderColor: settings.fontSize === f.value ? colors.primary : colors.border,
-                  },
-                ]}
-              >
-                <Text
-                  style={[
-                    styles.fontSizeLabel,
-                    { 
-                      color: settings.fontSize === f.value ? "#FFF" : colors.foreground,
-                      fontSize: 14 * f.multiplier,
-                    },
-                  ]}
-                >
-                  {f.label}
-                </Text>
-              </TouchableOpacity>
-            ))}
-          </View>
+          {/* Font Size settings removed */}
 
           <View style={[styles.settingRow, { borderBottomWidth: 0 }]}>
             <View style={[styles.iconContainer, { backgroundColor: colors.primary + "20" }]}>

@@ -13,18 +13,19 @@ export async function syncAllDataToCloud(): Promise<boolean> {
   try {
     console.log("[CloudSync] Starting full data sync to cloud...");
 
-    // Only sync on native platforms (web uses cookie-based auth)
-    if (Platform.OS === "web") {
-      console.log("[CloudSync] Web platform, skipping sync (uses cookie-based auth)");
+    // Skip sync only if running on web browser (not Expo Go)
+    // Expo Go reports Platform.OS as 'web' but still needs sync
+    // We check if we have a session token - if we do, we're on native/Expo Go and should sync
+    // If we don't have a token, we're on web browser with cookie-based auth
+    const sessionToken = await Auth.getSessionToken();
+    if (!sessionToken) {
+      console.log("[CloudSync] No session token, skipping sync (web browser with cookie auth)");
       return true;
     }
 
-    // Check if user has a session token
-    const sessionToken = await Auth.getSessionToken();
-    if (!sessionToken) {
-      console.log("[CloudSync] No session token, skipping sync");
-      return false;
-    }
+    console.log("[CloudSync] Platform:", Platform.OS, "- proceeding with sync");
+
+    // Session token already checked above
 
     // Fetch all local data
     const [talents, projects, categories, bookings, settings] = await Promise.all([
