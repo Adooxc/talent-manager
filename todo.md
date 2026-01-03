@@ -70,3 +70,12 @@
 - [x] Generate and send Quotation (price offer) PDF
 - [x] Generate and send Invoice PDF
 - [x] Track quotation/invoice status (sent, viewed, accepted, rejected)
+
+## Bug Fixes
+- [ ] Fix dark mode toggle not working
+- [ ] Fix theme color change not applying
+
+## New Features - File Attachments & Notifications
+- [x] Add file attachments for projects (contracts, documents)
+- [x] Push notifications for booking reminders
+- [x] Push notifications for payment due dates

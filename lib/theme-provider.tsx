@@ -1,21 +1,93 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { Appearance, View, useColorScheme as useSystemColorScheme } from "react-native";
 import { colorScheme as nativewindColorScheme, vars } from "nativewind";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import { SchemeColors, type ColorScheme } from "@/constants/theme";
+
+// Theme color options matching types.ts
+const THEME_COLOR_VALUES: Record<string, string> = {
+  indigo: '#6366F1',
+  blue: '#3B82F6',
+  green: '#22C55E',
+  purple: '#8B5CF6',
+  pink: '#EC4899',
+  orange: '#F97316',
+  red: '#EF4444',
+};
 
 type ThemeContextValue = {
   colorScheme: ColorScheme;
   setColorScheme: (scheme: ColorScheme) => void;
+  primaryColor: string;
+  setPrimaryColor: (color: string) => void;
 };
 
 const ThemeContext = createContext<ThemeContextValue | null>(null);
 
+const SETTINGS_KEY = "@talent_manager_settings";
+
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const systemScheme = useSystemColorScheme() ?? "light";
   const [colorScheme, setColorSchemeState] = useState<ColorScheme>(systemScheme);
+  const [primaryColor, setPrimaryColorState] = useState<string>(THEME_COLOR_VALUES.indigo);
+  const [isInitialized, setIsInitialized] = useState(false);
 
-  const applyScheme = useCallback((scheme: ColorScheme) => {
+  // Load saved settings on mount
+  useEffect(() => {
+    const loadSettings = async () => {
+      try {
+        const stored = await AsyncStorage.getItem(SETTINGS_KEY);
+        if (stored) {
+          const settings = JSON.parse(stored);
+          if (settings.darkMode !== undefined) {
+            const scheme = settings.darkMode ? "dark" : "light";
+            setColorSchemeState(scheme);
+            applyScheme(scheme, settings.themeColor ? THEME_COLOR_VALUES[settings.themeColor] : primaryColor);
+          }
+          if (settings.themeColor && THEME_COLOR_VALUES[settings.themeColor]) {
+            setPrimaryColorState(THEME_COLOR_VALUES[settings.themeColor]);
+          }
+        }
+      } catch (error) {
+        console.error("Failed to load theme settings:", error);
+      } finally {
+        setIsInitialized(true);
+      }
+    };
+    loadSettings();
+  }, []);
+
+  // Listen for settings changes
+  useEffect(() => {
+    const checkSettings = async () => {
+      try {
+        const stored = await AsyncStorage.getItem(SETTINGS_KEY);
+        if (stored) {
+          const settings = JSON.parse(stored);
+          const newScheme = settings.darkMode ? "dark" : "light";
+          const newColor = settings.themeColor ? THEME_COLOR_VALUES[settings.themeColor] : primaryColor;
+          
+          if (newScheme !== colorScheme) {
+            setColorSchemeState(newScheme);
+            applyScheme(newScheme, newColor);
+          }
+          if (newColor !== primaryColor) {
+            setPrimaryColorState(newColor);
+            applyScheme(colorScheme, newColor);
+          }
+        }
+      } catch (error) {
+        console.error("Failed to check settings:", error);
+      }
+    };
+
+    // Check for changes every 500ms (for real-time updates)
+    const interval = setInterval(checkSettings, 500);
+    return () => clearInterval(interval);
+  }, [colorScheme, primaryColor]);
+
+  const applyScheme = useCallback((scheme: ColorScheme, customPrimary?: string) => {
     nativewindColorScheme.set(scheme);
     Appearance.setColorScheme?.(scheme);
     if (typeof document !== "undefined") {
@@ -24,24 +96,35 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       root.classList.toggle("dark", scheme === "dark");
       const palette = SchemeColors[scheme];
       Object.entries(palette).forEach(([token, value]) => {
-        root.style.setProperty(`--color-${token}`, value);
+        if (token === 'primary' && customPrimary) {
+          root.style.setProperty(`--color-${token}`, customPrimary);
+        } else {
+          root.style.setProperty(`--color-${token}`, value);
+        }
       });
     }
   }, []);
 
   const setColorScheme = useCallback((scheme: ColorScheme) => {
     setColorSchemeState(scheme);
-    applyScheme(scheme);
-  }, [applyScheme]);
+    applyScheme(scheme, primaryColor);
+  }, [applyScheme, primaryColor]);
+
+  const setPrimaryColor = useCallback((color: string) => {
+    setPrimaryColorState(color);
+    applyScheme(colorScheme, color);
+  }, [applyScheme, colorScheme]);
 
   useEffect(() => {
-    applyScheme(colorScheme);
-  }, [applyScheme, colorScheme]);
+    if (isInitialized) {
+      applyScheme(colorScheme, primaryColor);
+    }
+  }, [applyScheme, colorScheme, primaryColor, isInitialized]);
 
   const themeVariables = useMemo(
     () =>
       vars({
-        "color-primary": SchemeColors[colorScheme].primary,
+        "color-primary": primaryColor,
         "color-background": SchemeColors[colorScheme].background,
         "color-surface": SchemeColors[colorScheme].surface,
         "color-foreground": SchemeColors[colorScheme].foreground,
@@ -51,17 +134,18 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
         "color-warning": SchemeColors[colorScheme].warning,
         "color-error": SchemeColors[colorScheme].error,
       }),
-    [colorScheme],
+    [colorScheme, primaryColor],
   );
 
   const value = useMemo(
     () => ({
       colorScheme,
       setColorScheme,
+      primaryColor,
+      setPrimaryColor,
     }),
-    [colorScheme, setColorScheme],
+    [colorScheme, setColorScheme, primaryColor, setPrimaryColor],
   );
-  console.log(value, themeVariables)
 
   return (
     <ThemeContext.Provider value={value}>

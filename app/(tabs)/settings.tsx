@@ -31,6 +31,14 @@ import {
   AppLanguage,
 } from "@/lib/types";
 import { getSettings, saveSettings, clearAllData, getCategories, exportAllData, importAllData } from "@/lib/storage";
+import { 
+  getNotificationSettings, 
+  saveNotificationSettings, 
+  requestNotificationPermissions,
+  sendTestNotification,
+  NotificationSettings,
+  DEFAULT_NOTIFICATION_SETTINGS,
+} from "@/lib/notifications";
 import { useFocusEffect } from "@react-navigation/native";
 import { useAuth } from "@/hooks/use-auth";
 
@@ -43,12 +51,18 @@ export default function SettingsScreen() {
   const [categoryCount, setCategoryCount] = useState(0);
   const [isExporting, setIsExporting] = useState(false);
   const [isImporting, setIsImporting] = useState(false);
+  const [notificationSettings, setNotificationSettings] = useState<NotificationSettings>(DEFAULT_NOTIFICATION_SETTINGS);
 
   const loadSettings = useCallback(async () => {
-    const [data, cats] = await Promise.all([getSettings(), getCategories()]);
+    const [data, cats, notifSettings] = await Promise.all([
+      getSettings(), 
+      getCategories(),
+      getNotificationSettings(),
+    ]);
     setSettings(data);
     setProfitMarginInput(data.defaultProfitMargin.toString());
     setCategoryCount(cats.length);
+    setNotificationSettings(notifSettings);
   }, []);
 
   useFocusEffect(
@@ -63,6 +77,49 @@ export default function SettingsScreen() {
     }
     const updated = await saveSettings({ monthlyReminderEnabled: value });
     setSettings(updated);
+  };
+
+  const handleToggleBookingReminders = async (value: boolean) => {
+    if (Platform.OS !== "web") {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    }
+    if (value) {
+      const hasPermission = await requestNotificationPermissions();
+      if (!hasPermission) {
+        Alert.alert("Permission Required", "Please enable notifications in your device settings to receive booking reminders.");
+        return;
+      }
+    }
+    const updated = await saveNotificationSettings({ bookingReminders: value });
+    setNotificationSettings(updated);
+  };
+
+  const handleTogglePaymentReminders = async (value: boolean) => {
+    if (Platform.OS !== "web") {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    }
+    if (value) {
+      const hasPermission = await requestNotificationPermissions();
+      if (!hasPermission) {
+        Alert.alert("Permission Required", "Please enable notifications in your device settings to receive payment reminders.");
+        return;
+      }
+    }
+    const updated = await saveNotificationSettings({ paymentReminders: value });
+    setNotificationSettings(updated);
+  };
+
+  const handleTestNotification = async () => {
+    if (Platform.OS !== "web") {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    }
+    const hasPermission = await requestNotificationPermissions();
+    if (!hasPermission) {
+      Alert.alert("Permission Required", "Please enable notifications in your device settings.");
+      return;
+    }
+    await sendTestNotification();
+    Alert.alert("Success", "Test notification sent!");
   };
 
   const handleToggleDarkMode = async (value: boolean) => {
@@ -538,14 +595,40 @@ export default function SettingsScreen() {
           </TouchableOpacity>
         </View>
 
-        {/* Reminders */}
+        {/* Reminders & Notifications */}
         <View style={[styles.section, { backgroundColor: colors.surface, borderColor: colors.border }]}>
           <Text style={[styles.sectionTitle, { color: colors.muted }]}>
-            {t("REMINDERS", "التذكيرات")}
+            {t("NOTIFICATIONS", "الإشعارات")}
           </Text>
           
           {renderSettingRow(
             "bell.fill",
+            t("Booking Reminders", "تذكيرات الحجوزات"),
+            t("Get notified before bookings", "إشعار قبل مواعيد الحجوزات"),
+            <Switch
+              value={notificationSettings.bookingReminders}
+              onValueChange={handleToggleBookingReminders}
+              trackColor={{ false: colors.border, true: colors.primary }}
+              thumbColor="#FFF"
+            />,
+            colors.primary
+          )}
+
+          {renderSettingRow(
+            "dollarsign.circle.fill",
+            t("Payment Reminders", "تذكيرات المدفوعات"),
+            t("Get notified about due payments", "إشعار بالمدفوعات المستحقة"),
+            <Switch
+              value={notificationSettings.paymentReminders}
+              onValueChange={handleTogglePaymentReminders}
+              trackColor={{ false: colors.border, true: colors.primary }}
+              thumbColor="#FFF"
+            />,
+            colors.success
+          )}
+
+          {renderSettingRow(
+            "photo.fill",
             t("Monthly Photo Updates", "تحديث الصور الشهري"),
             t("Get reminded to update talent photos", "تذكير بتحديث صور المواهب"),
             <Switch
@@ -554,8 +637,16 @@ export default function SettingsScreen() {
               trackColor={{ false: colors.border, true: colors.primary }}
               thumbColor="#FFF"
             />,
-            undefined,
-            undefined,
+            colors.warning
+          )}
+
+          {Platform.OS !== "web" && renderSettingRow(
+            "bell.badge.fill",
+            t("Test Notification", "اختبار الإشعارات"),
+            t("Send a test notification", "إرسال إشعار تجريبي"),
+            <IconSymbol name="chevron.right" size={20} color={colors.muted} />,
+            colors.muted,
+            handleTestNotification,
             true
           )}
         </View>

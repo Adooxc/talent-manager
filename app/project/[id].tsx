@@ -14,12 +14,14 @@ import { useRouter, useLocalSearchParams } from "expo-router";
 import * as Haptics from "expo-haptics";
 import * as Print from "expo-print";
 import * as Sharing from "expo-sharing";
+import * as DocumentPicker from "expo-document-picker";
+import * as FileSystem from "expo-file-system/legacy";
 
 import { ScreenContainer } from "@/components/screen-container";
 import { IconSymbol } from "@/components/ui/icon-symbol";
 import { useColors } from "@/hooks/use-colors";
-import { Project, ProjectStatus, Talent, Category, PROJECT_PHASES, ProjectPayment, generateId } from "@/lib/types";
-import { getProjectById, getTalents, deleteProject, calculateProjectCosts, getCategories, getCurrencySymbol } from "@/lib/storage";
+import { Project, ProjectStatus, Talent, Category, PROJECT_PHASES, ProjectPayment, ProjectAttachment, generateId } from "@/lib/types";
+import { getProjectById, getTalents, deleteProject, calculateProjectCosts, getCategories, getCurrencySymbol, updateProject } from "@/lib/storage";
 import { useFocusEffect } from "@react-navigation/native";
 
 const STATUS_LABELS: Record<ProjectStatus, string> = {
@@ -93,6 +95,71 @@ export default function ProjectDetailScreen() {
         },
       ]
     );
+  };
+
+  const handleAddAttachment = async () => {
+    try {
+      const result = await DocumentPicker.getDocumentAsync({
+        type: ['application/pdf', 'image/*', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'],
+        copyToCacheDirectory: true,
+      });
+
+      if (!result.canceled && result.assets && result.assets.length > 0) {
+        const file = result.assets[0];
+        const attachment: ProjectAttachment = {
+          id: generateId(),
+          name: file.name,
+          uri: file.uri,
+          type: file.mimeType?.includes('pdf') ? 'contract' : 
+                file.mimeType?.includes('image') ? 'image' : 'document',
+          uploadedAt: new Date().toISOString(),
+        };
+
+        const currentAttachments = project?.attachments || [];
+        await updateProject(id!, { attachments: [...currentAttachments, attachment] });
+        loadData();
+        
+        if (Platform.OS !== "web") {
+          Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+        }
+        Alert.alert("Success", "File attached successfully!");
+      }
+    } catch (error) {
+      console.error("Error picking document:", error);
+      Alert.alert("Error", "Failed to attach file. Please try again.");
+    }
+  };
+
+  const handleDeleteAttachment = (attachmentId: string) => {
+    Alert.alert(
+      "Delete Attachment",
+      "Are you sure you want to delete this attachment?",
+      [
+        { text: "Cancel", style: "cancel" },
+        {
+          text: "Delete",
+          style: "destructive",
+          onPress: async () => {
+            const currentAttachments = project?.attachments || [];
+            const updatedAttachments = currentAttachments.filter(a => a.id !== attachmentId);
+            await updateProject(id!, { attachments: updatedAttachments });
+            loadData();
+          },
+        },
+      ]
+    );
+  };
+
+  const handleOpenAttachment = async (attachment: ProjectAttachment) => {
+    try {
+      if (await Sharing.isAvailableAsync()) {
+        await Sharing.shareAsync(attachment.uri);
+      } else {
+        Alert.alert("Info", `File: ${attachment.name}`);
+      }
+    } catch (error) {
+      console.error("Error opening attachment:", error);
+    }
   };
 
   const generatePDF = async () => {
@@ -490,6 +557,72 @@ export default function ProjectDetailScreen() {
           </View>
         </View>
 
+        {/* Attachments Section */}
+        <View style={styles.section}>
+          <View style={styles.sectionHeader}>
+            <Text style={[styles.sectionTitle, { color: colors.foreground }]}>Attachments</Text>
+            <TouchableOpacity
+              onPress={handleAddAttachment}
+              style={[styles.addAttachmentButton, { backgroundColor: colors.primary }]}
+            >
+              <IconSymbol name="plus" size={16} color="#FFF" />
+              <Text style={styles.addAttachmentText}>Add File</Text>
+            </TouchableOpacity>
+          </View>
+          
+          {(!project.attachments || project.attachments.length === 0) ? (
+            <View style={[styles.emptyAttachments, { borderColor: colors.border }]}>
+              <IconSymbol name="doc.fill" size={32} color={colors.muted} />
+              <Text style={[styles.emptyAttachmentsText, { color: colors.muted }]}>
+                No attachments yet
+              </Text>
+              <Text style={[styles.emptyAttachmentsHint, { color: colors.muted }]}>
+                Add contracts, documents, or images
+              </Text>
+            </View>
+          ) : (
+            <View style={styles.attachmentsList}>
+              {project.attachments.map((attachment) => (
+                <View
+                  key={attachment.id}
+                  style={[styles.attachmentItem, { backgroundColor: colors.surface, borderColor: colors.border }]}
+                >
+                  <TouchableOpacity
+                    style={styles.attachmentContent}
+                    onPress={() => handleOpenAttachment(attachment)}
+                  >
+                    <View style={[styles.attachmentIcon, { backgroundColor: 
+                      attachment.type === 'contract' ? '#EF4444' :
+                      attachment.type === 'image' ? '#3B82F6' :
+                      attachment.type === 'document' ? '#22C55E' : '#9CA3AF'
+                    }]}>
+                      <IconSymbol
+                        name={attachment.type === 'image' ? 'photo.fill' : 'doc.fill'}
+                        size={18}
+                        color="#FFF"
+                      />
+                    </View>
+                    <View style={styles.attachmentInfo}>
+                      <Text style={[styles.attachmentName, { color: colors.foreground }]} numberOfLines={1}>
+                        {attachment.name}
+                      </Text>
+                      <Text style={[styles.attachmentDate, { color: colors.muted }]}>
+                        {new Date(attachment.uploadedAt).toLocaleDateString()}
+                      </Text>
+                    </View>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    onPress={() => handleDeleteAttachment(attachment.id)}
+                    style={styles.deleteAttachmentButton}
+                  >
+                    <IconSymbol name="trash.fill" size={18} color={colors.error} />
+                  </TouchableOpacity>
+                </View>
+              ))}
+            </View>
+          )}
+        </View>
+
         {/* Export Button */}
         <View style={styles.section}>
           <TouchableOpacity
@@ -777,5 +910,78 @@ const styles = StyleSheet.create({
     fontSize: 12,
     marginTop: 6,
     textAlign: "right",
+  },
+  sectionHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 16,
+  },
+  addAttachmentButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 8,
+    gap: 6,
+  },
+  addAttachmentText: {
+    color: "#FFF",
+    fontSize: 14,
+    fontWeight: "600",
+  },
+  emptyAttachments: {
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: 32,
+    borderWidth: 2,
+    borderStyle: "dashed",
+    borderRadius: 12,
+  },
+  emptyAttachmentsText: {
+    fontSize: 16,
+    fontWeight: "500",
+    marginTop: 12,
+  },
+  emptyAttachmentsHint: {
+    fontSize: 13,
+    marginTop: 4,
+  },
+  attachmentsList: {
+    gap: 10,
+  },
+  attachmentItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    padding: 12,
+    borderRadius: 12,
+    borderWidth: 1,
+  },
+  attachmentContent: {
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  attachmentIcon: {
+    width: 40,
+    height: 40,
+    borderRadius: 8,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  attachmentInfo: {
+    flex: 1,
+    marginLeft: 12,
+  },
+  attachmentName: {
+    fontSize: 15,
+    fontWeight: "500",
+  },
+  attachmentDate: {
+    fontSize: 12,
+    marginTop: 2,
+  },
+  deleteAttachmentButton: {
+    padding: 8,
   },
 });
