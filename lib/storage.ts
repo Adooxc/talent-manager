@@ -1,11 +1,126 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Talent, Project, AppSettings, DEFAULT_SETTINGS, generateId } from './types';
+import { 
+  Talent, 
+  Project, 
+  AppSettings, 
+  Category,
+  TalentBooking,
+  DEFAULT_SETTINGS, 
+  DEFAULT_CATEGORIES,
+  generateId 
+} from './types';
 
 const STORAGE_KEYS = {
   TALENTS: '@talent_manager_talents',
   PROJECTS: '@talent_manager_projects',
   SETTINGS: '@talent_manager_settings',
+  CATEGORIES: '@talent_manager_categories',
+  BOOKINGS: '@talent_manager_bookings',
 };
+
+// ============ CATEGORIES ============
+
+export async function getCategories(): Promise<Category[]> {
+  try {
+    const data = await AsyncStorage.getItem(STORAGE_KEYS.CATEGORIES);
+    if (data) {
+      return JSON.parse(data);
+    }
+    // Initialize with default categories
+    const defaultCats = DEFAULT_CATEGORIES.map((cat, index) => ({
+      ...cat,
+      id: generateId() + index,
+    }));
+    await AsyncStorage.setItem(STORAGE_KEYS.CATEGORIES, JSON.stringify(defaultCats));
+    return defaultCats;
+  } catch (error) {
+    console.error('Error getting categories:', error);
+    return [];
+  }
+}
+
+export async function saveCategory(category: Omit<Category, 'id'>): Promise<Category> {
+  const categories = await getCategories();
+  const newCategory: Category = {
+    ...category,
+    id: generateId(),
+  };
+  categories.push(newCategory);
+  await AsyncStorage.setItem(STORAGE_KEYS.CATEGORIES, JSON.stringify(categories));
+  return newCategory;
+}
+
+export async function updateCategory(id: string, updates: Partial<Category>): Promise<Category | null> {
+  const categories = await getCategories();
+  const index = categories.findIndex(c => c.id === id);
+  if (index === -1) return null;
+  
+  categories[index] = { ...categories[index], ...updates };
+  await AsyncStorage.setItem(STORAGE_KEYS.CATEGORIES, JSON.stringify(categories));
+  return categories[index];
+}
+
+export async function deleteCategory(id: string): Promise<boolean> {
+  const categories = await getCategories();
+  const filtered = categories.filter(c => c.id !== id);
+  if (filtered.length === categories.length) return false;
+  
+  await AsyncStorage.setItem(STORAGE_KEYS.CATEGORIES, JSON.stringify(filtered));
+  return true;
+}
+
+export async function getCategoryById(id: string): Promise<Category | null> {
+  const categories = await getCategories();
+  return categories.find(c => c.id === id) || null;
+}
+
+// ============ BOOKINGS ============
+
+export async function getBookings(): Promise<TalentBooking[]> {
+  try {
+    const data = await AsyncStorage.getItem(STORAGE_KEYS.BOOKINGS);
+    return data ? JSON.parse(data) : [];
+  } catch (error) {
+    console.error('Error getting bookings:', error);
+    return [];
+  }
+}
+
+export async function getBookingsByTalentId(talentId: string): Promise<TalentBooking[]> {
+  const bookings = await getBookings();
+  return bookings.filter(b => b.talentId === talentId);
+}
+
+export async function saveBooking(booking: Omit<TalentBooking, 'id' | 'createdAt'>): Promise<TalentBooking> {
+  const bookings = await getBookings();
+  const newBooking: TalentBooking = {
+    ...booking,
+    id: generateId(),
+    createdAt: new Date().toISOString(),
+  };
+  bookings.push(newBooking);
+  await AsyncStorage.setItem(STORAGE_KEYS.BOOKINGS, JSON.stringify(bookings));
+  return newBooking;
+}
+
+export async function updateBooking(id: string, updates: Partial<TalentBooking>): Promise<TalentBooking | null> {
+  const bookings = await getBookings();
+  const index = bookings.findIndex(b => b.id === id);
+  if (index === -1) return null;
+  
+  bookings[index] = { ...bookings[index], ...updates };
+  await AsyncStorage.setItem(STORAGE_KEYS.BOOKINGS, JSON.stringify(bookings));
+  return bookings[index];
+}
+
+export async function deleteBooking(id: string): Promise<boolean> {
+  const bookings = await getBookings();
+  const filtered = bookings.filter(b => b.id !== id);
+  if (filtered.length === bookings.length) return false;
+  
+  await AsyncStorage.setItem(STORAGE_KEYS.BOOKINGS, JSON.stringify(filtered));
+  return true;
+}
 
 // ============ TALENTS ============
 
@@ -48,6 +163,10 @@ export async function deleteTalent(id: string): Promise<boolean> {
   if (filtered.length === talents.length) return false;
   
   await AsyncStorage.setItem(STORAGE_KEYS.TALENTS, JSON.stringify(filtered));
+  // Also delete related bookings
+  const bookings = await getBookings();
+  const filteredBookings = bookings.filter(b => b.talentId !== id);
+  await AsyncStorage.setItem(STORAGE_KEYS.BOOKINGS, JSON.stringify(filteredBookings));
   return true;
 }
 
@@ -135,6 +254,8 @@ export async function clearAllData(): Promise<void> {
     STORAGE_KEYS.TALENTS,
     STORAGE_KEYS.PROJECTS,
     STORAGE_KEYS.SETTINGS,
+    STORAGE_KEYS.CATEGORIES,
+    STORAGE_KEYS.BOOKINGS,
   ]);
 }
 
@@ -163,4 +284,15 @@ export function needsPhotoUpdate(talent: Talent): boolean {
   const now = new Date();
   const daysDiff = Math.floor((now.getTime() - lastUpdate.getTime()) / (1000 * 60 * 60 * 24));
   return daysDiff >= 30;
+}
+
+// Get currency symbol
+export function getCurrencySymbol(code: string): string {
+  const symbols: Record<string, string> = {
+    KWD: 'KD',
+    USD: '$',
+    SAR: 'SR',
+    AED: 'AED',
+  };
+  return symbols[code] || code;
 }

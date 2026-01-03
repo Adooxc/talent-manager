@@ -16,33 +16,26 @@ import { Platform } from "react-native";
 import { ScreenContainer } from "@/components/screen-container";
 import { IconSymbol } from "@/components/ui/icon-symbol";
 import { useColors } from "@/hooks/use-colors";
-import { Talent, TalentCategory } from "@/lib/types";
-import { getTalentById, deleteTalent, needsPhotoUpdate } from "@/lib/storage";
+import { Talent, Category, CURRENCIES } from "@/lib/types";
+import { getTalentById, deleteTalent, needsPhotoUpdate, getCategories, getCurrencySymbol } from "@/lib/storage";
 import { useFocusEffect } from "@react-navigation/native";
-
-const CATEGORY_LABELS: Record<TalentCategory, string> = {
-  model: "Model",
-  artist: "Artist",
-  both: "Model & Artist",
-};
-
-const CATEGORY_COLORS: Record<TalentCategory, string> = {
-  model: "#6366F1",
-  artist: "#EC4899",
-  both: "#8B5CF6",
-};
 
 export default function TalentDetailScreen() {
   const router = useRouter();
   const { id } = useLocalSearchParams<{ id: string }>();
   const colors = useColors();
   const [talent, setTalent] = useState<Talent | null>(null);
+  const [category, setCategory] = useState<Category | null>(null);
   const [selectedPhotoIndex, setSelectedPhotoIndex] = useState(0);
 
   const loadTalent = useCallback(async () => {
     if (!id) return;
-    const data = await getTalentById(id);
+    const [data, cats] = await Promise.all([getTalentById(id), getCategories()]);
     setTalent(data);
+    if (data) {
+      const cat = cats.find(c => c.id === data.categoryId);
+      setCategory(cat || null);
+    }
   }, [id]);
 
   useFocusEffect(
@@ -56,6 +49,13 @@ export default function TalentDetailScreen() {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     }
     router.push(`/talent/edit/${id}` as any);
+  };
+
+  const handleCalendar = () => {
+    if (Platform.OS !== "web") {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    }
+    router.push(`/talent/calendar/${id}` as any);
   };
 
   const handleDelete = () => {
@@ -83,15 +83,11 @@ export default function TalentDetailScreen() {
     Linking.openURL(`tel:${phone}`);
   };
 
-  const handleOpenSocial = (url: string) => {
-    if (url.startsWith("@")) {
-      // Handle username format
-      Linking.openURL(`https://instagram.com/${url.replace("@", "")}`);
-    } else if (!url.startsWith("http")) {
-      Linking.openURL(`https://${url}`);
-    } else {
-      Linking.openURL(url);
+  const handleSocialMedia = (url: string) => {
+    if (!url.startsWith("http")) {
+      url = `https://${url}`;
     }
+    Linking.openURL(url);
   };
 
   if (!talent) {
@@ -111,6 +107,7 @@ export default function TalentDetailScreen() {
   }
 
   const needsUpdate = needsPhotoUpdate(talent);
+  const currencySymbol = getCurrencySymbol(talent.currency);
 
   return (
     <ScreenContainer edges={["top", "left", "right", "bottom"]}>
@@ -120,6 +117,9 @@ export default function TalentDetailScreen() {
           <Text style={[styles.backText, { color: colors.primary }]}>Back</Text>
         </TouchableOpacity>
         <View style={styles.headerActions}>
+          <TouchableOpacity onPress={handleCalendar} style={styles.headerButton}>
+            <IconSymbol name="calendar" size={22} color={colors.primary} />
+          </TouchableOpacity>
           <TouchableOpacity onPress={handleEdit} style={styles.headerButton}>
             <IconSymbol name="pencil" size={22} color={colors.primary} />
           </TouchableOpacity>
@@ -133,8 +133,8 @@ export default function TalentDetailScreen() {
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        {/* Photo Gallery */}
-        <View style={styles.galleryContainer}>
+        {/* Main Photo */}
+        <View style={styles.mainPhotoContainer}>
           <Image
             source={{ uri: talent.photos[selectedPhotoIndex] || talent.profilePhoto }}
             style={styles.mainPhoto}
@@ -146,8 +146,13 @@ export default function TalentDetailScreen() {
               <Text style={styles.updateBadgeText}>Needs Update</Text>
             </View>
           )}
-          <View style={[styles.categoryBadge, { backgroundColor: CATEGORY_COLORS[talent.category] }]}>
-            <Text style={styles.categoryText}>{CATEGORY_LABELS[talent.category]}</Text>
+          {category && (
+            <View style={[styles.categoryBadge, { backgroundColor: colors.primary }]}>
+              <Text style={styles.categoryText}>{category.name}</Text>
+            </View>
+          )}
+          <View style={[styles.genderBadge, { backgroundColor: talent.gender === 'male' ? '#3B82F6' : '#EC4899' }]}>
+            <Text style={styles.genderText}>{talent.gender === 'male' ? 'Male' : 'Female'}</Text>
           </View>
         </View>
 
@@ -181,7 +186,7 @@ export default function TalentDetailScreen() {
           <View style={[styles.priceContainer, { backgroundColor: colors.primary + "15" }]}>
             <IconSymbol name="dollarsign.circle.fill" size={20} color={colors.primary} />
             <Text style={[styles.price, { color: colors.primary }]}>
-              ${talent.pricePerProject.toLocaleString()} / project
+              {currencySymbol} {talent.pricePerProject.toLocaleString()} / project
             </Text>
           </View>
         </View>
@@ -207,36 +212,99 @@ export default function TalentDetailScreen() {
         )}
 
         {/* Social Media */}
-        {Object.entries(talent.socialMedia).some(([_, value]) => value) && (
+        {Object.keys(talent.socialMedia).some(key => (talent.socialMedia as any)[key]) && (
           <View style={styles.section}>
             <Text style={[styles.sectionTitle, { color: colors.foreground }]}>Social Media</Text>
-            {Object.entries(talent.socialMedia).map(([key, value]) => {
-              if (!value) return null;
-              const labels: Record<string, string> = {
-                instagram: "Instagram",
-                tiktok: "TikTok",
-                twitter: "Twitter/X",
-                facebook: "Facebook",
-                youtube: "YouTube",
-                other: "Other",
-              };
-              return (
-                <TouchableOpacity
-                  key={key}
-                  onPress={() => handleOpenSocial(value)}
-                  style={[styles.contactRow, { backgroundColor: colors.surface, borderColor: colors.border }]}
-                >
-                  <View style={[styles.contactIcon, { backgroundColor: colors.primary + "20" }]}>
-                    <IconSymbol name="link" size={18} color={colors.primary} />
-                  </View>
-                  <View style={styles.socialContent}>
-                    <Text style={[styles.socialLabel, { color: colors.muted }]}>{labels[key]}</Text>
-                    <Text style={[styles.contactText, { color: colors.foreground }]}>{value}</Text>
-                  </View>
-                  <IconSymbol name="chevron.right" size={18} color={colors.muted} />
-                </TouchableOpacity>
-              );
-            })}
+            {talent.socialMedia.instagram && (
+              <TouchableOpacity
+                onPress={() => handleSocialMedia(`instagram.com/${talent.socialMedia.instagram?.replace('@', '')}`)}
+                style={[styles.socialRow, { backgroundColor: colors.surface, borderColor: colors.border }]}
+              >
+                <View style={[styles.socialIcon, { backgroundColor: "#E1306C20" }]}>
+                  <Text style={styles.socialEmoji}>📷</Text>
+                </View>
+                <View style={styles.socialInfo}>
+                  <Text style={[styles.socialLabel, { color: colors.muted }]}>Instagram</Text>
+                  <Text style={[styles.socialHandle, { color: colors.foreground }]}>{talent.socialMedia.instagram}</Text>
+                </View>
+                <IconSymbol name="chevron.right" size={18} color={colors.muted} />
+              </TouchableOpacity>
+            )}
+            {talent.socialMedia.tiktok && (
+              <TouchableOpacity
+                onPress={() => handleSocialMedia(`tiktok.com/${talent.socialMedia.tiktok?.replace('@', '')}`)}
+                style={[styles.socialRow, { backgroundColor: colors.surface, borderColor: colors.border }]}
+              >
+                <View style={[styles.socialIcon, { backgroundColor: "#00000020" }]}>
+                  <Text style={styles.socialEmoji}>🎵</Text>
+                </View>
+                <View style={styles.socialInfo}>
+                  <Text style={[styles.socialLabel, { color: colors.muted }]}>TikTok</Text>
+                  <Text style={[styles.socialHandle, { color: colors.foreground }]}>{talent.socialMedia.tiktok}</Text>
+                </View>
+                <IconSymbol name="chevron.right" size={18} color={colors.muted} />
+              </TouchableOpacity>
+            )}
+            {talent.socialMedia.snapchat && (
+              <TouchableOpacity
+                onPress={() => handleSocialMedia(`snapchat.com/add/${talent.socialMedia.snapchat?.replace('@', '')}`)}
+                style={[styles.socialRow, { backgroundColor: colors.surface, borderColor: colors.border }]}
+              >
+                <View style={[styles.socialIcon, { backgroundColor: "#FFFC0020" }]}>
+                  <Text style={styles.socialEmoji}>👻</Text>
+                </View>
+                <View style={styles.socialInfo}>
+                  <Text style={[styles.socialLabel, { color: colors.muted }]}>Snapchat</Text>
+                  <Text style={[styles.socialHandle, { color: colors.foreground }]}>{talent.socialMedia.snapchat}</Text>
+                </View>
+                <IconSymbol name="chevron.right" size={18} color={colors.muted} />
+              </TouchableOpacity>
+            )}
+            {talent.socialMedia.twitter && (
+              <TouchableOpacity
+                onPress={() => handleSocialMedia(`twitter.com/${talent.socialMedia.twitter?.replace('@', '')}`)}
+                style={[styles.socialRow, { backgroundColor: colors.surface, borderColor: colors.border }]}
+              >
+                <View style={[styles.socialIcon, { backgroundColor: "#1DA1F220" }]}>
+                  <Text style={styles.socialEmoji}>𝕏</Text>
+                </View>
+                <View style={styles.socialInfo}>
+                  <Text style={[styles.socialLabel, { color: colors.muted }]}>Twitter/X</Text>
+                  <Text style={[styles.socialHandle, { color: colors.foreground }]}>{talent.socialMedia.twitter}</Text>
+                </View>
+                <IconSymbol name="chevron.right" size={18} color={colors.muted} />
+              </TouchableOpacity>
+            )}
+            {talent.socialMedia.youtube && (
+              <TouchableOpacity
+                onPress={() => handleSocialMedia(talent.socialMedia.youtube!)}
+                style={[styles.socialRow, { backgroundColor: colors.surface, borderColor: colors.border }]}
+              >
+                <View style={[styles.socialIcon, { backgroundColor: "#FF000020" }]}>
+                  <Text style={styles.socialEmoji}>▶️</Text>
+                </View>
+                <View style={styles.socialInfo}>
+                  <Text style={[styles.socialLabel, { color: colors.muted }]}>YouTube</Text>
+                  <Text style={[styles.socialHandle, { color: colors.foreground }]} numberOfLines={1}>{talent.socialMedia.youtube}</Text>
+                </View>
+                <IconSymbol name="chevron.right" size={18} color={colors.muted} />
+              </TouchableOpacity>
+            )}
+            {talent.socialMedia.facebook && (
+              <TouchableOpacity
+                onPress={() => handleSocialMedia(talent.socialMedia.facebook!)}
+                style={[styles.socialRow, { backgroundColor: colors.surface, borderColor: colors.border }]}
+              >
+                <View style={[styles.socialIcon, { backgroundColor: "#1877F220" }]}>
+                  <Text style={styles.socialEmoji}>📘</Text>
+                </View>
+                <View style={styles.socialInfo}>
+                  <Text style={[styles.socialLabel, { color: colors.muted }]}>Facebook</Text>
+                  <Text style={[styles.socialHandle, { color: colors.foreground }]} numberOfLines={1}>{talent.socialMedia.facebook}</Text>
+                </View>
+                <IconSymbol name="chevron.right" size={18} color={colors.muted} />
+              </TouchableOpacity>
+            )}
           </View>
         )}
 
@@ -299,8 +367,9 @@ const styles = StyleSheet.create({
   scrollContent: {
     paddingBottom: 40,
   },
-  galleryContainer: {
+  mainPhotoContainer: {
     position: "relative",
+    width: "100%",
     aspectRatio: 1,
   },
   mainPhoto: {
@@ -320,20 +389,33 @@ const styles = StyleSheet.create({
   },
   updateBadgeText: {
     color: "#FFF",
-    fontSize: 13,
+    fontSize: 12,
     fontWeight: "600",
   },
   categoryBadge: {
     position: "absolute",
-    top: 16,
-    right: 16,
-    paddingHorizontal: 12,
-    paddingVertical: 6,
+    bottom: 16,
+    left: 16,
+    paddingHorizontal: 14,
+    paddingVertical: 8,
     borderRadius: 20,
   },
   categoryText: {
     color: "#FFF",
-    fontSize: 13,
+    fontSize: 14,
+    fontWeight: "600",
+  },
+  genderBadge: {
+    position: "absolute",
+    bottom: 16,
+    right: 16,
+    paddingHorizontal: 14,
+    paddingVertical: 8,
+    borderRadius: 20,
+  },
+  genderText: {
+    color: "#FFF",
+    fontSize: 14,
     fontWeight: "600",
   },
   thumbnailContainer: {
@@ -346,7 +428,6 @@ const styles = StyleSheet.create({
     height: 64,
     borderRadius: 8,
     overflow: "hidden",
-    marginRight: 8,
   },
   thumbnailImage: {
     width: "100%",
@@ -359,15 +440,15 @@ const styles = StyleSheet.create({
   name: {
     fontSize: 28,
     fontWeight: "700",
+    marginBottom: 12,
   },
   priceContainer: {
     flexDirection: "row",
     alignItems: "center",
     alignSelf: "flex-start",
-    paddingHorizontal: 12,
+    paddingHorizontal: 14,
     paddingVertical: 8,
     borderRadius: 20,
-    marginTop: 12,
     gap: 8,
   },
   price: {
@@ -376,7 +457,7 @@ const styles = StyleSheet.create({
   },
   section: {
     paddingHorizontal: 20,
-    paddingTop: 24,
+    paddingTop: 28,
   },
   sectionTitle: {
     fontSize: 18,
@@ -392,23 +473,46 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   contactIcon: {
-    width: 36,
-    height: 36,
-    borderRadius: 10,
+    width: 40,
+    height: 40,
+    borderRadius: 20,
     alignItems: "center",
     justifyContent: "center",
+    marginRight: 12,
   },
   contactText: {
     flex: 1,
     fontSize: 16,
-    marginLeft: 12,
   },
-  socialContent: {
+  socialRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    padding: 14,
+    borderRadius: 12,
+    borderWidth: 1,
+    marginBottom: 8,
+  },
+  socialIcon: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    alignItems: "center",
+    justifyContent: "center",
+    marginRight: 12,
+  },
+  socialEmoji: {
+    fontSize: 18,
+  },
+  socialInfo: {
     flex: 1,
-    marginLeft: 12,
   },
   socialLabel: {
     fontSize: 12,
+    marginBottom: 2,
+  },
+  socialHandle: {
+    fontSize: 15,
+    fontWeight: "500",
   },
   notesContainer: {
     padding: 16,
@@ -421,7 +525,7 @@ const styles = StyleSheet.create({
   },
   metadata: {
     paddingHorizontal: 20,
-    paddingTop: 24,
+    paddingTop: 28,
   },
   metadataText: {
     fontSize: 13,

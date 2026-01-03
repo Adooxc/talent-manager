@@ -1,0 +1,43 @@
+Cast Services Presentation - Key Features Required:
+
+1. CATEGORIES STRUCTURE (from slide 5):
+   - Women / Men tabs at top
+   - Categories: Actors, Influencers, Models, Extra (كومبارس)
+   - Grid display with photos and names
+
+2. TALENT PROFILE FEATURES:
+   - Profile photo
+   - Name
+   - Social Media section
+   - Calendar for availability/bookings
+   - Ability to add events with:
+     * Event title
+     * Location
+     * All-day toggle
+     * Start/End date and time
+     * Travel time
+
+3. BOOKING FLOW (3 steps):
+   - Step 1: Choose person (اختيار الشخص)
+   - Step 2: Book appointment (حجز الموعد) - Calendar
+   - Step 3: Payment (الدفع) - with address and subtotal in KWD
+
+4. KEY FEATURES (from slide 4):
+   - Large database of models, actors, influencers
+   - Personal calendar for each talent showing monthly commitments
+   - Pre-payment policy before photo sessions
+   - Simple 3-step booking: choose person, select date/time, pay
+
+5. BENEFITS (from slide 6):
+   - Enable client to choose suitable talent
+   - Simplify payment process
+   - Pre-booking to ensure talent availability
+   - Organization in production processes
+
+REQUIRED CHANGES TO APP:
+- Add custom categories management (not just model/artist/both)
+- Add gender filter (Women/Men)
+- Add calendar/availability tracking per talent
+- Add booking system with dates
+- Support KWD currency
+- Categories needed: Actors, Influencers, Models, Extra

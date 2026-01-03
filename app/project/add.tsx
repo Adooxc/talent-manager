@@ -20,8 +20,8 @@ import * as Haptics from "expo-haptics";
 import { ScreenContainer } from "@/components/screen-container";
 import { IconSymbol } from "@/components/ui/icon-symbol";
 import { useColors } from "@/hooks/use-colors";
-import { Talent, ProjectStatus, ProjectTalent } from "@/lib/types";
-import { saveProject, getTalents, getSettings, calculateProjectCosts } from "@/lib/storage";
+import { Talent, ProjectStatus, ProjectTalent, CURRENCIES } from "@/lib/types";
+import { saveProject, getTalents, getSettings, calculateProjectCosts, getCurrencySymbol } from "@/lib/storage";
 import { useFocusEffect } from "@react-navigation/native";
 
 const STATUS_OPTIONS: { value: ProjectStatus; label: string }[] = [
@@ -41,6 +41,7 @@ export default function AddProjectScreen() {
   const [status, setStatus] = useState<ProjectStatus>("draft");
   const [selectedTalents, setSelectedTalents] = useState<ProjectTalent[]>([]);
   const [profitMargin, setProfitMargin] = useState("15");
+  const [currency, setCurrency] = useState("KWD");
   const [saving, setSaving] = useState(false);
   
   const [allTalents, setAllTalents] = useState<Talent[]>([]);
@@ -51,6 +52,7 @@ export default function AddProjectScreen() {
     const [talents, settings] = await Promise.all([getTalents(), getSettings()]);
     setAllTalents(talents);
     setProfitMargin(settings.defaultProfitMargin.toString());
+    setCurrency(settings.defaultCurrency);
   }, []);
 
   useFocusEffect(
@@ -101,6 +103,7 @@ export default function AddProjectScreen() {
         status,
         talents: selectedTalents,
         profitMarginPercent: parseFloat(profitMargin) || 0,
+        currency,
       });
 
       if (Platform.OS !== "web") {
@@ -300,7 +303,7 @@ export default function AddProjectScreen() {
                     <View style={styles.selectedTalentInfo}>
                       <Text style={[styles.selectedTalentName, { color: colors.foreground }]}>{talent.name}</Text>
                       <View style={styles.priceInputRow}>
-                        <Text style={[styles.priceLabel, { color: colors.muted }]}>$</Text>
+                        <Text style={[styles.priceLabel, { color: colors.muted }]}>{getCurrencySymbol(currency)}</Text>
                         <TextInput
                           style={[styles.priceInput, { color: colors.foreground, borderColor: colors.border }]}
                           value={customPrices[pt.talentId] ?? talent.pricePerProject.toString()}
@@ -327,6 +330,29 @@ export default function AddProjectScreen() {
           <View style={styles.section}>
             <Text style={[styles.sectionTitle, { color: colors.foreground }]}>Cost Calculation</Text>
             
+            <View style={styles.inputGroup}>
+              <Text style={[styles.label, { color: colors.foreground }]}>Currency</Text>
+              <View style={styles.currencyPicker}>
+                {CURRENCIES.map((c) => (
+                  <TouchableOpacity
+                    key={c.code}
+                    onPress={() => setCurrency(c.code)}
+                    style={[
+                      styles.currencyButton,
+                      {
+                        backgroundColor: currency === c.code ? colors.primary : colors.surface,
+                        borderColor: currency === c.code ? colors.primary : colors.border,
+                      },
+                    ]}
+                  >
+                    <Text style={[styles.currencyCode, { color: currency === c.code ? "#FFF" : colors.foreground }]}>
+                      {c.code}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            </View>
+            
             {renderInput("Profit Margin", profitMargin, setProfitMargin, "15", {
               keyboardType: "numeric",
               suffix: "%",
@@ -335,15 +361,15 @@ export default function AddProjectScreen() {
             <View style={[styles.costSummary, { backgroundColor: colors.surface, borderColor: colors.border }]}>
               <View style={styles.costRow}>
                 <Text style={[styles.costLabel, { color: colors.muted }]}>Subtotal (Talents)</Text>
-                <Text style={[styles.costValue, { color: colors.foreground }]}>${costs.subtotal.toLocaleString()}</Text>
+                <Text style={[styles.costValue, { color: colors.foreground }]}>{getCurrencySymbol(currency)} {costs.subtotal.toLocaleString()}</Text>
               </View>
               <View style={styles.costRow}>
                 <Text style={[styles.costLabel, { color: colors.muted }]}>Profit ({profitMargin}%)</Text>
-                <Text style={[styles.costValue, { color: colors.success }]}>+${costs.profit.toLocaleString()}</Text>
+                <Text style={[styles.costValue, { color: colors.success }]}>+{getCurrencySymbol(currency)} {costs.profit.toLocaleString()}</Text>
               </View>
               <View style={[styles.costRow, styles.totalRow, { borderTopColor: colors.border }]}>
                 <Text style={[styles.totalLabel, { color: colors.foreground }]}>Total</Text>
-                <Text style={[styles.totalValue, { color: colors.primary }]}>${costs.total.toLocaleString()}</Text>
+                <Text style={[styles.totalValue, { color: colors.primary }]}>{getCurrencySymbol(currency)} {costs.total.toLocaleString()}</Text>
               </View>
             </View>
           </View>
@@ -648,5 +674,22 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     alignItems: "center",
     justifyContent: "center",
+  },
+  currencyPicker: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 10,
+  },
+  currencyButton: {
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    borderRadius: 12,
+    borderWidth: 1,
+    alignItems: "center",
+    minWidth: 70,
+  },
+  currencyCode: {
+    fontSize: 14,
+    fontWeight: "600",
   },
 });

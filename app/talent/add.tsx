@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import {
   ScrollView,
   Text,
@@ -14,17 +14,17 @@ import { Image } from "expo-image";
 import { useRouter } from "expo-router";
 import * as ImagePicker from "expo-image-picker";
 import * as Haptics from "expo-haptics";
+import { useFocusEffect } from "@react-navigation/native";
 
 import { ScreenContainer } from "@/components/screen-container";
 import { IconSymbol } from "@/components/ui/icon-symbol";
 import { useColors } from "@/hooks/use-colors";
-import { TalentCategory, SocialMedia } from "@/lib/types";
-import { saveTalent } from "@/lib/storage";
+import { Gender, SocialMedia, Category, CURRENCIES } from "@/lib/types";
+import { saveTalent, getCategories, getSettings } from "@/lib/storage";
 
-const CATEGORIES: { value: TalentCategory; label: string }[] = [
-  { value: "model", label: "Model" },
-  { value: "artist", label: "Artist" },
-  { value: "both", label: "Both" },
+const GENDERS: { value: Gender; label: string; labelAr: string }[] = [
+  { value: "male", label: "Male", labelAr: "رجال" },
+  { value: "female", label: "Female", labelAr: "نساء" },
 ];
 
 export default function AddTalentScreen() {
@@ -32,13 +32,31 @@ export default function AddTalentScreen() {
   const colors = useColors();
   
   const [name, setName] = useState("");
-  const [category, setCategory] = useState<TalentCategory>("model");
+  const [categoryId, setCategoryId] = useState("");
+  const [gender, setGender] = useState<Gender>("male");
   const [photos, setPhotos] = useState<string[]>([]);
   const [phoneNumbers, setPhoneNumbers] = useState<string[]>([""]);
   const [socialMedia, setSocialMedia] = useState<SocialMedia>({});
   const [pricePerProject, setPricePerProject] = useState("");
+  const [currency, setCurrency] = useState("KWD");
   const [notes, setNotes] = useState("");
   const [saving, setSaving] = useState(false);
+  const [categories, setCategories] = useState<Category[]>([]);
+
+  const loadData = useCallback(async () => {
+    const [cats, settings] = await Promise.all([getCategories(), getSettings()]);
+    setCategories(cats);
+    setCurrency(settings.defaultCurrency);
+    if (cats.length > 0 && !categoryId) {
+      setCategoryId(cats[0].id);
+    }
+  }, [categoryId]);
+
+  useFocusEffect(
+    useCallback(() => {
+      loadData();
+    }, [loadData])
+  );
 
   const pickImages = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
@@ -88,18 +106,25 @@ export default function AddTalentScreen() {
       return;
     }
 
+    if (!categoryId) {
+      Alert.alert("Error", "Please select a category");
+      return;
+    }
+
     const price = parseFloat(pricePerProject) || 0;
 
     setSaving(true);
     try {
       await saveTalent({
         name: name.trim(),
-        category,
+        categoryId,
+        gender,
         photos,
         profilePhoto: photos[0],
         phoneNumbers: phoneNumbers.filter((p) => p.trim()),
         socialMedia,
         pricePerProject: price,
+        currency,
         notes: notes.trim(),
       });
 
@@ -148,6 +173,8 @@ export default function AddTalentScreen() {
       </View>
     </View>
   );
+
+  const currencySymbol = CURRENCIES.find(c => c.code === currency)?.symbol || currency;
 
   return (
     <ScreenContainer edges={["top", "left", "right", "bottom"]}>
@@ -216,38 +243,106 @@ export default function AddTalentScreen() {
             <Text style={[styles.sectionTitle, { color: colors.foreground }]}>Basic Info</Text>
             {renderInput("Name", name, setName, "Enter name")}
             
+            {/* Gender Selection */}
             <View style={styles.inputGroup}>
-              <Text style={[styles.label, { color: colors.foreground }]}>Category</Text>
+              <Text style={[styles.label, { color: colors.foreground }]}>Gender</Text>
               <View style={styles.categoryContainer}>
-                {CATEGORIES.map((cat) => (
+                {GENDERS.map((g) => (
                   <TouchableOpacity
-                    key={cat.value}
-                    onPress={() => setCategory(cat.value)}
+                    key={g.value}
+                    onPress={() => setGender(g.value)}
                     style={[
                       styles.categoryButton,
                       {
-                        backgroundColor: category === cat.value ? colors.primary : colors.surface,
-                        borderColor: category === cat.value ? colors.primary : colors.border,
+                        backgroundColor: gender === g.value ? colors.primary : colors.surface,
+                        borderColor: gender === g.value ? colors.primary : colors.border,
                       },
                     ]}
                   >
                     <Text
                       style={[
                         styles.categoryButtonText,
-                        { color: category === cat.value ? "#FFF" : colors.foreground },
+                        { color: gender === g.value ? "#FFF" : colors.foreground },
                       ]}
                     >
-                      {cat.label}
+                      {g.label}
                     </Text>
                   </TouchableOpacity>
                 ))}
               </View>
             </View>
 
-            {renderInput("Price per Project", pricePerProject, setPricePerProject, "0", {
-              keyboardType: "numeric",
-              prefix: "$",
-            })}
+            {/* Category Selection */}
+            <View style={styles.inputGroup}>
+              <Text style={[styles.label, { color: colors.foreground }]}>Category</Text>
+              <View style={styles.categoryContainer}>
+                {categories.map((cat) => (
+                  <TouchableOpacity
+                    key={cat.id}
+                    onPress={() => setCategoryId(cat.id)}
+                    style={[
+                      styles.categoryButton,
+                      {
+                        backgroundColor: categoryId === cat.id ? colors.primary : colors.surface,
+                        borderColor: categoryId === cat.id ? colors.primary : colors.border,
+                      },
+                    ]}
+                  >
+                    <Text
+                      style={[
+                        styles.categoryButtonText,
+                        { color: categoryId === cat.id ? "#FFF" : colors.foreground },
+                      ]}
+                    >
+                      {cat.name}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            </View>
+
+            {/* Price with Currency */}
+            <View style={styles.inputGroup}>
+              <Text style={[styles.label, { color: colors.foreground }]}>Price per Project</Text>
+              <View style={styles.priceRow}>
+                <View style={[styles.inputWrapper, { backgroundColor: colors.surface, borderColor: colors.border, flex: 1 }]}>
+                  <Text style={[styles.inputPrefix, { color: colors.muted }]}>{currencySymbol}</Text>
+                  <TextInput
+                    style={[styles.input, { color: colors.foreground }]}
+                    value={pricePerProject}
+                    onChangeText={setPricePerProject}
+                    placeholder="0"
+                    placeholderTextColor={colors.muted}
+                    keyboardType="numeric"
+                    returnKeyType="done"
+                  />
+                </View>
+                <View style={styles.currencyPicker}>
+                  {CURRENCIES.slice(0, 2).map((c) => (
+                    <TouchableOpacity
+                      key={c.code}
+                      onPress={() => setCurrency(c.code)}
+                      style={[
+                        styles.currencyButton,
+                        {
+                          backgroundColor: currency === c.code ? colors.primary : colors.surface,
+                          borderColor: currency === c.code ? colors.primary : colors.border,
+                        },
+                      ]}
+                    >
+                      <Text
+                        style={[
+                          styles.currencyButtonText,
+                          { color: currency === c.code ? "#FFF" : colors.foreground },
+                        ]}
+                      >
+                        {c.code}
+                      </Text>
+                    </TouchableOpacity>
+                  ))}
+                </View>
+              </View>
+            </View>
           </View>
 
           {/* Contact */}
@@ -285,10 +380,10 @@ export default function AddTalentScreen() {
             <Text style={[styles.sectionTitle, { color: colors.foreground }]}>Social Media</Text>
             {renderInput("Instagram", socialMedia.instagram || "", (v) => updateSocialMedia("instagram", v), "@username")}
             {renderInput("TikTok", socialMedia.tiktok || "", (v) => updateSocialMedia("tiktok", v), "@username")}
+            {renderInput("Snapchat", socialMedia.snapchat || "", (v) => updateSocialMedia("snapchat", v), "@username")}
             {renderInput("Twitter/X", socialMedia.twitter || "", (v) => updateSocialMedia("twitter", v), "@username")}
-            {renderInput("Facebook", socialMedia.facebook || "", (v) => updateSocialMedia("facebook", v), "Profile URL")}
             {renderInput("YouTube", socialMedia.youtube || "", (v) => updateSocialMedia("youtube", v), "Channel URL")}
-            {renderInput("Other", socialMedia.other || "", (v) => updateSocialMedia("other", v), "Other link")}
+            {renderInput("Facebook", socialMedia.facebook || "", (v) => updateSocialMedia("facebook", v), "Profile URL")}
           </View>
 
           {/* Notes */}
@@ -344,6 +439,7 @@ const styles = StyleSheet.create({
   },
   photosContainer: {
     gap: 12,
+    paddingRight: 20,
   },
   addPhotoButton: {
     width: 120,
@@ -353,11 +449,11 @@ const styles = StyleSheet.create({
     borderStyle: "dashed",
     alignItems: "center",
     justifyContent: "center",
+    gap: 8,
   },
   addPhotoText: {
     fontSize: 13,
     fontWeight: "500",
-    marginTop: 8,
   },
   photoWrapper: {
     position: "relative",
@@ -373,7 +469,7 @@ const styles = StyleSheet.create({
     left: 8,
     paddingHorizontal: 8,
     paddingVertical: 4,
-    borderRadius: 6,
+    borderRadius: 8,
   },
   mainBadgeText: {
     color: "#FFF",
@@ -417,21 +513,40 @@ const styles = StyleSheet.create({
   multilineInput: {
     minHeight: 100,
     textAlignVertical: "top",
+    paddingTop: 14,
   },
   categoryContainer: {
     flexDirection: "row",
-    gap: 12,
+    flexWrap: "wrap",
+    gap: 10,
   },
   categoryButton: {
-    flex: 1,
-    paddingVertical: 12,
-    borderRadius: 12,
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    borderRadius: 20,
     borderWidth: 1,
-    alignItems: "center",
   },
   categoryButtonText: {
-    fontSize: 15,
+    fontSize: 14,
     fontWeight: "500",
+  },
+  priceRow: {
+    flexDirection: "row",
+    gap: 12,
+  },
+  currencyPicker: {
+    flexDirection: "row",
+    gap: 8,
+  },
+  currencyButton: {
+    paddingHorizontal: 12,
+    paddingVertical: 14,
+    borderRadius: 12,
+    borderWidth: 1,
+  },
+  currencyButtonText: {
+    fontSize: 14,
+    fontWeight: "600",
   },
   phoneRow: {
     flexDirection: "row",
@@ -445,6 +560,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 8,
+    paddingVertical: 8,
   },
   addButtonText: {
     fontSize: 15,

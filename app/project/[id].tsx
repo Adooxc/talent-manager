@@ -18,8 +18,8 @@ import * as Sharing from "expo-sharing";
 import { ScreenContainer } from "@/components/screen-container";
 import { IconSymbol } from "@/components/ui/icon-symbol";
 import { useColors } from "@/hooks/use-colors";
-import { Project, ProjectStatus, Talent } from "@/lib/types";
-import { getProjectById, getTalents, deleteProject, calculateProjectCosts } from "@/lib/storage";
+import { Project, ProjectStatus, Talent, Category } from "@/lib/types";
+import { getProjectById, getTalents, deleteProject, calculateProjectCosts, getCategories, getCurrencySymbol } from "@/lib/storage";
 import { useFocusEffect } from "@react-navigation/native";
 
 const STATUS_LABELS: Record<ProjectStatus, string> = {
@@ -40,16 +40,19 @@ export default function ProjectDetailScreen() {
   const colors = useColors();
   const [project, setProject] = useState<Project | null>(null);
   const [talents, setTalents] = useState<Talent[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
   const [exporting, setExporting] = useState(false);
 
   const loadData = useCallback(async () => {
     if (!id) return;
-    const [projectData, talentsData] = await Promise.all([
+    const [projectData, talentsData, catsData] = await Promise.all([
       getProjectById(id),
       getTalents(),
+      getCategories(),
     ]);
     setProject(projectData);
     setTalents(talentsData);
+    setCategories(catsData);
   }, [id]);
 
   useFocusEffect(
@@ -92,6 +95,7 @@ export default function ProjectDetailScreen() {
     setExporting(true);
     try {
       const costs = calculateProjectCosts(talents, project.talents, project.profitMarginPercent);
+      const currencySymbol = getCurrencySymbol(project.currency);
       
       const talentRows = project.talents.map((pt) => {
         const talent = talents.find((t) => t.id === pt.talentId);
@@ -104,11 +108,11 @@ export default function ProjectDetailScreen() {
                 ${talent.profilePhoto ? `<img src="${talent.profilePhoto}" style="width: 48px; height: 48px; border-radius: 8px; object-fit: cover;" />` : ""}
                 <div>
                   <div style="font-weight: 600;">${talent.name}</div>
-                  <div style="color: #64748B; font-size: 12px;">${talent.category}</div>
+                  <div style="color: #64748B; font-size: 12px;">${categories.find(c => c.id === talent.categoryId)?.name || 'Unknown'}</div>
                 </div>
               </div>
             </td>
-            <td style="padding: 12px; border-bottom: 1px solid #E2E8F0; text-align: right;">$${price.toLocaleString()}</td>
+            <td style="padding: 12px; border-bottom: 1px solid #E2E8F0; text-align: right;">${currencySymbol} ${price.toLocaleString()}</td>
           </tr>
         `;
       }).join("");
@@ -239,15 +243,15 @@ export default function ProjectDetailScreen() {
           <div class="summary">
             <div class="summary-row">
               <span>Subtotal</span>
-              <span>$${costs.subtotal.toLocaleString()}</span>
+              <span>${currencySymbol} ${costs.subtotal.toLocaleString()}</span>
             </div>
             <div class="summary-row">
               <span>Profit (${project.profitMarginPercent}%)</span>
-              <span class="profit">+$${costs.profit.toLocaleString()}</span>
+              <span class="profit">+${currencySymbol} ${costs.profit.toLocaleString()}</span>
             </div>
             <div class="summary-row total">
               <span>Total</span>
-              <span class="total-value">$${costs.total.toLocaleString()}</span>
+              <span class="total-value">${currencySymbol} ${costs.total.toLocaleString()}</span>
             </div>
           </div>
 
@@ -379,9 +383,9 @@ export default function ProjectDetailScreen() {
                 )}
                 <View style={styles.talentInfo}>
                   <Text style={[styles.talentName, { color: colors.foreground }]}>{talent.name}</Text>
-                  <Text style={[styles.talentCategory, { color: colors.muted }]}>{talent.category}</Text>
+                  <Text style={[styles.talentCategory, { color: colors.muted }]}>{categories.find(c => c.id === talent.categoryId)?.name || 'Unknown'}</Text>
                 </View>
-                <Text style={[styles.talentPrice, { color: colors.primary }]}>${price.toLocaleString()}</Text>
+                <Text style={[styles.talentPrice, { color: colors.primary }]}>{getCurrencySymbol(project.currency)} {price.toLocaleString()}</Text>
               </TouchableOpacity>
             );
           })}
@@ -394,15 +398,15 @@ export default function ProjectDetailScreen() {
           <View style={[styles.costCard, { backgroundColor: colors.surface, borderColor: colors.border }]}>
             <View style={styles.costRow}>
               <Text style={[styles.costLabel, { color: colors.muted }]}>Subtotal</Text>
-              <Text style={[styles.costValue, { color: colors.foreground }]}>${costs.subtotal.toLocaleString()}</Text>
+              <Text style={[styles.costValue, { color: colors.foreground }]}>{getCurrencySymbol(project.currency)} {costs.subtotal.toLocaleString()}</Text>
             </View>
             <View style={styles.costRow}>
               <Text style={[styles.costLabel, { color: colors.muted }]}>Profit ({project.profitMarginPercent}%)</Text>
-              <Text style={[styles.costValue, { color: colors.success }]}>+${costs.profit.toLocaleString()}</Text>
+              <Text style={[styles.costValue, { color: colors.success }]}>+{getCurrencySymbol(project.currency)} {costs.profit.toLocaleString()}</Text>
             </View>
             <View style={[styles.costRow, styles.totalRow, { borderTopColor: colors.border }]}>
               <Text style={[styles.totalLabel, { color: colors.foreground }]}>Total</Text>
-              <Text style={[styles.totalValue, { color: colors.primary }]}>${costs.total.toLocaleString()}</Text>
+              <Text style={[styles.totalValue, { color: colors.primary }]}>{getCurrencySymbol(project.currency)} {costs.total.toLocaleString()}</Text>
             </View>
           </View>
         </View>

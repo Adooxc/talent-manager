@@ -13,6 +13,10 @@ import {
   getProjectById,
   getSettings,
   saveSettings,
+  getCategories,
+  saveCategory,
+  getBookings,
+  saveBooking,
   calculateProjectCosts,
   needsPhotoUpdate,
 } from './storage';
@@ -45,17 +49,20 @@ describe('Storage Utilities', () => {
 
       const newTalent = await saveTalent({
         name: 'Test Model',
-        category: 'model',
+        categoryId: 'cat-1',
+        gender: 'female',
         photos: ['photo1.jpg'],
         profilePhoto: 'photo1.jpg',
         phoneNumbers: ['+1234567890'],
         socialMedia: { instagram: '@testmodel' },
         pricePerProject: 1000,
+        currency: 'KWD',
         notes: 'Test notes',
       });
 
       expect(newTalent.id).toBeDefined();
       expect(newTalent.name).toBe('Test Model');
+      expect(newTalent.gender).toBe('female');
       expect(newTalent.createdAt).toBeDefined();
       expect(AsyncStorage.setItem).toHaveBeenCalled();
     });
@@ -64,12 +71,14 @@ describe('Storage Utilities', () => {
       const mockTalent: Talent = {
         id: 'test-id',
         name: 'Test Model',
-        category: 'model',
+        categoryId: 'cat-1',
+        gender: 'male',
         photos: ['photo1.jpg'],
         profilePhoto: 'photo1.jpg',
         phoneNumbers: [],
         socialMedia: {},
         pricePerProject: 1000,
+        currency: 'KWD',
         notes: '',
         createdAt: new Date().toISOString(),
         lastPhotoUpdate: new Date().toISOString(),
@@ -91,12 +100,14 @@ describe('Storage Utilities', () => {
       const mockTalent: Talent = {
         id: 'test-id',
         name: 'Test Model',
-        category: 'model',
+        categoryId: 'cat-1',
+        gender: 'female',
         photos: ['photo1.jpg'],
         profilePhoto: 'photo1.jpg',
         phoneNumbers: [],
         socialMedia: {},
         pricePerProject: 1000,
+        currency: 'KWD',
         notes: '',
         createdAt: new Date().toISOString(),
         lastPhotoUpdate: new Date().toISOString(),
@@ -112,12 +123,14 @@ describe('Storage Utilities', () => {
       const mockTalent: Talent = {
         id: 'test-id',
         name: 'Test Model',
-        category: 'model',
+        categoryId: 'cat-1',
+        gender: 'male',
         photos: ['photo1.jpg'],
         profilePhoto: 'photo1.jpg',
         phoneNumbers: [],
         socialMedia: {},
         pricePerProject: 1000,
+        currency: 'KWD',
         notes: '',
         createdAt: new Date().toISOString(),
         lastPhotoUpdate: new Date().toISOString(),
@@ -149,6 +162,7 @@ describe('Storage Utilities', () => {
         status: 'draft',
         talents: [{ talentId: 'talent-1' }],
         profitMarginPercent: 15,
+        currency: 'KWD',
       });
 
       expect(newProject.id).toBeDefined();
@@ -166,6 +180,7 @@ describe('Storage Utilities', () => {
         status: 'active',
         talents: [],
         profitMarginPercent: 15,
+        currency: 'KWD',
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       };
@@ -193,18 +208,72 @@ describe('Storage Utilities', () => {
     });
   });
 
+  describe('Categories', () => {
+    it('should initialize with default categories when none exist', async () => {
+      vi.mocked(AsyncStorage.getItem).mockResolvedValue(null);
+      vi.mocked(AsyncStorage.setItem).mockResolvedValue();
+
+      const categories = await getCategories();
+      expect(categories.length).toBe(4);
+      expect(categories[0].name).toBe('Actors');
+    });
+
+    it('should save a new category', async () => {
+      vi.mocked(AsyncStorage.getItem).mockResolvedValue(JSON.stringify([]));
+      vi.mocked(AsyncStorage.setItem).mockResolvedValue();
+
+      const newCategory = await saveCategory({
+        name: 'New Category',
+        nameAr: 'فئة جديدة',
+        order: 5,
+      });
+
+      expect(newCategory.id).toBeDefined();
+      expect(newCategory.name).toBe('New Category');
+    });
+  });
+
+  describe('Bookings', () => {
+    it('should return empty array when no bookings exist', async () => {
+      vi.mocked(AsyncStorage.getItem).mockResolvedValue(null);
+      const bookings = await getBookings();
+      expect(bookings).toEqual([]);
+    });
+
+    it('should save a new booking', async () => {
+      vi.mocked(AsyncStorage.getItem).mockResolvedValue(null);
+      vi.mocked(AsyncStorage.setItem).mockResolvedValue();
+
+      const newBooking = await saveBooking({
+        talentId: 'talent-1',
+        title: 'Photo Shoot',
+        location: 'Studio A',
+        startDate: '2025-01-15T10:00:00Z',
+        endDate: '2025-01-15T14:00:00Z',
+        allDay: false,
+        notes: 'Test booking',
+      });
+
+      expect(newBooking.id).toBeDefined();
+      expect(newBooking.title).toBe('Photo Shoot');
+      expect(newBooking.createdAt).toBeDefined();
+    });
+  });
+
   describe('calculateProjectCosts', () => {
     it('should calculate costs correctly', () => {
       const talents: Talent[] = [
         {
           id: 'talent-1',
           name: 'Model 1',
-          category: 'model',
+          categoryId: 'cat-1',
+          gender: 'female',
           photos: [],
           profilePhoto: '',
           phoneNumbers: [],
           socialMedia: {},
           pricePerProject: 1000,
+          currency: 'KWD',
           notes: '',
           createdAt: '',
           lastPhotoUpdate: '',
@@ -212,12 +281,14 @@ describe('Storage Utilities', () => {
         {
           id: 'talent-2',
           name: 'Model 2',
-          category: 'model',
+          categoryId: 'cat-1',
+          gender: 'male',
           photos: [],
           profilePhoto: '',
           phoneNumbers: [],
           socialMedia: {},
           pricePerProject: 2000,
+          currency: 'KWD',
           notes: '',
           createdAt: '',
           lastPhotoUpdate: '',
@@ -252,12 +323,14 @@ describe('Storage Utilities', () => {
       const talent: Talent = {
         id: 'test',
         name: 'Test',
-        category: 'model',
+        categoryId: 'cat-1',
+        gender: 'female',
         photos: [],
         profilePhoto: '',
         phoneNumbers: [],
         socialMedia: {},
         pricePerProject: 0,
+        currency: 'KWD',
         notes: '',
         createdAt: '',
         lastPhotoUpdate: oldDate.toISOString(),
@@ -273,12 +346,14 @@ describe('Storage Utilities', () => {
       const talent: Talent = {
         id: 'test',
         name: 'Test',
-        category: 'model',
+        categoryId: 'cat-1',
+        gender: 'male',
         photos: [],
         profilePhoto: '',
         phoneNumbers: [],
         socialMedia: {},
         pricePerProject: 0,
+        currency: 'KWD',
         notes: '',
         createdAt: '',
         lastPhotoUpdate: recentDate.toISOString(),

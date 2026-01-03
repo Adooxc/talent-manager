@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import {
   FlatList,
   Text,
@@ -8,6 +8,7 @@ import {
   Pressable,
   StyleSheet,
   RefreshControl,
+  ScrollView,
 } from "react-native";
 import { Image } from "expo-image";
 import { useRouter } from "expo-router";
@@ -17,51 +18,43 @@ import { Platform } from "react-native";
 import { ScreenContainer } from "@/components/screen-container";
 import { IconSymbol } from "@/components/ui/icon-symbol";
 import { useColors } from "@/hooks/use-colors";
-import { Talent, TalentCategory } from "@/lib/types";
-import { getTalents, needsPhotoUpdate } from "@/lib/storage";
+import { Talent, Category, Gender } from "@/lib/types";
+import { getTalents, needsPhotoUpdate, getCategories, getCurrencySymbol } from "@/lib/storage";
 import { useFocusEffect } from "@react-navigation/native";
-
-const CATEGORY_LABELS: Record<TalentCategory, string> = {
-  model: "Model",
-  artist: "Artist",
-  both: "Model & Artist",
-};
-
-const CATEGORY_COLORS: Record<TalentCategory, string> = {
-  model: "#6366F1",
-  artist: "#EC4899",
-  both: "#8B5CF6",
-};
 
 export default function TalentsScreen() {
   const router = useRouter();
   const colors = useColors();
   const [talents, setTalents] = useState<Talent[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [refreshing, setRefreshing] = useState(false);
-  const [filterCategory, setFilterCategory] = useState<TalentCategory | "all">("all");
+  const [filterCategoryId, setFilterCategoryId] = useState<string | "all">("all");
+  const [filterGender, setFilterGender] = useState<Gender | "all">("all");
 
-  const loadTalents = useCallback(async () => {
-    const data = await getTalents();
-    setTalents(data.sort((a, b) => a.name.localeCompare(b.name)));
+  const loadData = useCallback(async () => {
+    const [talentsData, catsData] = await Promise.all([getTalents(), getCategories()]);
+    setTalents(talentsData.sort((a, b) => a.name.localeCompare(b.name)));
+    setCategories(catsData);
   }, []);
 
   useFocusEffect(
     useCallback(() => {
-      loadTalents();
-    }, [loadTalents])
+      loadData();
+    }, [loadData])
   );
 
   const onRefresh = async () => {
     setRefreshing(true);
-    await loadTalents();
+    await loadData();
     setRefreshing(false);
   };
 
   const filteredTalents = talents.filter((talent) => {
     const matchesSearch = talent.name.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesCategory = filterCategory === "all" || talent.category === filterCategory;
-    return matchesSearch && matchesCategory;
+    const matchesCategory = filterCategoryId === "all" || talent.categoryId === filterCategoryId;
+    const matchesGender = filterGender === "all" || talent.gender === filterGender;
+    return matchesSearch && matchesCategory && matchesGender;
   });
 
   const handleAddTalent = () => {
@@ -78,8 +71,14 @@ export default function TalentsScreen() {
     router.push(`/talent/${talent.id}` as any);
   };
 
+  const getCategoryName = (categoryId: string) => {
+    const cat = categories.find(c => c.id === categoryId);
+    return cat?.name || "Unknown";
+  };
+
   const renderTalentCard = ({ item }: { item: Talent }) => {
     const needsUpdate = needsPhotoUpdate(item);
+    const currencySymbol = getCurrencySymbol(item.currency);
     
     return (
       <Pressable
@@ -107,13 +106,11 @@ export default function TalentsScreen() {
               <IconSymbol name="bell.fill" size={12} color="#FFF" />
             </View>
           )}
-          <View
-            style={[
-              styles.categoryBadge,
-              { backgroundColor: CATEGORY_COLORS[item.category] },
-            ]}
-          >
-            <Text style={styles.categoryText}>{CATEGORY_LABELS[item.category]}</Text>
+          <View style={[styles.categoryBadge, { backgroundColor: colors.primary }]}>
+            <Text style={styles.categoryText}>{getCategoryName(item.categoryId)}</Text>
+          </View>
+          <View style={[styles.genderBadge, { backgroundColor: item.gender === 'male' ? '#3B82F6' : '#EC4899' }]}>
+            <Text style={styles.genderText}>{item.gender === 'male' ? '♂' : '♀'}</Text>
           </View>
         </View>
         <View style={styles.cardContent}>
@@ -121,35 +118,10 @@ export default function TalentsScreen() {
             {item.name}
           </Text>
           <Text style={[styles.talentPrice, { color: colors.muted }]}>
-            ${item.pricePerProject.toLocaleString()}
+            {currencySymbol} {item.pricePerProject.toLocaleString()}
           </Text>
         </View>
       </Pressable>
-    );
-  };
-
-  const renderFilterButton = (category: TalentCategory | "all", label: string) => {
-    const isActive = filterCategory === category;
-    return (
-      <TouchableOpacity
-        onPress={() => setFilterCategory(category)}
-        style={[
-          styles.filterButton,
-          {
-            backgroundColor: isActive ? colors.primary : colors.surface,
-            borderColor: isActive ? colors.primary : colors.border,
-          },
-        ]}
-      >
-        <Text
-          style={[
-            styles.filterButtonText,
-            { color: isActive ? "#FFF" : colors.foreground },
-          ]}
-        >
-          {label}
-        </Text>
-      </TouchableOpacity>
     );
   };
 
@@ -158,7 +130,7 @@ export default function TalentsScreen() {
       <View style={styles.header}>
         <Text style={[styles.title, { color: colors.foreground }]}>Talents</Text>
         <Text style={[styles.subtitle, { color: colors.muted }]}>
-          {talents.length} {talents.length === 1 ? "talent" : "talents"}
+          {filteredTalents.length} of {talents.length} {talents.length === 1 ? "talent" : "talents"}
         </Text>
       </View>
 
@@ -174,12 +146,90 @@ export default function TalentsScreen() {
         />
       </View>
 
-      <View style={styles.filterContainer}>
-        {renderFilterButton("all", "All")}
-        {renderFilterButton("model", "Models")}
-        {renderFilterButton("artist", "Artists")}
-        {renderFilterButton("both", "Both")}
+      {/* Gender Filter */}
+      <View style={styles.genderFilterContainer}>
+        <TouchableOpacity
+          onPress={() => setFilterGender("all")}
+          style={[
+            styles.genderFilterButton,
+            {
+              backgroundColor: filterGender === "all" ? colors.primary : colors.surface,
+              borderColor: filterGender === "all" ? colors.primary : colors.border,
+            },
+          ]}
+        >
+          <Text style={[styles.genderFilterText, { color: filterGender === "all" ? "#FFF" : colors.foreground }]}>
+            All
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => setFilterGender("female")}
+          style={[
+            styles.genderFilterButton,
+            {
+              backgroundColor: filterGender === "female" ? "#EC4899" : colors.surface,
+              borderColor: filterGender === "female" ? "#EC4899" : colors.border,
+            },
+          ]}
+        >
+          <Text style={[styles.genderFilterText, { color: filterGender === "female" ? "#FFF" : colors.foreground }]}>
+            Women
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => setFilterGender("male")}
+          style={[
+            styles.genderFilterButton,
+            {
+              backgroundColor: filterGender === "male" ? "#3B82F6" : colors.surface,
+              borderColor: filterGender === "male" ? "#3B82F6" : colors.border,
+            },
+          ]}
+        >
+          <Text style={[styles.genderFilterText, { color: filterGender === "male" ? "#FFF" : colors.foreground }]}>
+            Men
+          </Text>
+        </TouchableOpacity>
       </View>
+
+      {/* Category Filter */}
+      <ScrollView 
+        horizontal 
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={styles.filterContainer}
+      >
+        <TouchableOpacity
+          onPress={() => setFilterCategoryId("all")}
+          style={[
+            styles.filterButton,
+            {
+              backgroundColor: filterCategoryId === "all" ? colors.primary : colors.surface,
+              borderColor: filterCategoryId === "all" ? colors.primary : colors.border,
+            },
+          ]}
+        >
+          <Text style={[styles.filterButtonText, { color: filterCategoryId === "all" ? "#FFF" : colors.foreground }]}>
+            All Categories
+          </Text>
+        </TouchableOpacity>
+        {categories.map((cat) => (
+          <TouchableOpacity
+            key={cat.id}
+            onPress={() => setFilterCategoryId(cat.id)}
+            style={[
+              styles.filterButton,
+              {
+                backgroundColor: filterCategoryId === cat.id ? colors.primary : colors.surface,
+                borderColor: filterCategoryId === cat.id ? colors.primary : colors.border,
+              },
+            ]}
+          >
+            <Text style={[styles.filterButtonText, { color: filterCategoryId === cat.id ? "#FFF" : colors.foreground }]}>
+              {cat.name}
+            </Text>
+          </TouchableOpacity>
+        ))}
+      </ScrollView>
 
       <FlatList
         data={filteredTalents}
@@ -196,12 +246,12 @@ export default function TalentsScreen() {
           <View style={styles.emptyContainer}>
             <IconSymbol name="person.2.fill" size={64} color={colors.muted} />
             <Text style={[styles.emptyText, { color: colors.muted }]}>
-              {searchQuery || filterCategory !== "all"
+              {searchQuery || filterCategoryId !== "all" || filterGender !== "all"
                 ? "No talents found"
                 : "No talents yet"}
             </Text>
             <Text style={[styles.emptySubtext, { color: colors.muted }]}>
-              {searchQuery || filterCategory !== "all"
+              {searchQuery || filterCategoryId !== "all" || filterGender !== "all"
                 ? "Try adjusting your search or filters"
                 : "Tap the + button to add your first talent"}
             </Text>
@@ -249,8 +299,24 @@ const styles = StyleSheet.create({
     marginLeft: 10,
     fontSize: 16,
   },
-  filterContainer: {
+  genderFilterContainer: {
     flexDirection: "row",
+    paddingHorizontal: 20,
+    marginBottom: 12,
+    gap: 8,
+  },
+  genderFilterButton: {
+    flex: 1,
+    paddingVertical: 10,
+    borderRadius: 20,
+    borderWidth: 1,
+    alignItems: "center",
+  },
+  genderFilterText: {
+    fontSize: 14,
+    fontWeight: "600",
+  },
+  filterContainer: {
     paddingHorizontal: 20,
     marginBottom: 16,
     gap: 8,
@@ -306,8 +372,8 @@ const styles = StyleSheet.create({
   },
   categoryBadge: {
     position: "absolute",
-    top: 8,
-    right: 8,
+    bottom: 8,
+    left: 8,
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: 8,
@@ -316,6 +382,21 @@ const styles = StyleSheet.create({
     color: "#FFF",
     fontSize: 10,
     fontWeight: "600",
+  },
+  genderBadge: {
+    position: "absolute",
+    top: 8,
+    right: 8,
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  genderText: {
+    color: "#FFF",
+    fontSize: 12,
+    fontWeight: "700",
   },
   cardContent: {
     padding: 12,

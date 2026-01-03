@@ -41,3 +41,20 @@
 - [x] Implement reminder frequency settings
 - [x] Add default profit margin setting
 - [x] Implement theme toggle (light/dark)
+
+## Cast Services Updates (NEW)
+- [x] Add custom categories management (add/edit/delete categories)
+- [x] Add gender field to talents (Male/Female)
+- [x] Add gender filter tabs (Women/Men/All)
+- [x] Add calendar/availability tracking per talent
+- [x] Add booking events with date/time/location
+- [x] Add multiple currency support (KWD, SAR, AED, USD, EUR)
+- [x] Update talent list to filter by category
+- [x] Add currency picker in project creation
+- [x] Update PDF export with currency support
+
+## Pending Features
+- [ ] Backup and restore data
+- [ ] Multiple photos per talent (gallery)
+- [ ] Advanced search filters
+- [ ] Export all data as JSON
