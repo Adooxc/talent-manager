@@ -18,7 +18,7 @@ import { ScreenContainer } from "@/components/screen-container";
 import { IconSymbol } from "@/components/ui/icon-symbol";
 import { useColors } from "@/hooks/use-colors";
 import { Talent, Category, CURRENCIES } from "@/lib/types";
-import { getTalentById, deleteTalent, needsPhotoUpdate, getCategories, getCurrencySymbol } from "@/lib/storage";
+import { getTalentById, deleteTalent, needsPhotoUpdate, getCategories, getCurrencySymbol, updateTalent } from "@/lib/storage";
 import { useFocusEffect } from "@react-navigation/native";
 
 export default function TalentDetailScreen() {
@@ -57,6 +57,27 @@ export default function TalentDetailScreen() {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     }
     router.push(`/talent/calendar/${id}` as any);
+  };
+
+  const handleHistory = () => {
+    if (Platform.OS !== "web") {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    }
+    router.push(`/talent/history/${id}` as any);
+  };
+
+  const handleArchive = async () => {
+    if (!talent) return;
+    const newArchiveStatus = !talent.isArchived;
+    if (Platform.OS !== "web") {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    }
+    await updateTalent(id!, { isArchived: newArchiveStatus });
+    setTalent({ ...talent, isArchived: newArchiveStatus });
+    Alert.alert(
+      newArchiveStatus ? "Archived" : "Unarchived",
+      `${talent.name} has been ${newArchiveStatus ? "archived" : "restored"}.`
+    );
   };
 
   const handleDelete = () => {
@@ -136,8 +157,14 @@ export default function TalentDetailScreen() {
           <Text style={[styles.backText, { color: colors.primary }]}>Back</Text>
         </TouchableOpacity>
         <View style={styles.headerActions}>
+          <TouchableOpacity onPress={handleHistory} style={styles.headerButton}>
+            <IconSymbol name="folder.fill" size={22} color={colors.primary} />
+          </TouchableOpacity>
           <TouchableOpacity onPress={handleCalendar} style={styles.headerButton}>
             <IconSymbol name="calendar" size={22} color={colors.primary} />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={handleArchive} style={styles.headerButton}>
+            <IconSymbol name="archivebox.fill" size={22} color={talent.isArchived ? colors.warning : colors.muted} />
           </TouchableOpacity>
           <TouchableOpacity onPress={handleEdit} style={styles.headerButton}>
             <IconSymbol name="pencil" size={22} color={colors.primary} />

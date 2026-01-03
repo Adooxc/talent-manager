@@ -61,6 +61,16 @@ const MAPPING = {
   "arrow.clockwise": "refresh",
   "message.fill": "message",
   "info.circle.fill": "info",
+  "archivebox.fill": "archive",
+  "briefcase.fill": "work",
+  "creditcard.fill": "credit-card",
+  "clock": "access-time",
+  "paperclip": "attach-file",
+  "chart.pie.fill": "pie-chart",
+  "arrow.up.right": "trending-up",
+  "arrow.down.right": "trending-down",
+  "receipt.fill": "receipt",
+  "doc.text.fill": "article",
 } as IconMapping;
 
 /**

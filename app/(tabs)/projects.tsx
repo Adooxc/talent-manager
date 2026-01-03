@@ -141,10 +141,18 @@ export default function ProjectsScreen() {
   return (
     <ScreenContainer className="flex-1">
       <View style={styles.header}>
-        <Text style={[styles.title, { color: colors.foreground }]}>Projects</Text>
-        <Text style={[styles.subtitle, { color: colors.muted }]}>
-          {projects.length} {projects.length === 1 ? "project" : "projects"}
-        </Text>
+        <View style={styles.headerLeft}>
+          <Text style={[styles.title, { color: colors.foreground }]}>Projects</Text>
+          <Text style={[styles.subtitle, { color: colors.muted }]}>
+            {projects.length} {projects.length === 1 ? "project" : "projects"}
+          </Text>
+        </View>
+        <TouchableOpacity
+          onPress={() => router.push('/project/calendar' as any)}
+          style={[styles.calendarButton, { backgroundColor: colors.surface }]}
+        >
+          <IconSymbol name="calendar" size={22} color={colors.primary} />
+        </TouchableOpacity>
       </View>
 
       <FlatList
@@ -182,9 +190,22 @@ export default function ProjectsScreen() {
 
 const styles = StyleSheet.create({
   header: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
     paddingHorizontal: 20,
     paddingTop: 8,
     paddingBottom: 16,
+  },
+  headerLeft: {
+    flex: 1,
+  },
+  calendarButton: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    alignItems: "center",
+    justifyContent: "center",
   },
   title: {
     fontSize: 34,

@@ -8,8 +8,8 @@ import {
   StyleSheet,
   TextInput,
   Alert,
-  Share,
   ActivityIndicator,
+  I18nManager,
 } from "react-native";
 import * as Haptics from "expo-haptics";
 import * as FileSystem from "expo-file-system/legacy";
@@ -21,7 +21,15 @@ import { useRouter } from "expo-router";
 import { ScreenContainer } from "@/components/screen-container";
 import { IconSymbol } from "@/components/ui/icon-symbol";
 import { useColors } from "@/hooks/use-colors";
-import { AppSettings, DEFAULT_SETTINGS, CURRENCIES } from "@/lib/types";
+import { 
+  AppSettings, 
+  DEFAULT_SETTINGS, 
+  THEME_COLORS, 
+  FONT_SIZES,
+  ThemeColor,
+  FontSize,
+  AppLanguage,
+} from "@/lib/types";
 import { getSettings, saveSettings, clearAllData, getCategories, exportAllData, importAllData } from "@/lib/storage";
 import { useFocusEffect } from "@react-navigation/native";
 import { useAuth } from "@/hooks/use-auth";
@@ -33,7 +41,6 @@ export default function SettingsScreen() {
   const [settings, setSettings] = useState<AppSettings>(DEFAULT_SETTINGS);
   const [profitMarginInput, setProfitMarginInput] = useState("");
   const [categoryCount, setCategoryCount] = useState(0);
-  const [isSyncing, setIsSyncing] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
   const [isImporting, setIsImporting] = useState(false);
 
@@ -58,6 +65,56 @@ export default function SettingsScreen() {
     setSettings(updated);
   };
 
+  const handleToggleDarkMode = async (value: boolean) => {
+    if (Platform.OS !== "web") {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    }
+    const updated = await saveSettings({ darkMode: value });
+    setSettings(updated);
+    // Note: Full dark mode implementation requires ThemeProvider update
+  };
+
+  const handleThemeColorChange = async (color: ThemeColor) => {
+    if (Platform.OS !== "web") {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    }
+    const updated = await saveSettings({ themeColor: color });
+    setSettings(updated);
+  };
+
+  const handleFontSizeChange = async (size: FontSize) => {
+    if (Platform.OS !== "web") {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    }
+    const updated = await saveSettings({ fontSize: size });
+    setSettings(updated);
+  };
+
+  const handleLanguageChange = async (lang: AppLanguage) => {
+    if (Platform.OS !== "web") {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    }
+    const updated = await saveSettings({ language: lang });
+    setSettings(updated);
+    
+    // Handle RTL for Arabic
+    if (lang === 'ar' && !I18nManager.isRTL) {
+      I18nManager.forceRTL(true);
+      Alert.alert(
+        "Language Changed",
+        "Please restart the app to apply the Arabic layout.",
+        [{ text: "OK" }]
+      );
+    } else if (lang === 'en' && I18nManager.isRTL) {
+      I18nManager.forceRTL(false);
+      Alert.alert(
+        "Language Changed",
+        "Please restart the app to apply the English layout.",
+        [{ text: "OK" }]
+      );
+    }
+  };
+
   const handleProfitMarginChange = async (text: string) => {
     setProfitMarginInput(text);
     const value = parseFloat(text);
@@ -65,14 +122,6 @@ export default function SettingsScreen() {
       const updated = await saveSettings({ defaultProfitMargin: value });
       setSettings(updated);
     }
-  };
-
-  const handleCurrencyChange = async (currency: string) => {
-    if (Platform.OS !== "web") {
-      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    }
-    const updated = await saveSettings({ defaultCurrency: currency });
-    setSettings(updated);
   };
 
   const handleExportBackup = async () => {
@@ -83,7 +132,6 @@ export default function SettingsScreen() {
       const fileName = `talent_manager_backup_${new Date().toISOString().split("T")[0]}.json`;
       
       if (Platform.OS === "web") {
-        // Web: Download file
         const blob = new Blob([jsonString], { type: "application/json" });
         const url = URL.createObjectURL(blob);
         const a = document.createElement("a");
@@ -93,7 +141,6 @@ export default function SettingsScreen() {
         URL.revokeObjectURL(url);
         Alert.alert("Success", "Backup file downloaded successfully.");
       } else {
-        // Mobile: Save and share
         const filePath = `${FileSystem.cacheDirectory}${fileName}`;
         await FileSystem.writeAsStringAsync(filePath, jsonString);
         
@@ -197,6 +244,9 @@ export default function SettingsScreen() {
     );
   };
 
+  const isArabic = settings.language === 'ar';
+  const t = (en: string, ar: string) => isArabic ? ar : en;
+
   const renderSettingRow = (
     icon: any,
     title: string,
@@ -226,7 +276,9 @@ export default function SettingsScreen() {
   return (
     <ScreenContainer className="flex-1">
       <View style={styles.header}>
-        <Text style={[styles.title, { color: colors.foreground }]}>Settings</Text>
+        <Text style={[styles.title, { color: colors.foreground }]}>
+          {t("Settings", "الإعدادات")}
+        </Text>
       </View>
 
       <ScrollView
@@ -235,7 +287,9 @@ export default function SettingsScreen() {
       >
         {/* Account Section */}
         <View style={[styles.section, { backgroundColor: colors.surface, borderColor: colors.border }]}>
-          <Text style={[styles.sectionTitle, { color: colors.muted }]}>ACCOUNT</Text>
+          <Text style={[styles.sectionTitle, { color: colors.muted }]}>
+            {t("ACCOUNT", "الحساب")}
+          </Text>
           
           {authLoading ? (
             <View style={styles.loadingRow}>
@@ -249,10 +303,10 @@ export default function SettingsScreen() {
               </View>
               <View style={styles.settingContent}>
                 <Text style={[styles.settingTitle, { color: colors.foreground }]}>
-                  {user.name || "Signed In"}
+                  {user.name || t("Signed In", "تم تسجيل الدخول")}
                 </Text>
                 <Text style={[styles.settingSubtitle, { color: colors.muted }]}>
-                  {user.email || "Cloud sync enabled"}
+                  {user.email || t("Cloud sync enabled", "المزامنة السحابية مفعلة")}
                 </Text>
               </View>
             </View>
@@ -266,9 +320,11 @@ export default function SettingsScreen() {
                 <IconSymbol name="person.crop.circle.badge.plus" size={20} color="#FFF" />
               </View>
               <View style={styles.settingContent}>
-                <Text style={[styles.settingTitle, { color: colors.foreground }]}>Sign In</Text>
+                <Text style={[styles.settingTitle, { color: colors.foreground }]}>
+                  {t("Sign In", "تسجيل الدخول")}
+                </Text>
                 <Text style={[styles.settingSubtitle, { color: colors.muted }]}>
-                  Enable cloud sync across devices
+                  {t("Enable cloud sync across devices", "تفعيل المزامنة السحابية")}
                 </Text>
               </View>
               <IconSymbol name="chevron.right" size={20} color={colors.muted} />
@@ -276,9 +332,146 @@ export default function SettingsScreen() {
           )}
         </View>
 
+        {/* Appearance Section */}
+        <View style={[styles.section, { backgroundColor: colors.surface, borderColor: colors.border }]}>
+          <Text style={[styles.sectionTitle, { color: colors.muted }]}>
+            {t("APPEARANCE", "المظهر")}
+          </Text>
+          
+          {renderSettingRow(
+            "house.fill",
+            t("Dark Mode", "الوضع الداكن"),
+            t("Switch between light and dark theme", "التبديل بين الوضع الفاتح والداكن"),
+            <Switch
+              value={settings.darkMode}
+              onValueChange={handleToggleDarkMode}
+              trackColor={{ false: colors.border, true: colors.primary }}
+              thumbColor="#FFF"
+            />
+          )}
+
+          <View style={[styles.settingRow, { borderBottomColor: colors.border }]}>
+            <View style={[styles.iconContainer, { backgroundColor: colors.primary + "20" }]}>
+              <IconSymbol name="star.fill" size={20} color={colors.primary} />
+            </View>
+            <View style={styles.settingContent}>
+              <Text style={[styles.settingTitle, { color: colors.foreground }]}>
+                {t("Theme Color", "لون التطبيق")}
+              </Text>
+              <Text style={[styles.settingSubtitle, { color: colors.muted }]}>
+                {t("Choose your preferred accent color", "اختر لونك المفضل")}
+              </Text>
+            </View>
+          </View>
+          <View style={styles.colorPicker}>
+            {THEME_COLORS.map((c) => (
+              <TouchableOpacity
+                key={c.value}
+                onPress={() => handleThemeColorChange(c.value)}
+                style={[
+                  styles.colorButton,
+                  { backgroundColor: c.color },
+                  settings.themeColor === c.value && styles.colorButtonSelected,
+                ]}
+              >
+                {settings.themeColor === c.value && (
+                  <IconSymbol name="checkmark" size={16} color="#FFF" />
+                )}
+              </TouchableOpacity>
+            ))}
+          </View>
+
+          <View style={[styles.settingRow, { borderBottomColor: colors.border }]}>
+            <View style={[styles.iconContainer, { backgroundColor: colors.primary + "20" }]}>
+              <IconSymbol name="doc.fill" size={20} color={colors.primary} />
+            </View>
+            <View style={styles.settingContent}>
+              <Text style={[styles.settingTitle, { color: colors.foreground }]}>
+                {t("Font Size", "حجم الخط")}
+              </Text>
+              <Text style={[styles.settingSubtitle, { color: colors.muted }]}>
+                {t("Adjust text size for readability", "ضبط حجم النص")}
+              </Text>
+            </View>
+          </View>
+          <View style={styles.fontSizePicker}>
+            {FONT_SIZES.map((f) => (
+              <TouchableOpacity
+                key={f.value}
+                onPress={() => handleFontSizeChange(f.value)}
+                style={[
+                  styles.fontSizeButton,
+                  {
+                    backgroundColor: settings.fontSize === f.value ? colors.primary : colors.background,
+                    borderColor: settings.fontSize === f.value ? colors.primary : colors.border,
+                  },
+                ]}
+              >
+                <Text
+                  style={[
+                    styles.fontSizeLabel,
+                    { 
+                      color: settings.fontSize === f.value ? "#FFF" : colors.foreground,
+                      fontSize: 14 * f.multiplier,
+                    },
+                  ]}
+                >
+                  {f.label}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+
+          <View style={[styles.settingRow, { borderBottomWidth: 0 }]}>
+            <View style={[styles.iconContainer, { backgroundColor: colors.primary + "20" }]}>
+              <IconSymbol name="message.fill" size={20} color={colors.primary} />
+            </View>
+            <View style={styles.settingContent}>
+              <Text style={[styles.settingTitle, { color: colors.foreground }]}>
+                {t("Language", "اللغة")}
+              </Text>
+              <Text style={[styles.settingSubtitle, { color: colors.muted }]}>
+                {t("Choose app language", "اختر لغة التطبيق")}
+              </Text>
+            </View>
+          </View>
+          <View style={styles.languagePicker}>
+            <TouchableOpacity
+              onPress={() => handleLanguageChange('en')}
+              style={[
+                styles.languageButton,
+                {
+                  backgroundColor: settings.language === 'en' ? colors.primary : colors.background,
+                  borderColor: settings.language === 'en' ? colors.primary : colors.border,
+                },
+              ]}
+            >
+              <Text style={[styles.languageLabel, { color: settings.language === 'en' ? "#FFF" : colors.foreground }]}>
+                English
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => handleLanguageChange('ar')}
+              style={[
+                styles.languageButton,
+                {
+                  backgroundColor: settings.language === 'ar' ? colors.primary : colors.background,
+                  borderColor: settings.language === 'ar' ? colors.primary : colors.border,
+                },
+              ]}
+            >
+              <Text style={[styles.languageLabel, { color: settings.language === 'ar' ? "#FFF" : colors.foreground }]}>
+                العربية
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+
         {/* Categories Management */}
         <View style={[styles.section, { backgroundColor: colors.surface, borderColor: colors.border }]}>
-          <Text style={[styles.sectionTitle, { color: colors.muted }]}>CATEGORIES</Text>
+          <Text style={[styles.sectionTitle, { color: colors.muted }]}>
+            {t("CATEGORIES", "التصنيفات")}
+          </Text>
           
           <TouchableOpacity
             onPress={() => router.push("/settings/categories" as any)}
@@ -289,9 +482,56 @@ export default function SettingsScreen() {
               <IconSymbol name="folder.fill" size={20} color="#FFF" />
             </View>
             <View style={styles.settingContent}>
-              <Text style={[styles.settingTitle, { color: colors.foreground }]}>Manage Categories</Text>
+              <Text style={[styles.settingTitle, { color: colors.foreground }]}>
+                {t("Manage Categories", "إدارة التصنيفات")}
+              </Text>
               <Text style={[styles.settingSubtitle, { color: colors.muted }]}>
-                {categoryCount} {categoryCount === 1 ? "category" : "categories"} configured
+                {categoryCount} {categoryCount === 1 ? t("category", "تصنيف") : t("categories", "تصنيفات")}
+              </Text>
+            </View>
+            <IconSymbol name="chevron.right" size={20} color={colors.muted} />
+          </TouchableOpacity>
+        </View>
+
+        {/* Message Templates */}
+        <View style={[styles.section, { backgroundColor: colors.surface, borderColor: colors.border }]}>
+          <Text style={[styles.sectionTitle, { color: colors.muted }]}>
+            {t("COMMUNICATION", "التواصل")}
+          </Text>
+          
+          <TouchableOpacity
+            onPress={() => router.push("/settings/templates" as any)}
+            style={[styles.settingRow, { borderBottomColor: colors.border }]}
+            activeOpacity={0.7}
+          >
+            <View style={[styles.iconContainer, { backgroundColor: colors.success }]}>
+              <IconSymbol name="message.fill" size={20} color="#FFF" />
+            </View>
+            <View style={styles.settingContent}>
+              <Text style={[styles.settingTitle, { color: colors.foreground }]}>
+                {t("Message Templates", "قوالب الرسائل")}
+              </Text>
+              <Text style={[styles.settingSubtitle, { color: colors.muted }]}>
+                {t("Pre-written messages for WhatsApp", "رسائل جاهزة للواتساب")}
+              </Text>
+            </View>
+            <IconSymbol name="chevron.right" size={20} color={colors.muted} />
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            onPress={() => router.push("/settings/conversations" as any)}
+            style={[styles.settingRow, { borderBottomWidth: 0 }]}
+            activeOpacity={0.7}
+          >
+            <View style={[styles.iconContainer, { backgroundColor: colors.primary }]}>
+              <IconSymbol name="doc.fill" size={20} color="#FFF" />
+            </View>
+            <View style={styles.settingContent}>
+              <Text style={[styles.settingTitle, { color: colors.foreground }]}>
+                {t("Conversation Log", "سجل المحادثات")}
+              </Text>
+              <Text style={[styles.settingSubtitle, { color: colors.muted }]}>
+                {t("Notes from calls and meetings", "ملاحظات المكالمات والاجتماعات")}
               </Text>
             </View>
             <IconSymbol name="chevron.right" size={20} color={colors.muted} />
@@ -300,12 +540,14 @@ export default function SettingsScreen() {
 
         {/* Reminders */}
         <View style={[styles.section, { backgroundColor: colors.surface, borderColor: colors.border }]}>
-          <Text style={[styles.sectionTitle, { color: colors.muted }]}>REMINDERS</Text>
+          <Text style={[styles.sectionTitle, { color: colors.muted }]}>
+            {t("REMINDERS", "التذكيرات")}
+          </Text>
           
           {renderSettingRow(
             "bell.fill",
-            "Monthly Photo Updates",
-            "Get reminded to update talent photos",
+            t("Monthly Photo Updates", "تحديث الصور الشهري"),
+            t("Get reminded to update talent photos", "تذكير بتحديث صور المواهب"),
             <Switch
               value={settings.monthlyReminderEnabled}
               onValueChange={handleToggleReminder}
@@ -320,12 +562,14 @@ export default function SettingsScreen() {
 
         {/* Pricing */}
         <View style={[styles.section, { backgroundColor: colors.surface, borderColor: colors.border }]}>
-          <Text style={[styles.sectionTitle, { color: colors.muted }]}>PRICING</Text>
+          <Text style={[styles.sectionTitle, { color: colors.muted }]}>
+            {t("PRICING", "التسعير")}
+          </Text>
           
           {renderSettingRow(
             "dollarsign.circle.fill",
-            "Default Profit Margin",
-            "Applied to new projects",
+            t("Default Profit Margin", "هامش الربح الافتراضي"),
+            t("Applied to new projects", "يطبق على المشاريع الجديدة"),
             <View style={styles.inputContainer}>
               <TextInput
                 style={[styles.input, { color: colors.foreground, borderColor: colors.border }]}
@@ -342,8 +586,8 @@ export default function SettingsScreen() {
 
           {renderSettingRow(
             "dollarsign.circle.fill",
-            "Currency",
-            "Kuwaiti Dinar (KD)",
+            t("Currency", "العملة"),
+            t("Kuwaiti Dinar (KD)", "الدينار الكويتي"),
             <View style={[styles.currencyBadge, { backgroundColor: colors.primary }]}>
               <Text style={styles.currencyBadgeText}>KWD</Text>
             </View>,
@@ -355,12 +599,14 @@ export default function SettingsScreen() {
 
         {/* Backup & Restore */}
         <View style={[styles.section, { backgroundColor: colors.surface, borderColor: colors.border }]}>
-          <Text style={[styles.sectionTitle, { color: colors.muted }]}>BACKUP & RESTORE</Text>
+          <Text style={[styles.sectionTitle, { color: colors.muted }]}>
+            {t("BACKUP & RESTORE", "النسخ الاحتياطي")}
+          </Text>
           
           {renderSettingRow(
             "square.and.arrow.up",
-            "Export Backup",
-            "Save all data to a JSON file",
+            t("Export Backup", "تصدير النسخة الاحتياطية"),
+            t("Save all data to a JSON file", "حفظ جميع البيانات كملف"),
             isExporting ? (
               <ActivityIndicator size="small" color={colors.primary} />
             ) : (
@@ -372,8 +618,8 @@ export default function SettingsScreen() {
 
           {renderSettingRow(
             "square.and.arrow.down",
-            "Import Backup",
-            "Restore data from a backup file",
+            t("Import Backup", "استيراد النسخة الاحتياطية"),
+            t("Restore data from a backup file", "استعادة البيانات من ملف"),
             isImporting ? (
               <ActivityIndicator size="small" color={colors.primary} />
             ) : (
@@ -387,7 +633,9 @@ export default function SettingsScreen() {
 
         {/* Data */}
         <View style={[styles.section, { backgroundColor: colors.surface, borderColor: colors.border }]}>
-          <Text style={[styles.sectionTitle, { color: colors.muted }]}>DATA</Text>
+          <Text style={[styles.sectionTitle, { color: colors.muted }]}>
+            {t("DATA", "البيانات")}
+          </Text>
           
           <TouchableOpacity
             onPress={handleClearData}
@@ -398,9 +646,11 @@ export default function SettingsScreen() {
               <IconSymbol name="trash.fill" size={20} color={colors.error} />
             </View>
             <View style={styles.settingContent}>
-              <Text style={[styles.settingTitle, { color: colors.error }]}>Clear All Data</Text>
+              <Text style={[styles.settingTitle, { color: colors.error }]}>
+                {t("Clear All Data", "حذف جميع البيانات")}
+              </Text>
               <Text style={[styles.settingSubtitle, { color: colors.muted }]}>
-                Delete all talents, projects, and settings
+                {t("Delete all talents, projects, and settings", "حذف جميع المواهب والمشاريع والإعدادات")}
               </Text>
             </View>
             <IconSymbol name="chevron.right" size={20} color={colors.muted} />
@@ -412,7 +662,7 @@ export default function SettingsScreen() {
             Talent Manager v1.0.0
           </Text>
           <Text style={[styles.footerText, { color: colors.muted }]}>
-            Personal use only
+            {t("Personal use only", "للاستخدام الشخصي فقط")}
           </Text>
         </View>
       </ScrollView>
@@ -489,28 +739,71 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginLeft: 6,
   },
-  currencyPicker: {
+  colorPicker: {
     flexDirection: "row",
     flexWrap: "wrap",
     paddingHorizontal: 16,
     paddingBottom: 16,
+    gap: 12,
+  },
+  colorButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  colorButtonSelected: {
+    borderWidth: 3,
+    borderColor: "#FFF",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 4,
+  },
+  fontSizePicker: {
+    flexDirection: "row",
+    paddingHorizontal: 16,
+    paddingBottom: 16,
     gap: 10,
   },
-  currencyButton: {
-    paddingHorizontal: 16,
+  fontSizeButton: {
+    flex: 1,
     paddingVertical: 10,
-    borderRadius: 12,
+    borderRadius: 10,
     borderWidth: 1,
     alignItems: "center",
-    minWidth: 70,
   },
-  currencyCode: {
+  fontSizeLabel: {
+    fontWeight: "500",
+  },
+  languagePicker: {
+    flexDirection: "row",
+    paddingHorizontal: 16,
+    paddingBottom: 16,
+    gap: 10,
+  },
+  languageButton: {
+    flex: 1,
+    paddingVertical: 12,
+    borderRadius: 10,
+    borderWidth: 1,
+    alignItems: "center",
+  },
+  languageLabel: {
+    fontSize: 15,
+    fontWeight: "500",
+  },
+  currencyBadge: {
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 8,
+  },
+  currencyBadgeText: {
+    color: "#FFF",
     fontSize: 14,
     fontWeight: "600",
-  },
-  currencyName: {
-    fontSize: 11,
-    marginTop: 2,
   },
   footer: {
     alignItems: "center",
@@ -530,15 +823,5 @@ const styles = StyleSheet.create({
   },
   loadingText: {
     fontSize: 14,
-  },
-  currencyBadge: {
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 8,
-  },
-  currencyBadgeText: {
-    color: "#FFF",
-    fontSize: 14,
-    fontWeight: "600",
   },
 });

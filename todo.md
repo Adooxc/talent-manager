@@ -19,7 +19,7 @@
 - [x] Local data persistence with AsyncStorage
 - [x] Custom categories management (add, edit, delete)
 - [x] Gender filter (Male/Female)
-- [x] Multiple currency support (KWD, SAR, AED, USD, EUR)
+- [x] KWD currency only
 - [x] Calendar/availability tracking for talents
 - [x] Booking system with date/time management
 - [x] WhatsApp link when clicking phone number
@@ -40,10 +40,34 @@
 - [x] Cloud sync database schema ready
 - [x] User authentication integration
 
-## Remaining Items
-- [ ] Dark mode toggle
-- [ ] Custom PDF templates (client, internal, invoice)
-- [ ] Per-talent notes in projects
+## New Features - UI Improvements
+- [x] Dark mode toggle
+- [x] Custom primary color selection
+- [x] Font size settings (small/medium/large)
+- [x] Arabic language support with RTL
 
-## Currency Update
-- [x] Change to KWD only (remove other currencies)
+## New Features - Talent Management
+- [x] Archive talents (hide inactive without deleting)
+- [x] Talent history (all past projects per talent)
+
+## New Features - Project Improvements
+- [ ] Copy/duplicate project as template
+- [ ] Project phases (preparation, shooting, delivery)
+- [ ] File attachments (contracts, documents)
+- [ ] Payment tracking (received, remaining)
+- [x] Project calendar view (monthly overview)
+
+## New Features - Reports & Analytics
+- [x] Monthly report (revenue and projects summary)
+- [x] Top talents statistics (most booked)
+- [x] Profit analysis (compare periods)
+
+## New Features - Communication
+- [x] Message templates (job offer, booking confirmation, thank you)
+- [ ] Bulk messaging to multiple talents
+- [x] Conversation log (notes per conversation)
+
+## New Features - Quotation & Invoice
+- [x] Generate and send Quotation (price offer) PDF
+- [x] Generate and send Invoice PDF
+- [ ] Track quotation/invoice status (sent, viewed, accepted, rejected)

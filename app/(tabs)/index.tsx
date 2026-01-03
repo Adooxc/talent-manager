@@ -63,6 +63,7 @@ export default function TalentsScreen() {
   const [filterCategoryId, setFilterCategoryId] = useState<string | "all">("all");
   const [filterGender, setFilterGender] = useState<Gender | "all">("all");
   const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
+  const [showArchivedOnly, setShowArchivedOnly] = useState(false);
   
   // Multi-select state
   const [selectMode, setSelectMode] = useState(false);
@@ -147,6 +148,7 @@ export default function TalentsScreen() {
       const matchesCategory = filterCategoryId === "all" || talent.categoryId === filterCategoryId;
       const matchesGender = filterGender === "all" || talent.gender === filterGender;
       const matchesFavorites = !showFavoritesOnly || talent.isFavorite;
+      const matchesArchived = showArchivedOnly ? talent.isArchived : !talent.isArchived;
       
       // Advanced filters
       const age = talent.customFields?.age;
@@ -170,7 +172,7 @@ export default function TalentsScreen() {
       const matchesTags = filters.tags.length === 0 || 
         filters.tags.some(tag => talent.tags?.includes(tag));
       
-      return matchesSearch && matchesCategory && matchesGender && matchesFavorites &&
+      return matchesSearch && matchesCategory && matchesGender && matchesFavorites && matchesArchived &&
              matchesAgeMin && matchesAgeMax && matchesPriceMin && matchesPriceMax &&
              matchesRating && matchesLocation && matchesNationality && matchesLanguages && matchesTags;
     });
@@ -508,6 +510,16 @@ export default function TalentsScreen() {
                 name={showFavoritesOnly ? "heart.fill" : "heart"} 
                 size={22} 
                 color={showFavoritesOnly ? "#EF4444" : colors.muted} 
+              />
+            </TouchableOpacity>
+            <TouchableOpacity 
+              onPress={() => setShowArchivedOnly(!showArchivedOnly)}
+              style={[styles.headerButton, showArchivedOnly && { backgroundColor: colors.warning + '20' }]}
+            >
+              <IconSymbol 
+                name="archivebox.fill" 
+                size={22} 
+                color={showArchivedOnly ? colors.warning : colors.muted} 
               />
             </TouchableOpacity>
             <TouchableOpacity 

@@ -430,6 +430,15 @@ export default function ProjectDetailScreen() {
               {exporting ? "Generating PDF..." : "Export as PDF"}
             </Text>
           </TouchableOpacity>
+          
+          <TouchableOpacity
+            onPress={() => router.push(`/project/quotation/${id}` as any)}
+            style={[styles.exportButton, { backgroundColor: colors.success, marginTop: 12 }]}
+            activeOpacity={0.8}
+          >
+            <IconSymbol name="doc.text.fill" size={22} color="#FFF" />
+            <Text style={styles.exportButtonText}>Generate Quotation / Invoice</Text>
+          </TouchableOpacity>
         </View>
 
         {/* Metadata */}
