@@ -148,14 +148,15 @@ export const DEFAULT_SETTINGS: AppSettings = {
   whatsappMessage: 'مرحباً {name}، أتواصل معك بخصوص فرصة عمل...',
 };
 
-// Currency options
+// Currency - KWD only
 export const CURRENCIES = [
   { code: 'KWD', symbol: 'KD', name: 'Kuwaiti Dinar' },
-  { code: 'USD', symbol: '$', name: 'US Dollar' },
-  { code: 'SAR', symbol: 'SR', name: 'Saudi Riyal' },
-  { code: 'AED', symbol: 'AED', name: 'UAE Dirham' },
-  { code: 'EUR', symbol: '€', name: 'Euro' },
 ];
+
+// Helper to get currency symbol
+export function getCurrencySymbol(code?: string): string {
+  return 'KD';
+}
 
 // Project status options with labels and colors
 export const PROJECT_STATUSES: { value: ProjectStatus; label: string; color: string }[] = [

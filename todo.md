@@ -44,3 +44,6 @@
 - [ ] Dark mode toggle
 - [ ] Custom PDF templates (client, internal, invoice)
 - [ ] Per-talent notes in projects
+
+## Currency Update
+- [x] Change to KWD only (remove other currencies)

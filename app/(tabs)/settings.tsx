@@ -340,49 +340,17 @@ export default function SettingsScreen() {
             </View>
           )}
 
-          <View style={[styles.settingRow, { borderBottomWidth: 0 }]}>
-            <View style={[styles.iconContainer, { backgroundColor: colors.success + "20" }]}>
-              <IconSymbol name="dollarsign.circle.fill" size={20} color={colors.success} />
-            </View>
-            <View style={styles.settingContent}>
-              <Text style={[styles.settingTitle, { color: colors.foreground }]}>Default Currency</Text>
-              <Text style={[styles.settingSubtitle, { color: colors.muted }]}>
-                Used for new talents and projects
-              </Text>
-            </View>
-          </View>
-          <View style={styles.currencyPicker}>
-            {CURRENCIES.map((c) => (
-              <TouchableOpacity
-                key={c.code}
-                onPress={() => handleCurrencyChange(c.code)}
-                style={[
-                  styles.currencyButton,
-                  {
-                    backgroundColor: settings.defaultCurrency === c.code ? colors.primary : colors.background,
-                    borderColor: settings.defaultCurrency === c.code ? colors.primary : colors.border,
-                  },
-                ]}
-              >
-                <Text
-                  style={[
-                    styles.currencyCode,
-                    { color: settings.defaultCurrency === c.code ? "#FFF" : colors.foreground },
-                  ]}
-                >
-                  {c.code}
-                </Text>
-                <Text
-                  style={[
-                    styles.currencyName,
-                    { color: settings.defaultCurrency === c.code ? "#FFF" : colors.muted },
-                  ]}
-                >
-                  {c.symbol}
-                </Text>
-              </TouchableOpacity>
-            ))}
-          </View>
+          {renderSettingRow(
+            "dollarsign.circle.fill",
+            "Currency",
+            "Kuwaiti Dinar (KD)",
+            <View style={[styles.currencyBadge, { backgroundColor: colors.primary }]}>
+              <Text style={styles.currencyBadgeText}>KWD</Text>
+            </View>,
+            colors.success,
+            undefined,
+            true
+          )}
         </View>
 
         {/* Backup & Restore */}
@@ -562,5 +530,15 @@ const styles = StyleSheet.create({
   },
   loadingText: {
     fontSize: 14,
+  },
+  currencyBadge: {
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 8,
+  },
+  currencyBadgeText: {
+    color: "#FFF",
+    fontSize: 14,
+    fontWeight: "600",
   },
 });
