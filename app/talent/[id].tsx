@@ -83,6 +83,14 @@ export default function TalentDetailScreen() {
     Linking.openURL(`tel:${phone}`);
   };
 
+  const handleWhatsApp = (phone: string) => {
+    // Remove any non-numeric characters except +
+    const cleanPhone = phone.replace(/[^0-9+]/g, '');
+    // Remove leading + if present for WhatsApp URL
+    const whatsappPhone = cleanPhone.startsWith('+') ? cleanPhone.substring(1) : cleanPhone;
+    Linking.openURL(`https://wa.me/${whatsappPhone}`);
+  };
+
   const handleSocialMedia = (url: string) => {
     if (!url.startsWith("http")) {
       url = `https://${url}`;
@@ -196,17 +204,27 @@ export default function TalentDetailScreen() {
           <View style={styles.section}>
             <Text style={[styles.sectionTitle, { color: colors.foreground }]}>Contact</Text>
             {talent.phoneNumbers.filter(p => p).map((phone, index) => (
-              <TouchableOpacity
-                key={index}
-                onPress={() => handleCall(phone)}
-                style={[styles.contactRow, { backgroundColor: colors.surface, borderColor: colors.border }]}
-              >
-                <View style={[styles.contactIcon, { backgroundColor: colors.success + "20" }]}>
+              <View key={index} style={[styles.contactRow, { backgroundColor: colors.surface, borderColor: colors.border }]}>
+                <TouchableOpacity
+                  onPress={() => handleWhatsApp(phone)}
+                  style={[styles.contactIcon, { backgroundColor: "#25D36620" }]}
+                >
+                  <Text style={{ fontSize: 18 }}>💬</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() => handleWhatsApp(phone)}
+                  style={styles.contactTextContainer}
+                >
+                  <Text style={[styles.contactText, { color: colors.foreground }]}>{phone}</Text>
+                  <Text style={[styles.contactHint, { color: colors.muted }]}>Tap to WhatsApp</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() => handleCall(phone)}
+                  style={[styles.callButton, { backgroundColor: colors.success + "20" }]}
+                >
                   <IconSymbol name="phone.fill" size={18} color={colors.success} />
-                </View>
-                <Text style={[styles.contactText, { color: colors.foreground }]}>{phone}</Text>
-                <IconSymbol name="chevron.right" size={18} color={colors.muted} />
-              </TouchableOpacity>
+                </TouchableOpacity>
+              </View>
             ))}
           </View>
         )}
@@ -481,8 +499,21 @@ const styles = StyleSheet.create({
     marginRight: 12,
   },
   contactText: {
-    flex: 1,
     fontSize: 16,
+  },
+  contactTextContainer: {
+    flex: 1,
+  },
+  contactHint: {
+    fontSize: 12,
+    marginTop: 2,
+  },
+  callButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    alignItems: "center",
+    justifyContent: "center",
   },
   socialRow: {
     flexDirection: "row",

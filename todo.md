@@ -58,3 +58,6 @@
 - [ ] Multiple photos per talent (gallery)
 - [ ] Advanced search filters
 - [ ] Export all data as JSON
+
+## WhatsApp Integration
+- [x] Add WhatsApp link when clicking phone number
