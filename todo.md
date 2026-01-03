@@ -111,3 +111,7 @@
 
 ## Current Issues - Button Width Flexibility
 - [x] Make category buttons expand width based on text length instead of fixed width
+
+
+## Current Issues - Spacing
+- [x] Reduce spacing between category filters and talent list to remove large gap

@@ -1142,7 +1142,7 @@ const styles = StyleSheet.create({
   filterContainer: {
     paddingHorizontal: 20,
     gap: 10,
-    paddingBottom: 12,
+    paddingBottom: 4,
     paddingTop: 0,
   },
   filterButton: {
@@ -1343,7 +1343,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    paddingTop: 80,
+    paddingTop: 20,
   },
   emptyText: {
     fontSize: 18,
