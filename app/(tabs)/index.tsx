@@ -763,7 +763,7 @@ export default function TalentsScreen() {
         numColumns={viewMode === 'grid' ? 2 : 1}
         key={viewMode}
         columnWrapperStyle={viewMode === 'grid' ? styles.row : undefined}
-        contentContainerStyle={[styles.listContent, { marginTop: -40 }]}
+        contentContainerStyle={[styles.listContent, { marginTop: -25 }]}
         showsVerticalScrollIndicator={false}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.primary} />
