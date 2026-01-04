@@ -342,52 +342,7 @@ export default function SettingsScreen() {
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        {/* Account Section */}
-        <View style={[styles.section, { backgroundColor: colors.surface, borderColor: colors.border }]}>
-          <Text style={[styles.sectionTitle, { color: colors.muted }]}>
-            {t("ACCOUNT", "الحساب")}
-          </Text>
-          
-          {authLoading ? (
-            <View style={styles.loadingRow}>
-              <ActivityIndicator size="small" color={colors.primary} />
-              <Text style={[styles.loadingText, { color: colors.muted }]}>Loading...</Text>
-            </View>
-          ) : user ? (
-            <View style={[styles.settingRow, { borderBottomWidth: 0 }]}>
-              <View style={[styles.iconContainer, { backgroundColor: colors.success }]}>
-                <IconSymbol name="checkmark.circle.fill" size={20} color="#FFF" />
-              </View>
-              <View style={styles.settingContent}>
-                <Text style={[styles.settingTitle, { color: colors.foreground }]}>
-                  {user.name || t("Signed In", "تم تسجيل الدخول")}
-                </Text>
-                <Text style={[styles.settingSubtitle, { color: colors.muted }]}>
-                  {user.email || t("Cloud sync enabled", "المزامنة السحابية مفعلة")}
-                </Text>
-              </View>
-            </View>
-          ) : (
-            <TouchableOpacity
-              onPress={() => router.push("/login" as any)}
-              style={[styles.settingRow, { borderBottomWidth: 0 }]}
-              activeOpacity={0.7}
-            >
-              <View style={[styles.iconContainer, { backgroundColor: colors.primary }]}>
-                <IconSymbol name="person.crop.circle.badge.plus" size={20} color="#FFF" />
-              </View>
-              <View style={styles.settingContent}>
-                <Text style={[styles.settingTitle, { color: colors.foreground }]}>
-                  {t("Sign In", "تسجيل الدخول")}
-                </Text>
-                <Text style={[styles.settingSubtitle, { color: colors.muted }]}>
-                  {t("Enable cloud sync across devices", "تفعيل المزامنة السحابية")}
-                </Text>
-              </View>
-              <IconSymbol name="chevron.right" size={20} color={colors.muted} />
-            </TouchableOpacity>
-          )}
-        </View>
+        {/* Account section removed - OAuth login disabled */}
 
         {/* Appearance Section */}
         <View style={[styles.section, { backgroundColor: colors.surface, borderColor: colors.border }]}>

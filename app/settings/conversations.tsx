@@ -330,7 +330,7 @@ export default function ConversationsScreen() {
                 placeholder="What was discussed..."
                 placeholderTextColor={colors.muted}
                 multiline
-                numberOfLines={6}
+                numberOfLines={3}
               />
             </ScrollView>
 
