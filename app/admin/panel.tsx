@@ -15,7 +15,6 @@ import {
   restoreFromBackup,
   deleteBackup,
   formatBackupDate,
-  getBackupFileSize,
   initializeBackupDir,
   type TemplateData,
 } from "@/lib/template-manager";
@@ -466,19 +465,34 @@ export default function AdminPanelScreen() {
                               {new Date(template.updatedAt).toLocaleDateString('ar-SA')}
                             </Text>
                           </View>
-                          <TouchableOpacity
-                            onPress={() => handleDeleteTemplate(template.id, 'invoice')}
-                            style={{
-                              paddingHorizontal: 12,
-                              paddingVertical: 6,
-                              backgroundColor: colors.error + '20',
-                              borderRadius: 4,
-                            }}
-                          >
-                            <Text style={{ color: colors.error, fontSize: 12, fontWeight: '600' }}>
-                              Delete
-                            </Text>
-                          </TouchableOpacity>
+                          <View className="flex-row gap-2">
+                            <TouchableOpacity
+                              onPress={() => router.push(`/admin/template-preview?templateId=${template.id}`)}
+                              style={{
+                                paddingHorizontal: 12,
+                                paddingVertical: 6,
+                                backgroundColor: colors.primary + '20',
+                                borderRadius: 4,
+                              }}
+                            >
+                              <Text style={{ color: colors.primary, fontSize: 12, fontWeight: '600' }}>
+                                View
+                              </Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                              onPress={() => handleDeleteTemplate(template.id, 'invoice')}
+                              style={{
+                                paddingHorizontal: 12,
+                                paddingVertical: 6,
+                                backgroundColor: colors.error + '20',
+                                borderRadius: 4,
+                              }}
+                            >
+                              <Text style={{ color: colors.error, fontSize: 12, fontWeight: '600' }}>
+                                Delete
+                              </Text>
+                            </TouchableOpacity>
+                          </View>
                         </View>
                       ))}
                     </View>
@@ -529,19 +543,34 @@ export default function AdminPanelScreen() {
                               {new Date(template.updatedAt).toLocaleDateString('ar-SA')}
                             </Text>
                           </View>
-                          <TouchableOpacity
-                            onPress={() => handleDeleteTemplate(template.id, 'quotation')}
-                            style={{
-                              paddingHorizontal: 12,
-                              paddingVertical: 6,
-                              backgroundColor: colors.error + '20',
-                              borderRadius: 4,
-                            }}
-                          >
-                            <Text style={{ color: colors.error, fontSize: 12, fontWeight: '600' }}>
-                              Delete
-                            </Text>
-                          </TouchableOpacity>
+                          <View className="flex-row gap-2">
+                            <TouchableOpacity
+                              onPress={() => router.push(`/admin/template-preview?templateId=${template.id}`)}
+                              style={{
+                                paddingHorizontal: 12,
+                                paddingVertical: 6,
+                                backgroundColor: colors.primary + '20',
+                                borderRadius: 4,
+                              }}
+                            >
+                              <Text style={{ color: colors.primary, fontSize: 12, fontWeight: '600' }}>
+                                View
+                              </Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                              onPress={() => handleDeleteTemplate(template.id, 'quotation')}
+                              style={{
+                                paddingHorizontal: 12,
+                                paddingVertical: 6,
+                                backgroundColor: colors.error + '20',
+                                borderRadius: 4,
+                              }}
+                            >
+                              <Text style={{ color: colors.error, fontSize: 12, fontWeight: '600' }}>
+                                Delete
+                              </Text>
+                            </TouchableOpacity>
+                          </View>
                         </View>
                       ))}
                     </View>
