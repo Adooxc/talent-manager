@@ -56,8 +56,36 @@ async function startServer() {
 
   registerOAuthRoutes(app);
 
+  // Health check endpoint for monitoring
+  app.get("/health", (_req, res) => {
+    res.json({
+      status: "healthy",
+      timestamp: new Date().toISOString(),
+      uptime: process.uptime(),
+      environment: process.env.NODE_ENV || "development",
+      version: "1.0.0",
+    });
+  });
+
+  // Detailed health check for API
   app.get("/api/health", (_req, res) => {
-    res.json({ ok: true, timestamp: Date.now() });
+    res.json({
+      ok: true,
+      timestamp: Date.now(),
+      uptime: process.uptime(),
+      memory: process.memoryUsage(),
+      environment: process.env.NODE_ENV || "development",
+    });
+  });
+
+  // Readiness check for Kubernetes/Docker
+  app.get("/ready", (_req, res) => {
+    res.json({ ready: true, timestamp: new Date().toISOString() });
+  });
+
+  // Liveness check for Kubernetes/Docker
+  app.get("/live", (_req, res) => {
+    res.json({ alive: true, timestamp: new Date().toISOString() });
   });
 
   app.use(
