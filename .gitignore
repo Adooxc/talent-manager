@@ -1,15 +1,21 @@
 # Learn more https://docs.github.com/en/get-started/getting-started-with-git/ignoring-files
 
-# dependencies
+# ============ DEPENDENCIES ============
 node_modules/
+.pnp
+.pnp.js
+pnpm-lock.yaml
 
-# Expo
+# ============ EXPO & BUILD ============
 .expo/
+.expo-shared/
 dist/
+build/
 web-build/
 expo-env.d.ts
+.metro-health-check*
 
-# Native
+# ============ NATIVE BUILD ============
 .kotlin/
 *.orig.*
 *.jks
@@ -17,46 +23,83 @@ expo-env.d.ts
 *.p12
 *.key
 *.mobileprovision
-
-# Metro
-.metro-health-check*
-
-# debug
-npm-debug.*
-yarn-debug.*
-yarn-error.*
-
-# macOS
-.DS_Store
-*.pem
-
-# local env files
-.env*.local
-
-# typescript
-*.tsbuildinfo
-
-app-example
-
-# generated native folders
 /ios
 /android
 
-# IDE
+# ============ TESTING & COVERAGE ============
+coverage/
+.nyc_output/
+
+# ============ DEBUG & LOGS ============
+npm-debug.*
+yarn-debug.*
+yarn-error.*
+lerna-debug.log*
+logs/
+*.log
+
+# ============ ENVIRONMENT & SECRETS ============
+.env
+.env.local
+.env.*.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# ============ IDE & EDITOR ============
 .vscode/
 .idea/
 *.swp
 *.swo
 *~
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
+*.sublime-project
 
-# Logs
-logs
-*.log
-
-# OS
+# ============ OS ============
+.DS_Store
 Thumbs.db
+*.pem
 
-# Build files
+# ============ DATABASE ============
+*.db
+*.sqlite
+*.sqlite3
+
+# ============ CACHE ============
+.eslintcache
+.cache/
+.next/
+
+# ============ TEMPORARY ============
+tmp/
+temp/
+*.tmp
+app-example
+
+# ============ TYPESCRIPT ============
+*.tsbuildinfo
+
+# ============ BUILD ARTIFACTS ============
 *.tgz
 *.tar.gz
-.cache/
+*.zip
+
+# ============ MANUS SPECIFIC ============
+.manus/db/db-query-*.json
+
+# ============ MISC ============
+.DS_Store
+.AppleDouble
+.LSOverride
+*.sublime-workspace
+.vscode-test
+.yarn/cache
+.yarn/unplugged
+.yarn/build-state.yml
+.yarn/install-state.gz
+.pnp.*
