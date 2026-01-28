@@ -1,11 +1,10 @@
-import { useState, useEffect } from "react";
-import { View, Text, TouchableOpacity, ActivityIndicator, Image, ScrollView, Alert } from "react-native";
+import { useState, useEffect, useCallback } from "react";
+import { View, Text, TouchableOpacity, ActivityIndicator, ScrollView, Alert, Image } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { ScreenContainer } from "@/components/screen-container";
 import { useColors } from "@/hooks/use-colors";
 import { getTemplate, type TemplateData } from "@/lib/template-manager";
 import * as FileSystem from "expo-file-system/legacy";
-import * as WebBrowser from "expo-web-browser";
 import * as Sharing from "expo-sharing";
 
 export default function TemplatePreviewScreen() {
@@ -17,11 +16,7 @@ export default function TemplatePreviewScreen() {
   const [loading, setLoading] = useState(true);
   const [fileUri, setFileUri] = useState<string | null>(null);
 
-  useEffect(() => {
-    loadTemplate();
-  }, [templateId]);
-
-  const loadTemplate = async () => {
+  const loadTemplate = useCallback(async () => {
     try {
       setLoading(true);
       if (templateId) {
@@ -47,7 +42,11 @@ export default function TemplatePreviewScreen() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [templateId]);
+
+  useEffect(() => {
+    loadTemplate();
+  }, [loadTemplate]);
 
   const handleOpenExternally = async () => {
     try {
@@ -65,8 +64,8 @@ export default function TemplatePreviewScreen() {
       } else {
         Alert.alert("Error", "Sharing not available on this device");
       }
-    } catch (error) {
-      console.error("Error opening file:", error);
+    } catch (err) {
+      console.error("Error opening file:", err);
       Alert.alert("Error", "Failed to open file");
     }
   };
@@ -180,7 +179,7 @@ export default function TemplatePreviewScreen() {
             >
               <Text className="text-4xl mb-2">📄</Text>
               <Text className="text-foreground font-semibold">PDF Document</Text>
-              <Text className="text-muted text-sm mt-1">Tap "Open Externally" to view</Text>
+              <Text className="text-muted text-sm mt-1">Tap &quot;Open Externally&quot; to view</Text>
             </View>
           ) : (
             <View
@@ -199,7 +198,7 @@ export default function TemplatePreviewScreen() {
             >
               <Text className="text-4xl mb-2">📁</Text>
               <Text className="text-foreground font-semibold">File Preview</Text>
-              <Text className="text-muted text-sm mt-1">Tap "Open Externally" to view</Text>
+              <Text className="text-muted text-sm mt-1">Tap &quot;Open Externally&quot; to view</Text>
             </View>
           )}
 

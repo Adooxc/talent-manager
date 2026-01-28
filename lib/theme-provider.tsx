@@ -31,7 +31,7 @@ const ThemeContext = createContext<ThemeContextValue | null>(null);
 const SETTINGS_KEY = "@talent_manager_settings";
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const systemScheme = useSystemColorScheme() ?? "light";
+  const systemScheme = (useSystemColorScheme() ?? "light") as ColorScheme;
   const [colorScheme, setColorSchemeState] = useState<ColorScheme>(systemScheme);
   const [primaryColor, setPrimaryColorState] = useState<string>(THEME_COLOR_VALUES.indigo);
   const [fontSize, setFontSizeState] = useState<FontSize>("medium");
