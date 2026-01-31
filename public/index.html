@@ -8,7 +8,33 @@
     * { margin: 0; padding: 0; box-sizing: border-box; }
     html, body { height: 100%; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f5f5f5; color: #333; }
     .app-container { display: flex; height: 100vh; }
-    .sidebar { width: 280px; background: linear-gradient(180deg, #1a1a1a 0%, #0d0d0d 100%); color: white; padding: 20px; overflow-y: auto; box-shadow: 2px 0 8px rgba(0,0,0,0.2); }
+    .sidebar { 
+      width: 280px; 
+      background: linear-gradient(180deg, #1a1a1a 0%, #0d0d0d 100%); 
+      color: white; 
+      padding: 20px; 
+      overflow-y: auto; 
+      box-shadow: 2px 0 8px rgba(0,0,0,0.2); 
+      transition: transform 0.3s ease;
+      position: relative;
+    }
+    .sidebar.collapsed { transform: translateX(-280px); }
+    .toggle-sidebar { 
+      position: absolute; 
+      left: -50px; 
+      top: 20px; 
+      background: #0a7ea4; 
+      color: white; 
+      border: none; 
+      width: 40px; 
+      height: 40px; 
+      border-radius: 0 6px 6px 0; 
+      cursor: pointer; 
+      font-size: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
     .logo { font-size: 24px; font-weight: bold; margin-bottom: 30px; display: flex; align-items: center; gap: 10px; }
     .nav-section { margin-bottom: 30px; }
     .nav-title { font-size: 12px; font-weight: 600; color: #999; margin-bottom: 10px; text-transform: uppercase; }
@@ -19,13 +45,14 @@
     .header { background: white; padding: 20px 30px; border-bottom: 1px solid #e0e0e0; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
     .header h1 { font-size: 28px; color: #333; }
     .header-actions { display: flex; gap: 15px; align-items: center; }
-    .select-control { padding: 8px 12px; border: 1px solid #ddd; border-radius: 6px; background: white; cursor: pointer; }
     .btn { padding: 10px 20px; border: none; border-radius: 6px; cursor: pointer; font-weight: 500; transition: all 0.2s; }
     .btn-primary { background: #0a7ea4; color: white; }
     .btn-primary:hover { background: #086c8f; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(10, 126, 164, 0.3); }
     .btn-secondary { background: #f0f0f0; color: #333; }
     .btn-secondary:hover { background: #e0e0e0; }
     .btn-small { padding: 6px 12px; font-size: 12px; }
+    .btn-danger { background: #ef4444; color: white; }
+    .btn-danger:hover { background: #dc2626; }
     .content { flex: 1; overflow-y: auto; padding: 30px; }
     .page { display: none; }
     .page.active { display: block; }
@@ -54,9 +81,9 @@
     .talent-name { font-size: 18px; font-weight: 600; color: #333; }
     .talent-card.list .talent-name { font-size: 16px; }
     .talent-actions { display: flex; gap: 8px; }
-    .action-btn { background: none; border: none; cursor: pointer; font-size: 18px; opacity: 0.6; transition: opacity 0.2s; }
+    .action-btn { background: none; border: none; cursor: pointer; font-size: 18px; opacity: 0.6; transition: opacity 0.2s; padding: 4px 8px; }
     .action-btn:hover { opacity: 1; }
-    .talent-category { font-size: 12px; color: #999; margin-bottom: 8px; background: #f0f0f0; padding: 4px 8px; border-radius: 4px; display: inline-block; }
+    .talent-category { font-size: 12px; color: #fff; margin-bottom: 8px; background: #0a7ea4; padding: 4px 8px; border-radius: 4px; display: inline-block; font-weight: 600; }
     .talent-details { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; font-size: 13px; }
     .talent-card.list .talent-details { grid-template-columns: 1fr 1fr 1fr; }
     .detail-item { }
@@ -101,32 +128,32 @@
     .settings-title { font-size: 16px; font-weight: 600; margin-bottom: 15px; }
     .checkbox-group { display: flex; align-items: center; gap: 10px; cursor: pointer; }
     .checkbox-group input { cursor: pointer; }
-    .color-picker { display: flex; gap: 10px; flex-wrap: wrap; }
-    .color-option { width: 40px; height: 40px; border-radius: 6px; cursor: pointer; border: 2px solid transparent; transition: all 0.2s; }
-    .color-option.selected { border-color: #333; }
+    .success-message { background: #d4edda; color: #155724; padding: 12px 16px; border-radius: 6px; margin-bottom: 15px; display: none; }
+    .success-message.show { display: block; }
   </style>
 </head>
 <body>
   <div class="app-container">
     <!-- Sidebar -->
-    <div class="sidebar">
+    <div class="sidebar" id="sidebar">
+      <button class="toggle-sidebar" onclick="toggleSidebar()">☰</button>
       <div class="logo">🎬 Talent Manager</div>
       
       <div class="nav-section">
         <div class="nav-title">الرئيسية</div>
-        <div class="nav-item active" onclick="switchPage('talents')">👥 الموديلز والفنانين</div>
-        <div class="nav-item" onclick="switchPage('projects')">📋 المشاريع</div>
+        <div class="nav-item active" onclick="switchPage('talents', this)">👥 الموديلز والفنانين</div>
+        <div class="nav-item" onclick="switchPage('projects', this)">📋 المشاريع</div>
       </div>
 
       <div class="nav-section">
         <div class="nav-title">الإدارة</div>
-        <div class="nav-item" onclick="switchPage('messages')">💬 الرسائل</div>
-        <div class="nav-item" onclick="switchPage('stats')">📊 الإحصائيات</div>
+        <div class="nav-item" onclick="switchPage('messages', this)">💬 الرسائل</div>
+        <div class="nav-item" onclick="switchPage('stats', this)">📊 الإحصائيات</div>
       </div>
 
       <div class="nav-section">
         <div class="nav-title">أخرى</div>
-        <div class="nav-item" onclick="switchPage('settings')">⚙️ الإعدادات</div>
+        <div class="nav-item" onclick="switchPage('settings', this)">⚙️ الإعدادات</div>
       </div>
     </div>
 
@@ -136,15 +163,9 @@
       <div class="header">
         <h1>Talent Manager</h1>
         <div class="header-actions">
-          <select class="select-control" id="language-select" onchange="changeLanguage()">
+          <select class="filter-select" id="language-select" onchange="changeLanguage()">
             <option value="ar">العربية</option>
             <option value="en">English</option>
-          </select>
-          <select class="select-control" id="currency-select" onchange="changeCurrency()">
-            <option value="KWD">KD - الدينار الكويتي</option>
-            <option value="SAR">ر.س - الريال السعودي</option>
-            <option value="USD">$ - الدولار الأمريكي</option>
-            <option value="AED">د.إ - الدرهم الإماراتي</option>
           </select>
           <button class="btn btn-primary" onclick="openAddModal()">+ إضافة موديل</button>
         </div>
@@ -224,19 +245,20 @@
           <div class="page-header">
             <h2 class="page-title">الإعدادات</h2>
           </div>
+          <div class="success-message" id="success-message">✅ تم حفظ الإعدادات بنجاح!</div>
           <div class="settings-form">
             <div class="settings-group">
               <div class="settings-title">اللغة والعرض</div>
               <div class="form-group">
                 <label class="form-label">اللغة</label>
-                <select class="form-input" id="settings-language" onchange="applySettings()">
+                <select class="form-input" id="settings-language">
                   <option value="ar">العربية</option>
                   <option value="en">English</option>
                 </select>
               </div>
               <div class="form-group">
                 <label class="form-label">المظهر</label>
-                <select class="form-input" id="settings-theme" onchange="applySettings()">
+                <select class="form-input" id="settings-theme">
                   <option value="light">فاتح</option>
                   <option value="dark">داكن</option>
                 </select>
@@ -244,18 +266,10 @@
             </div>
 
             <div class="settings-group">
-              <div class="settings-title">العملة والوحدات</div>
-              <div class="form-group">
-                <label class="form-label">العملة الافتراضية</label>
-                <select class="form-input" id="settings-currency" onchange="applySettings()">
-                  <option value="KWD">KD - الدينار الكويتي</option>
-                  <option value="SAR">ر.س - الريال السعودي</option>
-                  <option value="USD">$ - الدولار الأمريكي</option>
-                </select>
-              </div>
+              <div class="settings-title">الإعدادات الافتراضية</div>
               <div class="form-group">
                 <label class="form-label">هامش الربح الافتراضي (%)</label>
-                <input type="number" class="form-input" id="settings-margin" value="15" onchange="applySettings()">
+                <input type="number" class="form-input" id="settings-margin" value="15">
               </div>
             </div>
 
@@ -266,16 +280,18 @@
                 <textarea class="form-input" id="settings-whatsapp" style="min-height: 100px; resize: vertical;">مرحباً {name}، أتواصل معك بخصوص فرصة عمل...</textarea>
               </div>
             </div>
+
+            <button class="btn btn-primary" onclick="saveSettings()">💾 حفظ الإعدادات</button>
           </div>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Add Talent Modal -->
+  <!-- Add/Edit Talent Modal -->
   <div id="add-modal" class="modal">
     <div class="modal-content">
-      <div class="modal-header">إضافة موديل جديد</div>
+      <div class="modal-header" id="modal-title">إضافة موديل جديد</div>
       
       <div class="form-row">
         <div class="form-group">
@@ -303,7 +319,7 @@
           </select>
         </div>
         <div class="form-group">
-          <label class="form-label">السعر (لكل مشروع)</label>
+          <label class="form-label">السعر (لكل مشروع) - KD</label>
           <input type="number" class="form-input" id="talent-price" placeholder="أدخل السعر">
         </div>
       </div>
@@ -365,6 +381,13 @@
 
       <div class="form-row form-row.full">
         <div class="form-group">
+          <label class="form-label">التقييم (1-5)</label>
+          <input type="number" class="form-input" id="talent-rating" min="0" max="5" value="0">
+        </div>
+      </div>
+
+      <div class="form-row form-row.full">
+        <div class="form-group">
           <label class="form-label">الملاحظات</label>
           <textarea class="form-input" id="talent-notes" style="min-height: 80px; resize: vertical;" placeholder="أي ملاحظات إضافية..."></textarea>
         </div>
@@ -372,7 +395,8 @@
 
       <div class="modal-footer">
         <button class="btn btn-secondary" onclick="closeAddModal()">إلغاء</button>
-        <button class="btn btn-primary" onclick="addTalent()">إضافة</button>
+        <button class="btn btn-danger" id="delete-btn" style="display: none;" onclick="confirmDelete()">حذف</button>
+        <button class="btn btn-primary" id="save-btn" onclick="saveTalent()">إضافة</button>
       </div>
     </div>
   </div>
@@ -407,9 +431,15 @@
       { id: '2', name: 'فيديو موسيقي', status: 'completed', budget: 75000, talents: ['2'] },
     ];
 
-    let currentCurrency = 'KWD';
     let currentLanguage = 'ar';
     let viewMode = 'grid';
+    let editingTalentId = null;
+    let appSettings = {
+      language: 'ar',
+      theme: 'light',
+      margin: 15,
+      whatsappMessage: 'مرحباً {name}، أتواصل معك بخصوص فرصة عمل...'
+    };
 
     const messageTemplates = [
       { name: 'عرض عمل', content: 'مرحباً {name}، لدي فرصة عمل مميزة لك. هل أنت متاح في {date}؟' },
@@ -417,6 +447,34 @@
       { name: 'شكراً', content: 'شكراً {name} على عملك الرائع في {project}! نتطلع للعمل معك مرة أخرى.' },
       { name: 'تذكير', content: 'مرحباً {name}، تذكير بموعدك غداً الساعة {time}. يرجى تأكيد حضورك.' },
     ];
+
+    function loadSettings() {
+      const saved = localStorage.getItem('talentManagerSettings');
+      if (saved) {
+        appSettings = JSON.parse(saved);
+        document.getElementById('settings-language').value = appSettings.language;
+        document.getElementById('settings-theme').value = appSettings.theme;
+        document.getElementById('settings-margin').value = appSettings.margin;
+        document.getElementById('settings-whatsapp').value = appSettings.whatsappMessage;
+      }
+    }
+
+    function saveSettings() {
+      appSettings.language = document.getElementById('settings-language').value;
+      appSettings.theme = document.getElementById('settings-theme').value;
+      appSettings.margin = parseInt(document.getElementById('settings-margin').value);
+      appSettings.whatsappMessage = document.getElementById('settings-whatsapp').value;
+      
+      localStorage.setItem('talentManagerSettings', JSON.stringify(appSettings));
+      
+      const msg = document.getElementById('success-message');
+      msg.classList.add('show');
+      setTimeout(() => msg.classList.remove('show'), 3000);
+    }
+
+    function toggleSidebar() {
+      document.getElementById('sidebar').classList.toggle('collapsed');
+    }
 
     function renderTalents(talentsToRender = talents) {
       const container = document.getElementById('talents-container');
@@ -463,7 +521,7 @@
             <div class="rating">
               ${[1,2,3,4,5].map(i => `<span class="star ${i <= t.rating ? 'filled' : ''}">★</span>`).join('')}
             </div>
-            <div class="talent-price">${formatPrice(t.price)}</div>
+            <div class="talent-price">${t.price.toLocaleString()} KD</div>
             <div class="talent-social">
               ${t.instagram ? `<div class="social-link">📱 Instagram</div>` : ''}
               ${t.tiktok ? `<div class="social-link">🎵 TikTok</div>` : ''}
@@ -476,20 +534,16 @@
       `).join('');
     }
 
-    function formatPrice(price) {
-      const symbols = { KWD: 'KD', SAR: 'ر.س', USD: '$', AED: 'د.إ' };
-      return `${price.toLocaleString()} ${symbols[currentCurrency]}`;
-    }
-
-    function switchPage(page) {
+    function switchPage(page, element) {
       document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
       document.getElementById(page + '-page').classList.add('active');
       document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
-      event.target.classList.add('active');
+      element.classList.add('active');
 
       if (page === 'stats') renderStats();
       if (page === 'messages') renderMessages();
       if (page === 'projects') renderProjects();
+      if (page === 'settings') loadSettings();
     }
 
     function filterTalents() {
@@ -517,11 +571,6 @@
       renderTalents(filtered);
     }
 
-    function changeCurrency() {
-      currentCurrency = document.getElementById('currency-select').value;
-      renderTalents();
-    }
-
     function changeLanguage() {
       currentLanguage = document.getElementById('language-select').value;
     }
@@ -534,59 +583,119 @@
     }
 
     function openAddModal() {
+      editingTalentId = null;
+      document.getElementById('modal-title').textContent = 'إضافة موديل جديد';
+      document.getElementById('save-btn').textContent = 'إضافة';
+      document.getElementById('delete-btn').style.display = 'none';
+      clearForm();
+      document.getElementById('add-modal').classList.add('active');
+    }
+
+    function editTalent(id) {
+      const talent = talents.find(t => t.id === id);
+      if (!talent) return;
+
+      editingTalentId = id;
+      document.getElementById('modal-title').textContent = 'تعديل الموديل';
+      document.getElementById('save-btn').textContent = 'حفظ التغييرات';
+      document.getElementById('delete-btn').style.display = 'block';
+
+      document.getElementById('talent-name').value = talent.name;
+      document.getElementById('talent-category').value = talent.category;
+      document.getElementById('talent-gender').value = talent.gender;
+      document.getElementById('talent-price').value = talent.price;
+      document.getElementById('talent-phone').value = talent.phone || '';
+      document.getElementById('talent-age').value = talent.age || '';
+      document.getElementById('talent-height').value = talent.height || '';
+      document.getElementById('talent-weight').value = talent.weight || '';
+      document.getElementById('talent-nationality').value = talent.nationality || '';
+      document.getElementById('talent-location').value = talent.location || '';
+      document.getElementById('talent-instagram').value = talent.instagram || '';
+      document.getElementById('talent-tiktok').value = talent.tiktok || '';
+      document.getElementById('talent-twitter').value = talent.twitter || '';
+      document.getElementById('talent-facebook').value = talent.facebook || '';
+      document.getElementById('talent-rating').value = talent.rating || 0;
+      document.getElementById('talent-notes').value = talent.notes || '';
+
       document.getElementById('add-modal').classList.add('active');
     }
 
     function closeAddModal() {
       document.getElementById('add-modal').classList.remove('active');
-      document.querySelectorAll('.form-input').forEach(input => input.value = '');
+      clearForm();
+      editingTalentId = null;
     }
 
-    function addTalent() {
+    function clearForm() {
+      document.querySelectorAll('.form-input').forEach(input => {
+        if (input.id !== 'talent-rating') input.value = '';
+        if (input.id === 'talent-rating') input.value = '0';
+      });
+    }
+
+    function saveTalent() {
       const name = document.getElementById('talent-name').value;
       const category = document.getElementById('talent-category').value;
       const gender = document.getElementById('talent-gender').value;
       const price = parseInt(document.getElementById('talent-price').value);
 
-      if (name && category && price) {
+      if (!name || !category || !price) {
+        alert('يرجى ملء جميع الحقول المطلوبة');
+        return;
+      }
+
+      const talentData = {
+        name,
+        category,
+        gender,
+        price,
+        age: parseInt(document.getElementById('talent-age').value) || 0,
+        phone: document.getElementById('talent-phone').value,
+        instagram: document.getElementById('talent-instagram').value,
+        tiktok: document.getElementById('talent-tiktok').value,
+        twitter: document.getElementById('talent-twitter').value,
+        facebook: document.getElementById('talent-facebook').value,
+        height: document.getElementById('talent-height').value,
+        weight: document.getElementById('talent-weight').value,
+        nationality: document.getElementById('talent-nationality').value,
+        location: document.getElementById('talent-location').value,
+        notes: document.getElementById('talent-notes').value,
+        rating: parseInt(document.getElementById('talent-rating').value) || 0,
+        image: gender === 'male' ? '👨' : '👩'
+      };
+
+      if (editingTalentId) {
+        const talentIndex = talents.findIndex(t => t.id === editingTalentId);
+        if (talentIndex !== -1) {
+          talents[talentIndex] = { ...talents[talentIndex], ...talentData };
+        }
+      } else {
         talents.push({
           id: Date.now().toString(),
-          name,
-          category,
-          gender,
-          price,
-          age: parseInt(document.getElementById('talent-age').value) || 0,
-          phone: document.getElementById('talent-phone').value,
-          instagram: document.getElementById('talent-instagram').value,
-          tiktok: document.getElementById('talent-tiktok').value,
-          twitter: document.getElementById('talent-twitter').value,
-          facebook: document.getElementById('talent-facebook').value,
-          height: document.getElementById('talent-height').value,
-          weight: document.getElementById('talent-weight').value,
-          nationality: document.getElementById('talent-nationality').value,
-          location: document.getElementById('talent-location').value,
-          notes: document.getElementById('talent-notes').value,
-          rating: 0,
+          ...talentData,
           tags: [],
-          image: gender === 'male' ? '👨' : '👩',
           isFavorite: false,
           isArchived: false,
           createdAt: new Date().toISOString()
         });
-        renderTalents();
-        closeAddModal();
       }
+
+      renderTalents();
+      closeAddModal();
     }
 
     function deleteTalent(id) {
       if (confirm('هل تريد حذف هذا الموديل؟')) {
         talents = talents.filter(t => t.id !== id);
         renderTalents();
+        closeAddModal();
       }
     }
 
-    function editTalent(id) {
-      alert('سيتم إضافة ميزة التعديل قريباً');
+    function confirmDelete() {
+      if (editingTalentId && confirm('هل تريد حذف هذا الموديل؟')) {
+        deleteTalent(editingTalentId);
+      }
     }
 
     function toggleFavorite(id) {
@@ -603,7 +712,7 @@
         <div class="project-card">
           <div class="project-name">${p.name}</div>
           <div class="project-status" style="background: ${p.status === 'active' ? '#e3f2fd' : '#f0f0f0'}; color: ${p.status === 'active' ? '#0a7ea4' : '#666'};">${p.status === 'active' ? 'نشط' : p.status === 'completed' ? 'مكتمل' : 'مسودة'}</div>
-          <div class="project-budget">${formatPrice(p.budget)}</div>
+          <div class="project-budget">${p.budget.toLocaleString()} KD</div>
         </div>
       `).join('');
     }
@@ -632,7 +741,7 @@
         </div>
         <div class="stat-card">
           <div class="stat-label">إجمالي الأرباح المحتملة</div>
-          <div class="stat-value">${formatPrice(talents.reduce((sum, t) => sum + t.price, 0))}</div>
+          <div class="stat-value">${talents.reduce((sum, t) => sum + t.price, 0).toLocaleString()} KD</div>
         </div>
         <div class="stat-card">
           <div class="stat-label">المفضلة</div>
@@ -645,14 +754,11 @@
       alert('سيتم إضافة ميزة إنشاء مشروع قريباً');
     }
 
-    function applySettings() {
-      // Save settings
-    }
-
     document.getElementById('add-modal').addEventListener('click', function(e) {
       if (e.target === this) closeAddModal();
     });
 
+    loadSettings();
     renderTalents();
   </script>
 </body>
