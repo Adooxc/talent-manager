@@ -1,0 +1,26 @@
+{
+  "buildCommand": "pnpm run build",
+  "outputDirectory": "dist",
+  "framework": "other",
+  "env": {
+    "NODE_ENV": "production"
+  },
+  "functions": {
+    "server/_core/index.ts": {
+      "runtime": "nodejs20.x",
+      "memory": 1024,
+      "maxDuration": 60
+    }
+  },
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "/server/_core/index.ts"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/dist/index.html",
+      "status": 200
+    }
+  ]
+}
