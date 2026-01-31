@@ -4,60 +4,98 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Talent Manager</title>
+  <script src="https://unpkg.com/react@19/umd/react.production.min.js"></script>
+  <script src="https://unpkg.com/react-dom@19/umd/react-dom.production.min.js"></script>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f5f5f5; }
-    .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
-    .header { background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
-    h1 { color: #333; margin-bottom: 10px; }
-    .status { color: #666; font-size: 14px; }
-    .features { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; }
-    .feature { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
-    .feature h3 { color: #0a7ea4; margin-bottom: 10px; }
-    .feature p { color: #666; font-size: 14px; line-height: 1.6; }
-    .app-link { display: inline-block; margin-top: 20px; padding: 12px 24px; background: #0a7ea4; color: white; text-decoration: none; border-radius: 6px; }
-    .app-link:hover { background: #086c8f; }
+    .app { display: flex; height: 100vh; }
+    .sidebar { width: 250px; background: #1a1a1a; color: white; padding: 20px; overflow-y: auto; }
+    .main { flex: 1; display: flex; flex-direction: column; }
+    .header { background: white; padding: 20px; border-bottom: 1px solid #e0e0e0; display: flex; justify-content: space-between; align-items: center; }
+    .content { flex: 1; overflow-y: auto; padding: 20px; }
+    .nav-item { padding: 12px; margin: 8px 0; border-radius: 6px; cursor: pointer; }
+    .nav-item:hover { background: rgba(255,255,255,0.1); }
+    .nav-item.active { background: #0a7ea4; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
+    .card { background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+    .card:hover { transform: translateY(-4px); box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+    .card-image { width: 100%; height: 200px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center; color: white; font-size: 48px; }
+    .card-info { padding: 16px; }
+    .card-name { font-size: 18px; font-weight: 600; margin-bottom: 8px; }
+    .card-category { font-size: 12px; color: #666; margin-bottom: 8px; }
+    .card-price { font-size: 16px; font-weight: 600; color: #0a7ea4; }
+    .btn { padding: 10px 20px; border: none; border-radius: 6px; cursor: pointer; font-weight: 500; }
+    .btn-primary { background: #0a7ea4; color: white; }
+    .btn-primary:hover { background: #086c8f; }
+    .search { width: 100%; padding: 10px 16px; border: 1px solid #ddd; border-radius: 6px; margin-bottom: 20px; font-size: 14px; }
+    .empty { text-align: center; padding: 60px 20px; }
+    .empty-icon { font-size: 64px; margin-bottom: 16px; }
+    .empty-title { font-size: 20px; font-weight: 600; margin-bottom: 8px; }
   </style>
 </head>
 <body>
-  <div class="container">
-    <div class="header">
-      <h1>🎬 Talent Manager</h1>
-      <p class="status">Professional talent management system for models and artists</p>
-    </div>
-    
-    <div class="features">
-      <div class="feature">
-        <h3>👥 Talent Management</h3>
-        <p>Add, edit, and manage your talents with photos, contact info, and social media links.</p>
-      </div>
-      <div class="feature">
-        <h3>📋 Project Management</h3>
-        <p>Create projects, assign talents, and track costs with automatic calculations.</p>
-      </div>
-      <div class="feature">
-        <h3>💬 WhatsApp Integration</h3>
-        <p>Send direct messages to your talents via WhatsApp integration.</p>
-      </div>
-      <div class="feature">
-        <h3>📄 PDF Export</h3>
-        <p>Export projects with detailed cost breakdowns as professional PDFs.</p>
-      </div>
-      <div class="feature">
-        <h3>🌍 Multi-language</h3>
-        <p>Full support for Arabic and English with dark mode theme.</p>
-      </div>
-      <div class="feature">
-        <h3>💾 Backup & Restore</h3>
-        <p>Automatic backup and restore functionality for all your data.</p>
-      </div>
-    </div>
+  <div id="root"></div>
+  <script>
+    const { useState, useMemo } = React;
+    const root = ReactDOM.createRoot(document.getElementById('root'));
 
-    <div style="margin-top: 40px; padding: 20px; background: white; border-radius: 8px; text-align: center;">
-      <h2 style="color: #333; margin-bottom: 15px;">Ready to Get Started?</h2>
-      <p style="color: #666; margin-bottom: 20px;">Access the full Talent Manager application</p>
-      <a href="https://mellow-sunburst-288fb4.netlify.app" class="app-link">Open Application</a>
-    </div>
-  </div>
+    function App() {
+      const [talents, setTalents] = useState([
+        { id: '1', name: 'أحمد علي', category: 'موديل', price: 5000, image: '👨' },
+        { id: '2', name: 'فاطمة محمد', category: 'ممثلة', price: 8000, image: '👩' },
+        { id: '3', name: 'محمود حسن', category: 'راقص', price: 3000, image: '🕺' },
+        { id: '4', name: 'ليلى أحمد', category: 'مغنية', price: 10000, image: '🎤' },
+      ]);
+      const [search, setSearch] = useState('');
+      const [page, setPage] = useState('talents');
+
+      const filtered = useMemo(() => talents.filter(t => t.name.toLowerCase().includes(search.toLowerCase())), [talents, search]);
+
+      return (
+        <div className="app">
+          <div className="sidebar">
+            <div style={{ fontSize: '24px', fontWeight: 'bold', marginBottom: '30px' }}>🎬 Talent Manager</div>
+            <div className={`nav-item ${page === 'talents' ? 'active' : ''}`} onClick={() => setPage('talents')}>👥 الموديلز</div>
+            <div className={`nav-item ${page === 'projects' ? 'active' : ''}`} onClick={() => setPage('projects')}>📋 المشاريع</div>
+            <div className={`nav-item ${page === 'settings' ? 'active' : ''}`} onClick={() => setPage('settings')}>⚙️ الإعدادات</div>
+          </div>
+          <div className="main">
+            <div className="header">
+              <h1>Talent Manager</h1>
+              <button className="btn btn-primary">+ إضافة موديل</button>
+            </div>
+            <div className="content">
+              {page === 'talents' && (
+                <>
+                  <input type="text" className="search" placeholder="ابحث عن موديل..." value={search} onChange={(e) => setSearch(e.target.value)} />
+                  {filtered.length > 0 ? (
+                    <div className="grid">
+                      {filtered.map(t => (
+                        <div key={t.id} className="card">
+                          <div className="card-image">{t.image}</div>
+                          <div className="card-info">
+                            <div className="card-name">{t.name}</div>
+                            <div className="card-category">{t.category}</div>
+                            <div className="card-price">{t.price.toLocaleString()} ر.س</div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="empty"><div className="empty-icon">🔍</div><div className="empty-title">لم يتم العثور على نتائج</div></div>
+                  )}
+                </>
+              )}
+              {page === 'projects' && <div className="empty"><div className="empty-icon">📋</div><div className="empty-title">المشاريع</div></div>}
+              {page === 'settings' && <div className="empty"><div className="empty-icon">⚙️</div><div className="empty-title">الإعدادات</div></div>}
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    root.render(<App />);
+  </script>
 </body>
 </html>
