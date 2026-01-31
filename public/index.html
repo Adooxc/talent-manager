@@ -19,12 +19,13 @@
     .header { background: white; padding: 20px 30px; border-bottom: 1px solid #e0e0e0; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
     .header h1 { font-size: 28px; color: #333; }
     .header-actions { display: flex; gap: 15px; align-items: center; }
-    .currency-select { padding: 8px 12px; border: 1px solid #ddd; border-radius: 6px; background: white; cursor: pointer; }
+    .select-control { padding: 8px 12px; border: 1px solid #ddd; border-radius: 6px; background: white; cursor: pointer; }
     .btn { padding: 10px 20px; border: none; border-radius: 6px; cursor: pointer; font-weight: 500; transition: all 0.2s; }
     .btn-primary { background: #0a7ea4; color: white; }
     .btn-primary:hover { background: #086c8f; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(10, 126, 164, 0.3); }
     .btn-secondary { background: #f0f0f0; color: #333; }
     .btn-secondary:hover { background: #e0e0e0; }
+    .btn-small { padding: 6px 12px; font-size: 12px; }
     .content { flex: 1; overflow-y: auto; padding: 30px; }
     .page { display: none; }
     .page.active { display: block; }
@@ -35,49 +36,74 @@
     .search-input { flex: 1; min-width: 250px; padding: 10px 16px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; transition: all 0.2s; }
     .search-input:focus { outline: none; border-color: #0a7ea4; box-shadow: 0 0 0 3px rgba(10, 126, 164, 0.1); }
     .filter-select { padding: 10px 12px; border: 1px solid #ddd; border-radius: 6px; background: white; cursor: pointer; min-width: 150px; }
-    .talents-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 25px; }
+    .view-controls { display: flex; gap: 10px; }
+    .view-btn { padding: 8px 12px; border: 1px solid #ddd; background: white; border-radius: 6px; cursor: pointer; }
+    .view-btn.active { background: #0a7ea4; color: white; border-color: #0a7ea4; }
+    .talents-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
+    .talents-list { display: flex; flex-direction: column; gap: 15px; }
     .talent-card { background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1); transition: all 0.3s; cursor: pointer; }
-    .talent-card:hover { transform: translateY(-8px); box-shadow: 0 12px 24px rgba(0,0,0,0.15); }
-    .talent-image-container { position: relative; width: 100%; height: 240px; overflow: hidden; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+    .talent-card:hover { transform: translateY(-4px); box-shadow: 0 8px 16px rgba(0,0,0,0.15); }
+    .talent-card.list { display: flex; }
+    .talent-image-container { position: relative; width: 100%; height: 200px; overflow: hidden; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); flex-shrink: 0; }
+    .talent-card.list .talent-image-container { width: 150px; height: 150px; }
     .talent-image { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 64px; }
-    .talent-image-upload { position: absolute; top: 10px; right: 10px; background: rgba(255,255,255,0.9); padding: 8px 12px; border-radius: 6px; cursor: pointer; font-size: 12px; }
-    .talent-info { padding: 20px; }
+    .talent-card.list .talent-image { font-size: 48px; }
+    .talent-info { padding: 20px; flex: 1; }
+    .talent-card.list .talent-info { padding: 15px; }
     .talent-header { display: flex; justify-content: space-between; align-items: start; margin-bottom: 12px; }
     .talent-name { font-size: 18px; font-weight: 600; color: #333; }
+    .talent-card.list .talent-name { font-size: 16px; }
     .talent-actions { display: flex; gap: 8px; }
     .action-btn { background: none; border: none; cursor: pointer; font-size: 18px; opacity: 0.6; transition: opacity 0.2s; }
     .action-btn:hover { opacity: 1; }
     .talent-category { font-size: 12px; color: #999; margin-bottom: 8px; background: #f0f0f0; padding: 4px 8px; border-radius: 4px; display: inline-block; }
     .talent-details { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; font-size: 13px; }
+    .talent-card.list .talent-details { grid-template-columns: 1fr 1fr 1fr; }
     .detail-item { }
     .detail-label { color: #999; }
     .detail-value { font-weight: 600; color: #333; }
     .talent-price { font-size: 18px; font-weight: 700; color: #0a7ea4; margin-top: 12px; padding-top: 12px; border-top: 1px solid #f0f0f0; }
-    .talent-social { display: flex; gap: 10px; margin-top: 12px; }
-    .social-link { flex: 1; padding: 8px; text-align: center; background: #f0f0f0; border-radius: 4px; font-size: 12px; cursor: pointer; transition: all 0.2s; }
+    .talent-social { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
+    .social-link { padding: 4px 8px; background: #f0f0f0; border-radius: 4px; font-size: 11px; cursor: pointer; transition: all 0.2s; }
     .social-link:hover { background: #0a7ea4; color: white; }
+    .rating { display: flex; gap: 4px; margin-top: 8px; }
+    .star { color: #ddd; cursor: pointer; font-size: 16px; }
+    .star.filled { color: #ffc107; }
+    .tags { display: flex; gap: 6px; margin-top: 8px; flex-wrap: wrap; }
+    .tag { background: #e3f2fd; color: #0a7ea4; padding: 4px 8px; border-radius: 4px; font-size: 11px; }
     .empty-state { text-align: center; padding: 80px 20px; }
     .empty-icon { font-size: 80px; margin-bottom: 20px; }
     .empty-title { font-size: 24px; font-weight: 600; margin-bottom: 10px; }
     .empty-text { color: #999; margin-bottom: 30px; }
     .modal { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center; }
     .modal.active { display: flex; }
-    .modal-content { background: white; border-radius: 10px; padding: 30px; max-width: 600px; width: 90%; max-height: 85vh; overflow-y: auto; }
+    .modal-content { background: white; border-radius: 10px; padding: 30px; max-width: 700px; width: 90%; max-height: 85vh; overflow-y: auto; }
     .modal-header { font-size: 22px; font-weight: 600; margin-bottom: 20px; color: #333; }
     .form-group { margin-bottom: 20px; }
     .form-label { display: block; font-size: 14px; font-weight: 600; margin-bottom: 8px; color: #333; }
     .form-input { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; transition: all 0.2s; }
     .form-input:focus { outline: none; border-color: #0a7ea4; box-shadow: 0 0 0 3px rgba(10, 126, 164, 0.1); }
     .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+    .form-row.full { grid-template-columns: 1fr; }
     .modal-footer { display: flex; gap: 12px; margin-top: 30px; justify-content: flex-end; }
-    .projects-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
+    .projects-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
     .project-card { background: white; border-radius: 8px; padding: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
     .project-name { font-size: 18px; font-weight: 600; margin-bottom: 10px; }
-    .project-budget { color: #0a7ea4; font-weight: 600; }
+    .project-status { display: inline-block; padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: 600; }
+    .project-budget { color: #0a7ea4; font-weight: 600; margin-top: 10px; }
+    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 30px; }
+    .stat-card { background: white; border-radius: 8px; padding: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+    .stat-label { color: #999; font-size: 14px; margin-bottom: 8px; }
+    .stat-value { font-size: 32px; font-weight: 700; color: #0a7ea4; }
     .settings-form { max-width: 600px; }
     .settings-group { margin-bottom: 30px; padding-bottom: 30px; border-bottom: 1px solid #e0e0e0; }
     .settings-group:last-child { border-bottom: none; }
     .settings-title { font-size: 16px; font-weight: 600; margin-bottom: 15px; }
+    .checkbox-group { display: flex; align-items: center; gap: 10px; cursor: pointer; }
+    .checkbox-group input { cursor: pointer; }
+    .color-picker { display: flex; gap: 10px; flex-wrap: wrap; }
+    .color-option { width: 40px; height: 40px; border-radius: 6px; cursor: pointer; border: 2px solid transparent; transition: all 0.2s; }
+    .color-option.selected { border-color: #333; }
   </style>
 </head>
 <body>
@@ -94,8 +120,8 @@
 
       <div class="nav-section">
         <div class="nav-title">الإدارة</div>
-        <div class="nav-item" onclick="switchPage('templates')">📝 القوالب</div>
-        <div class="nav-item" onclick="switchPage('reports')">📊 التقارير</div>
+        <div class="nav-item" onclick="switchPage('messages')">💬 الرسائل</div>
+        <div class="nav-item" onclick="switchPage('stats')">📊 الإحصائيات</div>
       </div>
 
       <div class="nav-section">
@@ -110,10 +136,14 @@
       <div class="header">
         <h1>Talent Manager</h1>
         <div class="header-actions">
-          <select class="currency-select" id="currency-select" onchange="changeCurrency()">
+          <select class="select-control" id="language-select" onchange="changeLanguage()">
+            <option value="ar">العربية</option>
+            <option value="en">English</option>
+          </select>
+          <select class="select-control" id="currency-select" onchange="changeCurrency()">
+            <option value="KWD">KD - الدينار الكويتي</option>
             <option value="SAR">ر.س - الريال السعودي</option>
             <option value="USD">$ - الدولار الأمريكي</option>
-            <option value="EUR">€ - اليورو</option>
             <option value="AED">د.إ - الدرهم الإماراتي</option>
           </select>
           <button class="btn btn-primary" onclick="openAddModal()">+ إضافة موديل</button>
@@ -133,19 +163,26 @@
             <input type="text" class="search-input" id="search-input" placeholder="ابحث عن موديل..." onkeyup="filterTalents()">
             <select class="filter-select" id="category-filter" onchange="filterTalents()">
               <option value="">جميع الفئات</option>
-              <option value="موديل">موديل</option>
-              <option value="ممثل">ممثل</option>
-              <option value="ممثلة">ممثلة</option>
-              <option value="راقص">راقص</option>
-              <option value="مغني">مغني</option>
-              <option value="مصور">مصور</option>
+              <option value="ممثلين">ممثلين</option>
+              <option value="مؤثرين">مؤثرين</option>
+              <option value="عارضين">عارضين</option>
+              <option value="كومبارس">كومبارس</option>
             </select>
-            <select class="filter-select" id="price-filter" onchange="filterTalents()">
-              <option value="">جميع الأسعار</option>
-              <option value="0-5000">أقل من 5000</option>
-              <option value="5000-10000">5000 - 10000</option>
-              <option value="10000+">أكثر من 10000</option>
+            <select class="filter-select" id="gender-filter" onchange="filterTalents()">
+              <option value="">الكل</option>
+              <option value="male">ذكر</option>
+              <option value="female">أنثى</option>
             </select>
+            <select class="filter-select" id="sort-select" onchange="filterTalents()">
+              <option value="name">الاسم</option>
+              <option value="price">السعر</option>
+              <option value="rating">التقييم</option>
+              <option value="date">التاريخ</option>
+            </select>
+            <div class="view-controls">
+              <button class="view-btn active" onclick="setViewMode('grid')">⊞ شبكة</button>
+              <button class="view-btn" onclick="setViewMode('list')">☰ قائمة</button>
+            </div>
           </div>
 
           <div id="talents-container" class="talents-grid"></div>
@@ -161,30 +198,25 @@
           <div id="projects-container" class="projects-grid" style="margin-top: 20px;"></div>
         </div>
 
-        <!-- Templates Page -->
-        <div id="templates-page" class="page">
+        <!-- Messages Page -->
+        <div id="messages-page" class="page">
           <div class="page-header">
-            <h2 class="page-title">القوالب</h2>
-            <p class="page-subtitle">استخدم قوالب جاهزة لتسريع العمل</p>
+            <h2 class="page-title">الرسائل والتواصل</h2>
+            <p class="page-subtitle">أرسل رسائل WhatsApp وأدر المحادثات</p>
           </div>
-          <div class="empty-state">
-            <div class="empty-icon">📝</div>
-            <div class="empty-title">لا توجد قوالب</div>
-            <div class="empty-text">سيتم إضافة قوالب قريباً</div>
+          <div style="background: white; border-radius: 8px; padding: 20px; margin-bottom: 20px;">
+            <h3 style="margin-bottom: 15px;">قوالب الرسائل</h3>
+            <div id="templates-container" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 15px;"></div>
           </div>
         </div>
 
-        <!-- Reports Page -->
-        <div id="reports-page" class="page">
+        <!-- Stats Page -->
+        <div id="stats-page" class="page">
           <div class="page-header">
-            <h2 class="page-title">التقارير</h2>
+            <h2 class="page-title">الإحصائيات</h2>
             <p class="page-subtitle">عرض إحصائيات وتقارير مفصلة</p>
           </div>
-          <div class="empty-state">
-            <div class="empty-icon">📊</div>
-            <div class="empty-title">لا توجد تقارير</div>
-            <div class="empty-text">سيتم إضافة التقارير قريباً</div>
-          </div>
+          <div class="stats-grid" id="stats-container"></div>
         </div>
 
         <!-- Settings Page -->
@@ -194,29 +226,17 @@
           </div>
           <div class="settings-form">
             <div class="settings-group">
-              <div class="settings-title">العملة والوحدات</div>
-              <div class="form-group">
-                <label class="form-label">العملة الافتراضية</label>
-                <select class="form-input" id="settings-currency">
-                  <option value="SAR">ر.س - الريال السعودي</option>
-                  <option value="USD">$ - الدولار الأمريكي</option>
-                  <option value="EUR">€ - اليورو</option>
-                </select>
-              </div>
-            </div>
-
-            <div class="settings-group">
               <div class="settings-title">اللغة والعرض</div>
               <div class="form-group">
                 <label class="form-label">اللغة</label>
-                <select class="form-input">
+                <select class="form-input" id="settings-language" onchange="applySettings()">
                   <option value="ar">العربية</option>
                   <option value="en">English</option>
                 </select>
               </div>
               <div class="form-group">
                 <label class="form-label">المظهر</label>
-                <select class="form-input">
+                <select class="form-input" id="settings-theme" onchange="applySettings()">
                   <option value="light">فاتح</option>
                   <option value="dark">داكن</option>
                 </select>
@@ -224,12 +244,26 @@
             </div>
 
             <div class="settings-group">
-              <div class="settings-title">الإشعارات</div>
+              <div class="settings-title">العملة والوحدات</div>
               <div class="form-group">
-                <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
-                  <input type="checkbox" checked>
-                  <span>تفعيل الإشعارات</span>
-                </label>
+                <label class="form-label">العملة الافتراضية</label>
+                <select class="form-input" id="settings-currency" onchange="applySettings()">
+                  <option value="KWD">KD - الدينار الكويتي</option>
+                  <option value="SAR">ر.س - الريال السعودي</option>
+                  <option value="USD">$ - الدولار الأمريكي</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">هامش الربح الافتراضي (%)</label>
+                <input type="number" class="form-input" id="settings-margin" value="15" onchange="applySettings()">
+              </div>
+            </div>
+
+            <div class="settings-group">
+              <div class="settings-title">رسائل WhatsApp</div>
+              <div class="form-group">
+                <label class="form-label">رسالة WhatsApp الافتراضية</label>
+                <textarea class="form-input" id="settings-whatsapp" style="min-height: 100px; resize: vertical;">مرحباً {name}، أتواصل معك بخصوص فرصة عمل...</textarea>
               </div>
             </div>
           </div>
@@ -242,27 +276,38 @@
   <div id="add-modal" class="modal">
     <div class="modal-content">
       <div class="modal-header">إضافة موديل جديد</div>
-      <div class="form-group">
-        <label class="form-label">الاسم</label>
-        <input type="text" class="form-input" id="talent-name" placeholder="أدخل اسم الموديل">
-      </div>
+      
       <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">الاسم</label>
+          <input type="text" class="form-input" id="talent-name" placeholder="أدخل اسم الموديل">
+        </div>
         <div class="form-group">
           <label class="form-label">الفئة</label>
           <select class="form-input" id="talent-category">
             <option value="">اختر الفئة</option>
-            <option value="موديل">موديل</option>
-            <option value="ممثل">ممثل</option>
-            <option value="ممثلة">ممثلة</option>
-            <option value="راقص">راقص</option>
-            <option value="مغني">مغني</option>
+            <option value="ممثلين">ممثلين</option>
+            <option value="مؤثرين">مؤثرين</option>
+            <option value="عارضين">عارضين</option>
+            <option value="كومبارس">كومبارس</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">الجنس</label>
+          <select class="form-input" id="talent-gender">
+            <option value="male">ذكر</option>
+            <option value="female">أنثى</option>
           </select>
         </div>
         <div class="form-group">
-          <label class="form-label">السعر</label>
+          <label class="form-label">السعر (لكل مشروع)</label>
           <input type="number" class="form-input" id="talent-price" placeholder="أدخل السعر">
         </div>
       </div>
+
       <div class="form-row">
         <div class="form-group">
           <label class="form-label">الهاتف</label>
@@ -273,6 +318,29 @@
           <input type="number" class="form-input" id="talent-age" placeholder="العمر">
         </div>
       </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">الطول</label>
+          <input type="text" class="form-input" id="talent-height" placeholder="مثال: 175 سم">
+        </div>
+        <div class="form-group">
+          <label class="form-label">الوزن</label>
+          <input type="text" class="form-input" id="talent-weight" placeholder="مثال: 70 كغ">
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">الجنسية</label>
+          <input type="text" class="form-input" id="talent-nationality" placeholder="الجنسية">
+        </div>
+        <div class="form-group">
+          <label class="form-label">الموقع</label>
+          <input type="text" class="form-input" id="talent-location" placeholder="المدينة/الدولة">
+        </div>
+      </div>
+
       <div class="form-row">
         <div class="form-group">
           <label class="form-label">Instagram</label>
@@ -283,6 +351,25 @@
           <input type="text" class="form-input" id="talent-tiktok" placeholder="@username">
         </div>
       </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Twitter</label>
+          <input type="text" class="form-input" id="talent-twitter" placeholder="@username">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Facebook</label>
+          <input type="text" class="form-input" id="talent-facebook" placeholder="الرابط أو الاسم">
+        </div>
+      </div>
+
+      <div class="form-row form-row.full">
+        <div class="form-group">
+          <label class="form-label">الملاحظات</label>
+          <textarea class="form-input" id="talent-notes" style="min-height: 80px; resize: vertical;" placeholder="أي ملاحظات إضافية..."></textarea>
+        </div>
+      </div>
+
       <div class="modal-footer">
         <button class="btn btn-secondary" onclick="closeAddModal()">إلغاء</button>
         <button class="btn btn-primary" onclick="addTalent()">إضافة</button>
@@ -292,13 +379,44 @@
 
   <script>
     let talents = [
-      { id: '1', name: 'أحمد علي', category: 'موديل', price: 5000, age: 25, phone: '0501234567', instagram: '@ahmed', tiktok: '@ahmed', image: '👨' },
-      { id: '2', name: 'فاطمة محمد', category: 'ممثلة', price: 8000, age: 28, phone: '0509876543', instagram: '@fatima', tiktok: '@fatima', image: '👩' },
-      { id: '3', name: 'محمود حسن', category: 'راقص', price: 3000, age: 22, phone: '0505555555', instagram: '@mahmoud', tiktok: '@mahmoud', image: '🕺' },
-      { id: '4', name: 'ليلى أحمد', category: 'مغني', price: 10000, age: 30, phone: '0507777777', instagram: '@layla', tiktok: '@layla', image: '🎤' },
+      { 
+        id: '1', name: 'أحمد علي', category: 'ممثلين', gender: 'male', price: 5000, age: 25, 
+        phone: '0501234567', instagram: '@ahmed', tiktok: '@ahmed', rating: 4, 
+        height: '175 سم', weight: '70 كغ', nationality: 'كويتي', location: 'الكويت',
+        tags: ['VIP', 'متاح الآن'], image: '👨', isFavorite: false, isArchived: false,
+        createdAt: new Date().toISOString()
+      },
+      { 
+        id: '2', name: 'فاطمة محمد', category: 'عارضين', gender: 'female', price: 8000, age: 28, 
+        phone: '0509876543', instagram: '@fatima', tiktok: '@fatima', rating: 5,
+        height: '168 سم', weight: '55 كغ', nationality: 'سعودية', location: 'الرياض',
+        tags: ['Top Rated'], image: '👩', isFavorite: true, isArchived: false,
+        createdAt: new Date().toISOString()
+      },
+      { 
+        id: '3', name: 'محمود حسن', category: 'كومبارس', gender: 'male', price: 3000, age: 22, 
+        phone: '0505555555', instagram: '@mahmoud', tiktok: '@mahmoud', rating: 3,
+        height: '180 سم', weight: '75 كغ', nationality: 'إماراتي', location: 'دبي',
+        tags: ['New'], image: '🕺', isFavorite: false, isArchived: false,
+        createdAt: new Date().toISOString()
+      },
     ];
 
-    let currentCurrency = 'SAR';
+    let projects = [
+      { id: '1', name: 'إعلان تجاري', status: 'active', budget: 50000, talents: ['1', '2'] },
+      { id: '2', name: 'فيديو موسيقي', status: 'completed', budget: 75000, talents: ['2'] },
+    ];
+
+    let currentCurrency = 'KWD';
+    let currentLanguage = 'ar';
+    let viewMode = 'grid';
+
+    const messageTemplates = [
+      { name: 'عرض عمل', content: 'مرحباً {name}، لدي فرصة عمل مميزة لك. هل أنت متاح في {date}؟' },
+      { name: 'تأكيد الحجز', content: 'مرحباً {name}، تم تأكيد حجزك لمشروع {project} في {date}. الموقع: {location}' },
+      { name: 'شكراً', content: 'شكراً {name} على عملك الرائع في {project}! نتطلع للعمل معك مرة أخرى.' },
+      { name: 'تذكير', content: 'مرحباً {name}، تذكير بموعدك غداً الساعة {time}. يرجى تأكيد حضورك.' },
+    ];
 
     function renderTalents(talentsToRender = talents) {
       const container = document.getElementById('talents-container');
@@ -306,43 +424,60 @@
         container.innerHTML = '<div style="grid-column: 1/-1;"><div class="empty-state"><div class="empty-icon">🔍</div><div class="empty-title">لم يتم العثور على نتائج</div></div></div>';
         return;
       }
+
+      const viewClass = viewMode === 'list' ? 'talent-card list' : 'talent-card';
+      const containerClass = viewMode === 'list' ? 'talents-list' : 'talents-grid';
+      
+      container.className = containerClass;
       container.innerHTML = talentsToRender.map(t => `
-        <div class="talent-card">
+        <div class="${viewClass}">
           <div class="talent-image-container">
             <div class="talent-image">${t.image}</div>
-            <div class="talent-image-upload">📸 تغيير</div>
           </div>
           <div class="talent-info">
             <div class="talent-header">
-              <div class="talent-name">${t.name}</div>
+              <div>
+                <div class="talent-name">${t.name}</div>
+                <span class="talent-category">${t.category}</span>
+              </div>
               <div class="talent-actions">
-                <button class="action-btn" onclick="editTalent('${t.id}')">✏️</button>
-                <button class="action-btn" onclick="deleteTalent('${t.id}')">🗑️</button>
+                <button class="action-btn" onclick="toggleFavorite('${t.id}')" title="المفضلة">${t.isFavorite ? '❤️' : '🤍'}</button>
+                <button class="action-btn" onclick="editTalent('${t.id}')" title="تعديل">✏️</button>
+                <button class="action-btn" onclick="deleteTalent('${t.id}')" title="حذف">🗑️</button>
               </div>
             </div>
-            <span class="talent-category">${t.category}</span>
             <div class="talent-details">
               <div class="detail-item">
                 <div class="detail-label">العمر</div>
                 <div class="detail-value">${t.age} سنة</div>
               </div>
               <div class="detail-item">
-                <div class="detail-label">الهاتف</div>
-                <div class="detail-value">${t.phone}</div>
+                <div class="detail-label">الجنس</div>
+                <div class="detail-value">${t.gender === 'male' ? 'ذكر' : 'أنثى'}</div>
               </div>
+              <div class="detail-item">
+                <div class="detail-label">الموقع</div>
+                <div class="detail-value">${t.location || '-'}</div>
+              </div>
+            </div>
+            <div class="rating">
+              ${[1,2,3,4,5].map(i => `<span class="star ${i <= t.rating ? 'filled' : ''}">★</span>`).join('')}
             </div>
             <div class="talent-price">${formatPrice(t.price)}</div>
             <div class="talent-social">
-              <div class="social-link">📱 Instagram</div>
-              <div class="social-link">🎵 TikTok</div>
+              ${t.instagram ? `<div class="social-link">📱 Instagram</div>` : ''}
+              ${t.tiktok ? `<div class="social-link">🎵 TikTok</div>` : ''}
+              ${t.twitter ? `<div class="social-link">𝕏 Twitter</div>` : ''}
+              ${t.facebook ? `<div class="social-link">f Facebook</div>` : ''}
             </div>
+            ${t.tags && t.tags.length > 0 ? `<div class="tags">${t.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}</div>` : ''}
           </div>
         </div>
       `).join('');
     }
 
     function formatPrice(price) {
-      const symbols = { SAR: 'ر.س', USD: '$', EUR: '€', AED: 'د.إ' };
+      const symbols = { KWD: 'KD', SAR: 'ر.س', USD: '$', AED: 'د.إ' };
       return `${price.toLocaleString()} ${symbols[currentCurrency]}`;
     }
 
@@ -351,27 +486,50 @@
       document.getElementById(page + '-page').classList.add('active');
       document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
       event.target.classList.add('active');
+
+      if (page === 'stats') renderStats();
+      if (page === 'messages') renderMessages();
+      if (page === 'projects') renderProjects();
     }
 
     function filterTalents() {
       const query = document.getElementById('search-input').value.toLowerCase();
       const category = document.getElementById('category-filter').value;
-      const priceRange = document.getElementById('price-filter').value;
+      const gender = document.getElementById('gender-filter').value;
+      const sort = document.getElementById('sort-select').value;
 
       let filtered = talents.filter(t => {
         const matchesSearch = t.name.toLowerCase().includes(query);
         const matchesCategory = !category || t.category === category;
-        let matchesPrice = true;
-        if (priceRange === '0-5000') matchesPrice = t.price < 5000;
-        else if (priceRange === '5000-10000') matchesPrice = t.price >= 5000 && t.price <= 10000;
-        else if (priceRange === '10000+') matchesPrice = t.price > 10000;
-        return matchesSearch && matchesCategory && matchesPrice;
+        const matchesGender = !gender || t.gender === gender;
+        return matchesSearch && matchesCategory && matchesGender;
       });
+
+      filtered.sort((a, b) => {
+        switch(sort) {
+          case 'price': return a.price - b.price;
+          case 'rating': return (b.rating || 0) - (a.rating || 0);
+          case 'date': return new Date(b.createdAt) - new Date(a.createdAt);
+          default: return a.name.localeCompare(b.name);
+        }
+      });
+
       renderTalents(filtered);
     }
 
     function changeCurrency() {
       currentCurrency = document.getElementById('currency-select').value;
+      renderTalents();
+    }
+
+    function changeLanguage() {
+      currentLanguage = document.getElementById('language-select').value;
+    }
+
+    function setViewMode(mode) {
+      viewMode = mode;
+      document.querySelectorAll('.view-btn').forEach(btn => btn.classList.remove('active'));
+      event.target.classList.add('active');
       renderTalents();
     }
 
@@ -381,31 +539,39 @@
 
     function closeAddModal() {
       document.getElementById('add-modal').classList.remove('active');
-      document.getElementById('talent-name').value = '';
-      document.getElementById('talent-category').value = '';
-      document.getElementById('talent-price').value = '';
+      document.querySelectorAll('.form-input').forEach(input => input.value = '');
     }
 
     function addTalent() {
       const name = document.getElementById('talent-name').value;
       const category = document.getElementById('talent-category').value;
+      const gender = document.getElementById('talent-gender').value;
       const price = parseInt(document.getElementById('talent-price').value);
-      const age = parseInt(document.getElementById('talent-age').value);
-      const phone = document.getElementById('talent-phone').value;
-      const instagram = document.getElementById('talent-instagram').value;
-      const tiktok = document.getElementById('talent-tiktok').value;
 
       if (name && category && price) {
         talents.push({
           id: Date.now().toString(),
           name,
           category,
+          gender,
           price,
-          age: age || 0,
-          phone: phone || '',
-          instagram: instagram || '',
-          tiktok: tiktok || '',
-          image: '👤'
+          age: parseInt(document.getElementById('talent-age').value) || 0,
+          phone: document.getElementById('talent-phone').value,
+          instagram: document.getElementById('talent-instagram').value,
+          tiktok: document.getElementById('talent-tiktok').value,
+          twitter: document.getElementById('talent-twitter').value,
+          facebook: document.getElementById('talent-facebook').value,
+          height: document.getElementById('talent-height').value,
+          weight: document.getElementById('talent-weight').value,
+          nationality: document.getElementById('talent-nationality').value,
+          location: document.getElementById('talent-location').value,
+          notes: document.getElementById('talent-notes').value,
+          rating: 0,
+          tags: [],
+          image: gender === 'male' ? '👨' : '👩',
+          isFavorite: false,
+          isArchived: false,
+          createdAt: new Date().toISOString()
         });
         renderTalents();
         closeAddModal();
@@ -421,6 +587,66 @@
 
     function editTalent(id) {
       alert('سيتم إضافة ميزة التعديل قريباً');
+    }
+
+    function toggleFavorite(id) {
+      const talent = talents.find(t => t.id === id);
+      if (talent) {
+        talent.isFavorite = !talent.isFavorite;
+        renderTalents();
+      }
+    }
+
+    function renderProjects() {
+      const container = document.getElementById('projects-container');
+      container.innerHTML = projects.map(p => `
+        <div class="project-card">
+          <div class="project-name">${p.name}</div>
+          <div class="project-status" style="background: ${p.status === 'active' ? '#e3f2fd' : '#f0f0f0'}; color: ${p.status === 'active' ? '#0a7ea4' : '#666'};">${p.status === 'active' ? 'نشط' : p.status === 'completed' ? 'مكتمل' : 'مسودة'}</div>
+          <div class="project-budget">${formatPrice(p.budget)}</div>
+        </div>
+      `).join('');
+    }
+
+    function renderMessages() {
+      const container = document.getElementById('templates-container');
+      container.innerHTML = messageTemplates.map((t, i) => `
+        <div style="background: #f9f9f9; border-radius: 6px; padding: 15px;">
+          <div style="font-weight: 600; margin-bottom: 10px;">${t.name}</div>
+          <div style="font-size: 13px; color: #666; line-height: 1.5;">${t.content}</div>
+          <button class="btn btn-small btn-primary" style="margin-top: 10px; width: 100%;">استخدم هذا القالب</button>
+        </div>
+      `).join('');
+    }
+
+    function renderStats() {
+      const container = document.getElementById('stats-container');
+      container.innerHTML = `
+        <div class="stat-card">
+          <div class="stat-label">إجمالي الموديلز</div>
+          <div class="stat-value">${talents.length}</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">المشاريع النشطة</div>
+          <div class="stat-value">${projects.filter(p => p.status === 'active').length}</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">إجمالي الأرباح المحتملة</div>
+          <div class="stat-value">${formatPrice(talents.reduce((sum, t) => sum + t.price, 0))}</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">المفضلة</div>
+          <div class="stat-value">${talents.filter(t => t.isFavorite).length}</div>
+        </div>
+      `;
+    }
+
+    function openProjectModal() {
+      alert('سيتم إضافة ميزة إنشاء مشروع قريباً');
+    }
+
+    function applySettings() {
+      // Save settings
     }
 
     document.getElementById('add-modal').addEventListener('click', function(e) {
