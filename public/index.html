@@ -3,6 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
   <title>Talent Manager - نظام إدارة الموديلز والفنانين</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -163,10 +166,6 @@
       <div class="header">
         <h1>Talent Manager</h1>
         <div class="header-actions">
-          <select class="filter-select" id="language-select" onchange="changeLanguage()">
-            <option value="ar">العربية</option>
-            <option value="en">English</option>
-          </select>
           <button class="btn btn-primary" onclick="openAddModal()">+ إضافة موديل</button>
         </div>
       </div>
@@ -569,10 +568,6 @@
       });
 
       renderTalents(filtered);
-    }
-
-    function changeLanguage() {
-      currentLanguage = document.getElementById('language-select').value;
     }
 
     function setViewMode(mode) {
