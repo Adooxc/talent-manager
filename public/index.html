@@ -827,14 +827,7 @@
                     </div>
                     
                     <!-- Create Project Page -->
-                    <div id="create-project-page" style="display: none; background: var(--surface); border-radius: 12px; padding: 24px; border: 1px solid var(--border);">
-                        <button onclick="backToProjectsList()" style="background: var(--primary); color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: 600; margin-bottom: 20px;">Back to Projects</button>
-                        <h1 style="color: var(--foreground); font-size: 28px; font-weight: 700; margin-bottom: 30px;">Create New Project</h1>
-                        <div style="max-height: 70vh; overflow-y: auto;">
-                            <div id="create-project-form"></div>
-                        </div>
-                    </div>
-                    
+
                     <!-- Inline Project Form -->
                     <div id="project-form-container" style="display: none; background: var(--surface); border-radius: 12px; padding: 24px; margin-bottom: 24px; border: 1px solid var(--border);">
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
@@ -994,6 +987,30 @@
                             <div style="background: var(--surface); border-radius: 12px; padding: 25px; border: 1px solid var(--border);">
                                 <div style="font-size: 13px; color: var(--text-light); margin-bottom: 10px;">Upcoming Projects</div>
                                 <div style="font-size: 36px; font-weight: bold; color: var(--active-menu-gradient-start);" id="dash-upcoming-projects">0</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Create Project Page -->
+                <div id="create-project-page" class="tab-content">
+                    <div style="background: linear-gradient(180deg, var(--background) 0%, var(--surface) 100%); min-height: 100vh; padding: 40px 20px;">
+                        <div style="max-width: 900px; margin: 0 auto;">
+                            <!-- Header -->
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px;">
+                                <h1 style="color: var(--foreground); font-size: 32px; font-weight: 800; margin: 0;">Create New Project</h1>
+                                <button onclick="showTab('projects-tab')" style="background: var(--error); color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 14px;">✕ Close</button>
+                            </div>
+
+                            <!-- Main Card Container -->
+                            <div style="background: var(--surface); border-radius: 16px; padding: 32px; border: 1px solid var(--border); box-shadow: 0 4px 20px rgba(0,0,0,0.1);">
+                                <div id="create-project-form"></div>
+                            </div>
+
+                            <!-- Selected Talents Preview -->
+                            <div id="selected-talents-preview" style="margin-top: 30px; background: var(--surface); border-radius: 16px; padding: 24px; border: 1px solid var(--border);">
+                                <h3 style="color: var(--foreground); margin: 0 0 20px 0; font-size: 18px; font-weight: 600;">Selected Models</h3>
+                                <p style="color: var(--muted); text-align: center; padding: 20px;">No talents selected</p>
                             </div>
                         </div>
                     </div>
@@ -2029,7 +2046,9 @@
             document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
             document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
             document.getElementById(tabId).classList.add('active');
-            event.target.classList.add('active');
+            if (event && event.target) {
+                event.target.classList.add('active');
+            }
 
             const defaultTitles = {
                 'talents-tab': 'Talents',
@@ -2632,20 +2651,34 @@
         function openCreateProjectModal() {
             selectedProjectTalents = [];
             document.getElementById('editing-project-index').value = '';
-            renderInlineProjectForm();
             
-            // Hide projects list and details page
-            document.getElementById('projects-list').style.display = 'none';
-            document.getElementById('project-details-page').style.display = 'none';
+            // Render form directly in create-project-form
+            const formContainer = document.getElementById('create-project-form');
+            let talentSelectorHTML = talents.map((talent, index) => {
+                const primaryImage = talentMediaItems[talent.id] && talentMediaItems[talent.id][talent.primaryMediaIndex] ? talentMediaItems[talent.id][talent.primaryMediaIndex] : '';
+                const isSelected = selectedProjectTalents.includes(index);
+                return `<div onclick="toggleProjectTalent(${index})" style="cursor: pointer; padding: 12px; border-radius: 8px; background: ${isSelected ? 'var(--primary)' : 'var(--background)'}; border: 2px solid ${isSelected ? 'var(--primary)' : 'var(--border)'}; display: flex; align-items: center; gap: 12px; transition: all 0.2s;">
+                    <div style="width: 60px; height: 60px; border-radius: 8px; background: linear-gradient(135deg, ${talent.primaryColor || '#0a7ea4'} 0%, ${talent.secondaryColor || '#0a7ea4'} 100%); flex-shrink: 0; display: flex; align-items: center; justify-content: center; color: white; font-size: 14px; font-weight: 600; overflow: hidden;">
+                        ${primaryImage ? `<img src="${primaryImage}" style="width: 100%; height: 100%; object-fit: cover;">` : `<span>${talent.name.substring(0, 1)}</span>`}
+                    </div>
+                    <div style="flex: 1;">
+                        <p style="color: ${isSelected ? 'white' : 'var(--foreground)'}; font-weight: 600; margin: 0 0 4px 0;">${talent.name}</p>
+                        <p style="color: ${isSelected ? 'rgba(255,255,255,0.8)' : 'var(--muted)'}; margin: 0; font-size: 14px;">${talent.price} KD</p>
+                    </div>
+                    <div style="width: 24px; height: 24px; border-radius: 4px; background: ${isSelected ? 'white' : 'var(--border)'}; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                        ${isSelected ? '<span style="color: var(--primary); font-weight: 600;">✓</span>' : ''}
+                    </div>
+                </div>`;
+            }).join('');
+            
+            formContainer.innerHTML = `<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;"><div class="form-group"><label class="form-label">Project Name</label><input type="text" id="project-name" class="form-input" placeholder="Project name"></div><div class="form-group"><label class="form-label">Executing Company</label><input type="text" id="project-executing-company" class="form-input" placeholder="Company name"></div><div class="form-group"><label class="form-label">Producing Company</label><input type="text" id="project-producing-company" class="form-input" placeholder="Company name"></div><div class="form-group"><label class="form-label">Director</label><input type="text" id="project-director" class="form-input" placeholder="Director name"></div><div class="form-group"><label class="form-label">Start Date</label><input type="date" id="project-start-date" class="form-input"></div><div class="form-group"><label class="form-label">End Date</label><input type="date" id="project-end-date" class="form-input"></div><div class="form-group"><label class="form-label">Fitting Date</label><input type="date" id="project-fitting-date" class="form-input"></div><div class="form-group"><label class="form-label">Casting Date</label><input type="date" id="project-casting-date" class="form-input"></div><div class="form-group"><label class="form-label">Project Color</label><input type="color" id="project-color" class="form-input" value="#0a7ea4" style="height: 50px; cursor: pointer;"></div><div class="form-group"><label class="form-label">Budget (KD)</label><input type="number" id="project-budget" class="form-input" placeholder="Project budget"></div><div class="form-group"><label class="form-label">Status</label><select id="project-status" class="form-input"><option value="Planning">Planning</option><option value="In Progress">In Progress</option><option value="Completed">Completed</option><option value="On Hold">On Hold</option><option value="Cancelled">Cancelled</option></select></div></div><div class="form-group"><label class="form-label">Notes</label><textarea id="project-notes" class="form-input" placeholder="Additional notes" style="min-height: 60px; resize: vertical;"></textarea></div><div class="form-group"><label class="form-label">WhatsApp Group Link</label><input type="text" id="project-whatsapp-group" class="form-input" placeholder="WhatsApp group link"></div><div class="form-group"><label class="form-label">Select Models</label><div id="project-talent-selector" style="border: 1px solid var(--border); border-radius: 8px; max-height: 300px; overflow-y: auto;">${talentSelectorHTML}</div></div><div class="form-group"><label class="form-label">Total Cost: <span id="project-total" style="color: var(--primary); font-weight: 600;">KD 0</span></label></div><div style="display: flex; gap: 12px; margin-top: 24px;"><button class="btn btn-primary" onclick="saveProject()">Save Project</button><button class="btn btn-secondary" onclick="backToProjectsList()">Cancel</button></div><input type="hidden" id="editing-project-index" value="">`;
             
             // Show create project page
-            document.getElementById('create-project-page').style.display = 'block';
-            document.getElementById('create-project-form').innerHTML = document.getElementById('inline-project-form').innerHTML;
+            showTab('create-project-page');
         }
         
         function backToProjectsList() {
-            document.getElementById('create-project-page').style.display = 'none';
-            document.getElementById('projects-list').style.display = 'block';
+            showTab('projects-tab');
             selectedProjectTalents = [];
             renderProjects();
         }
@@ -2744,7 +2777,22 @@
         
         function renderInlineProjectForm() {
             const formContainer = document.getElementById('inline-project-form');
-            let talentSelectorHTML = talents.map((talent, index) => `<div style="padding: 8px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 12px;"><input type="checkbox" id="talent-check-${index}" onchange="updateProjectTotal()"><label for="talent-check-${index}" style="flex: 1; cursor: pointer;">${talent.name} - ${talent.price} KD</label></div>`).join('');
+            let talentSelectorHTML = talents.map((talent, index) => {
+                const primaryImage = talentMediaItems[talent.id] && talentMediaItems[talent.id][talent.primaryMediaIndex] ? talentMediaItems[talent.id][talent.primaryMediaIndex] : '';
+                const isSelected = selectedProjectTalents.includes(index);
+                return `<div onclick="toggleProjectTalent(${index})" style="cursor: pointer; padding: 12px; border-radius: 8px; background: ${isSelected ? 'var(--primary)' : 'var(--background)'}; border: 2px solid ${isSelected ? 'var(--primary)' : 'var(--border)'}; display: flex; align-items: center; gap: 12px; transition: all 0.2s; hover: {background: var(--surface);}">
+                    <div style="width: 60px; height: 60px; border-radius: 8px; background: linear-gradient(135deg, ${talent.primaryColor || '#0a7ea4'} 0%, ${talent.secondaryColor || '#0a7ea4'} 100%); flex-shrink: 0; display: flex; align-items: center; justify-content: center; color: white; font-size: 14px; font-weight: 600; overflow: hidden;">
+                        ${primaryImage ? `<img src="${primaryImage}" style="width: 100%; height: 100%; object-fit: cover;">` : `<span>${talent.name.substring(0, 1)}</span>`}
+                    </div>
+                    <div style="flex: 1;">
+                        <p style="color: ${isSelected ? 'white' : 'var(--foreground)'}; font-weight: 600; margin: 0 0 4px 0;">${talent.name}</p>
+                        <p style="color: ${isSelected ? 'rgba(255,255,255,0.8)' : 'var(--muted)'}; margin: 0; font-size: 14px;">${talent.price} KD</p>
+                    </div>
+                    <div style="width: 24px; height: 24px; border-radius: 4px; background: ${isSelected ? 'white' : 'var(--border)'}; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                        ${isSelected ? '<span style="color: var(--primary); font-weight: 600;">✓</span>' : ''}
+                    </div>
+                </div>`;
+            }).join('');
             
             formContainer.innerHTML = `<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;"><div class="form-group"><label class="form-label">Project Name</label><input type="text" id="project-name" class="form-input" placeholder="Project name"></div><div class="form-group"><label class="form-label">Executing Company</label><input type="text" id="project-executing-company" class="form-input" placeholder="Company name"></div><div class="form-group"><label class="form-label">Producing Company</label><input type="text" id="project-producing-company" class="form-input" placeholder="Company name"></div><div class="form-group"><label class="form-label">Director</label><input type="text" id="project-director" class="form-input" placeholder="Director name"></div><div class="form-group"><label class="form-label">Start Date</label><input type="date" id="project-start-date" class="form-input"></div><div class="form-group"><label class="form-label">End Date</label><input type="date" id="project-end-date" class="form-input"></div><div class="form-group"><label class="form-label">Fitting Date</label><input type="date" id="project-fitting-date" class="form-input"></div><div class="form-group"><label class="form-label">Casting Date</label><input type="date" id="project-casting-date" class="form-input"></div><div class="form-group"><label class="form-label">Project Color</label><input type="color" id="project-color" class="form-input" value="#0a7ea4" style="height: 50px; cursor: pointer;"></div><div class="form-group"><label class="form-label">Budget (KD)</label><input type="number" id="project-budget" class="form-input" placeholder="Project budget"></div><div class="form-group"><label class="form-label">Status</label><select id="project-status" class="form-input"><option value="Planning">Planning</option><option value="In Progress">In Progress</option><option value="Completed">Completed</option><option value="On Hold">On Hold</option><option value="Cancelled">Cancelled</option></select></div></div><div class="form-group"><label class="form-label">Notes</label><textarea id="project-notes" class="form-input" placeholder="Additional notes" style="min-height: 60px; resize: vertical;"></textarea></div><div class="form-group"><label class="form-label">WhatsApp Group Link</label><input type="text" id="project-whatsapp-group" class="form-input" placeholder="WhatsApp group link"></div><div class="form-group"><label class="form-label">Select Models</label><div style="border: 1px solid var(--border); border-radius: 8px; max-height: 300px; overflow-y: auto;">${talentSelectorHTML}</div></div><div class="form-group"><label class="form-label">Total Cost: <span id="project-total" style="color: var(--primary); font-weight: 600;">KD 0</span></label></div><div style="display: flex; gap: 12px; margin-top: 24px;"><button class="btn btn-primary" onclick="saveProject()">Save Project</button><button class="btn btn-secondary" onclick="closeProjectForm()">Cancel</button></div><input type="hidden" id="editing-project-index" value="">`;
         }
@@ -2770,6 +2818,72 @@
                 }
             });
             document.getElementById('project-total').textContent = `KD ${total}`;
+            // Update selected talents preview
+            updateSelectedTalentsPreview();
+        }
+
+        function toggleProjectTalent(index) {
+            if (selectedProjectTalents.includes(index)) {
+                selectedProjectTalents = selectedProjectTalents.filter(i => i !== index);
+            } else {
+                selectedProjectTalents.push(index);
+            }
+            updateProjectTalentUI();
+            updateProjectTotal();
+        }
+        
+        function updateProjectTalentUI() {
+            // Update only the talent selector HTML without resetting selectedProjectTalents
+            const talentSelectorContainer = document.getElementById('project-talent-selector');
+            if (!talentSelectorContainer) return;
+            
+            let talentSelectorHTML = talents.map((talent, index) => {
+                const primaryImage = talentMediaItems[talent.id] && talentMediaItems[talent.id][talent.primaryMediaIndex] ? talentMediaItems[talent.id][talent.primaryMediaIndex] : '';
+                const isSelected = selectedProjectTalents.includes(index);
+                return `<div onclick="toggleProjectTalent(${index})" style="cursor: pointer; padding: 12px; border-radius: 8px; background: ${isSelected ? 'var(--primary)' : 'var(--background)'}; border: 2px solid ${isSelected ? 'var(--primary)' : 'var(--border)'}; display: flex; align-items: center; gap: 12px; transition: all 0.2s;">
+                    <div style="width: 60px; height: 60px; border-radius: 8px; background: linear-gradient(135deg, ${talent.primaryColor || '#0a7ea4'} 0%, ${talent.secondaryColor || '#0a7ea4'} 100%); flex-shrink: 0; display: flex; align-items: center; justify-content: center; color: white; font-size: 14px; font-weight: 600; overflow: hidden;">
+                        ${primaryImage ? `<img src="${primaryImage}" style="width: 100%; height: 100%; object-fit: cover;">` : `<span>${talent.name.substring(0, 1)}</span>`}
+                    </div>
+                    <div style="flex: 1;">
+                        <p style="color: ${isSelected ? 'white' : 'var(--foreground)'}; font-weight: 600; margin: 0 0 4px 0;">${talent.name}</p>
+                        <p style="color: ${isSelected ? 'rgba(255,255,255,0.8)' : 'var(--muted)'}; margin: 0; font-size: 14px;">${talent.price} KD</p>
+                    </div>
+                    <div style="width: 24px; height: 24px; border-radius: 4px; background: ${isSelected ? 'white' : 'var(--border)'}; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                        ${isSelected ? '<span style="color: var(--primary); font-weight: 600;">✓</span>' : ''}
+                    </div>
+                </div>`;
+            }).join('');
+            
+            talentSelectorContainer.innerHTML = talentSelectorHTML;
+        }
+
+        function updateSelectedTalentsPreview() {
+            const previewContainer = document.getElementById('selected-talents-preview');
+            if (!previewContainer) return;
+            
+            if (selectedProjectTalents.length === 0) {
+                previewContainer.innerHTML = '<p style="color: var(--muted); text-align: center; padding: 20px;">No talents selected</p>';
+                return;
+            }
+            
+            const talentCards = selectedProjectTalents.map(index => {
+                const talent = talents[index];
+                const primaryImage = talentMediaItems[talent.id] && talentMediaItems[talent.id][talent.primaryMediaIndex] ? talentMediaItems[talent.id][talent.primaryMediaIndex] : '';
+                const age = talent.age ? `${talent.age} years` : 'N/A';
+                return `
+                    <div style="background: var(--surface); border-radius: 12px; overflow: hidden; border: 1px solid var(--border); text-align: center; transition: transform 0.2s;">
+                        <div style="width: 100%; height: 120px; background: linear-gradient(135deg, ${talent.primaryColor || '#0a7ea4'} 0%, ${talent.secondaryColor || '#0a7ea4'} 100%); overflow: hidden; display: flex; align-items: center; justify-content: center;">
+                            ${primaryImage ? `<img src="${primaryImage}" style="width: 100%; height: 100%; object-fit: cover;">` : `<div style="color: white; font-size: 12px; font-weight: 600;">${talent.name.substring(0, 1)}</div>`}
+                        </div>
+                        <div style="padding: 12px;">
+                            <p style="color: var(--foreground); font-weight: 600; margin: 0 0 4px 0; font-size: 14px;">${talent.name}</p>
+                            <p style="color: var(--muted); margin: 0; font-size: 12px;">${age}</p>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            
+            previewContainer.innerHTML = `<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 12px;">${talentCards}</div>`;
         }
 
         function saveProject(editIndex = null) {
