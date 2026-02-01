@@ -846,9 +846,16 @@
                                 <div style="background: var(--surface-alt); border-radius: 12px; padding: 20px; border: 1px solid var(--border);">
                                     <h3 style="margin: 0 0 20px 0; font-size: 18px; font-weight: 700; color: var(--text);">Manage Talents</h3>
                                     
+                                    <div style="margin-bottom: 20px;">
+                                        <input type="text" id="talent-search-edit" placeholder="Search talents..." style="width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 8px; background: var(--surface); color: var(--text); font-size: 14px;">
+                                    </div>
+                                    
+                                    <div id="project-talents-list" style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px;"></div>
+                                    
                                     <div id="talents-selector" style="max-height: 500px; overflow-y: auto; border: 1px solid var(--border); border-radius: 8px; padding: 12px;"></div>
+                                    
+                                    <button onclick="showAddTalentModal()" style="width: 100%; margin-top: 16px; background: var(--primary); color: white; border: none; padding: 12px; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 14px;">+ Add New Talent</button>
                                 </div>
-
                             </div>
                         </div>
                     </div>
