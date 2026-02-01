@@ -852,6 +852,38 @@
                                     <span id="gradient-end-value" style="color: var(--text-light); font-size: 14px;">#ec4899</span>
                                 </div>
                             </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">Background Color</label>
+                                <div style="display: flex; gap: 12px; margin-top: 8px; align-items: center;">
+                                    <input type="color" id="bg-color" class="form-input" value="#f8fafc" style="width: 60px; height: 40px; cursor: pointer; border-radius: 8px; border: 1px solid var(--border);">
+                                    <span id="bg-color-value" style="color: var(--text-light); font-size: 14px;">#f8fafc</span>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">Text Color</label>
+                                <div style="display: flex; gap: 12px; margin-top: 8px; align-items: center;">
+                                    <input type="color" id="text-color" class="form-input" value="#1a202c" style="width: 60px; height: 40px; cursor: pointer; border-radius: 8px; border: 1px solid var(--border);">
+                                    <span id="text-color-value" style="color: var(--text-light); font-size: 14px;">#1a202c</span>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">Border Color</label>
+                                <div style="display: flex; gap: 12px; margin-top: 8px; align-items: center;">
+                                    <input type="color" id="border-color" class="form-input" value="#e2e8f0" style="width: 60px; height: 40px; cursor: pointer; border-radius: 8px; border: 1px solid var(--border);">
+                                    <span id="border-color-value" style="color: var(--text-light); font-size: 14px;">#e2e8f0</span>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">Surface Color</label>
+                                <div style="display: flex; gap: 12px; margin-top: 8px; align-items: center;">
+                                    <input type="color" id="surface-color" class="form-input" value="#ffffff" style="width: 60px; height: 40px; cursor: pointer; border-radius: 8px; border: 1px solid var(--border);">
+                                    <span id="surface-color-value" style="color: var(--text-light); font-size: 14px;">#ffffff</span>
+                                </div>
+                            </div>
                         </div>
 
                         <!-- Branding Settings -->
@@ -1958,6 +1990,27 @@
                 updateFavicon(savedLogo);
             }
             
+            const savedBgColor = localStorage.getItem('bgColor');
+            if (savedBgColor) {
+                document.documentElement.style.setProperty('--bg', savedBgColor);
+                document.getElementById('bg-color').value = savedBgColor;
+            }
+            const savedTextColor = localStorage.getItem('textColor');
+            if (savedTextColor) {
+                document.documentElement.style.setProperty('--text', savedTextColor);
+                document.getElementById('text-color').value = savedTextColor;
+            }
+            const savedBorderColor = localStorage.getItem('borderColor');
+            if (savedBorderColor) {
+                document.documentElement.style.setProperty('--border', savedBorderColor);
+                document.getElementById('border-color').value = savedBorderColor;
+            }
+            const savedSurfaceColor = localStorage.getItem('surfaceColor');
+            if (savedSurfaceColor) {
+                document.documentElement.style.setProperty('--surface', savedSurfaceColor);
+                document.getElementById('surface-color').value = savedSurfaceColor;
+            }
+            
             updateSiteTitle();
         }
 
@@ -2131,6 +2184,20 @@
             const gradientEnd = document.getElementById('gradient-end-color').value;
             localStorage.setItem('gradientStart', gradientStart);
             localStorage.setItem('gradientEnd', gradientEnd);
+            document.documentElement.style.setProperty('--gradient-start', gradientStart);
+            document.documentElement.style.setProperty('--gradient-end', gradientEnd);
+            const bgColor = document.getElementById('bg-color').value;
+            document.documentElement.style.setProperty('--bg', bgColor);
+            localStorage.setItem('bgColor', bgColor);
+            const textColor = document.getElementById('text-color').value;
+            document.documentElement.style.setProperty('--text', textColor);
+            localStorage.setItem('textColor', textColor);
+            const borderColor = document.getElementById('border-color').value;
+            document.documentElement.style.setProperty('--border', borderColor);
+            localStorage.setItem('borderColor', borderColor);
+            const surfaceColor = document.getElementById('surface-color').value;
+            document.documentElement.style.setProperty('--surface', surfaceColor);
+            localStorage.setItem('surfaceColor', surfaceColor);
             renderTalents();
             showNotification('Settings saved successfully!', 'success');
         }
