@@ -823,7 +823,7 @@
                             <div class="form-group">
                                 <label class="form-label">Primary Color</label>
                                 <div style="display: flex; gap: 12px; margin-top: 8px; align-items: center;">
-                                    <input type="color" id="primary-color" class="form-input" value="#667eea" onchange="changePrimaryColor()" style="width: 60px; height: 40px; cursor: pointer; border-radius: 8px; border: 1px solid var(--border);">
+                                    <input type="color" id="primary-color" class="form-input" value="#667eea" style="width: 60px; height: 40px; cursor: pointer; border-radius: 8px; border: 1px solid var(--border);">
                                     <span id="color-value" style="color: var(--text-light); font-size: 14px;">#667eea</span>
                                 </div>
                             </div>
@@ -831,7 +831,7 @@
                             <div class="form-group">
                                 <label class="form-label">Secondary Color</label>
                                 <div style="display: flex; gap: 12px; margin-top: 8px; align-items: center;">
-                                    <input type="color" id="secondary-color" class="form-input" value="#ec4899" onchange="changeSecondaryColor()" style="width: 60px; height: 40px; cursor: pointer; border-radius: 8px; border: 1px solid var(--border);">
+                                    <input type="color" id="secondary-color" class="form-input" value="#ec4899" style="width: 60px; height: 40px; cursor: pointer; border-radius: 8px; border: 1px solid var(--border);">
                                     <span id="secondary-color-value" style="color: var(--text-light); font-size: 14px;">#ec4899</span>
                                 </div>
                             </div>
@@ -2087,19 +2087,7 @@
             }
         }
 
-        function changePrimaryColor() {
-            const color = document.getElementById('primary-color').value;
-            document.documentElement.style.setProperty('--primary', color);
-            document.getElementById('color-value').textContent = color;
-            localStorage.setItem('primaryColor', color);
-        }
-        
-        function changeSecondaryColor() {
-            const color = document.getElementById('secondary-color').value;
-            document.documentElement.style.setProperty('--secondary', color);
-            document.getElementById('secondary-color-value').textContent = color;
-            localStorage.setItem('secondaryColor', color);
-        }
+
         
         function saveAllSettings() {
             const appName = document.getElementById('app-name').value || 'Talent Manager';
@@ -2115,6 +2103,12 @@
                 const settings = { profitMargin: profitMarginEl.value };
                 localStorage.setItem('settings', JSON.stringify(settings));
             }
+            const primaryColor = document.getElementById('primary-color').value;
+            document.documentElement.style.setProperty('--primary', primaryColor);
+            localStorage.setItem('primaryColor', primaryColor);
+            const secondaryColor = document.getElementById('secondary-color').value;
+            document.documentElement.style.setProperty('--secondary', secondaryColor);
+            localStorage.setItem('secondaryColor', secondaryColor);
             showNotification('Settings saved successfully!', 'success');
         }
 
