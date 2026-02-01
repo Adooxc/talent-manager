@@ -237,7 +237,7 @@
 
         .talents-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            grid-template-columns: var(--grid-columns, repeat(auto-fill, minmax(250px, 1fr)));
             gap: 24px;
         }
 
@@ -950,8 +950,7 @@
             const percentage = document.getElementById('card-size').value;
             const pixelSize = Math.round((percentage / 100) * 250);
             document.getElementById('card-size-label').textContent = percentage + '%';
-            const grid = document.getElementById('talents-list').parentElement;
-            grid.style.gridTemplateColumns = `repeat(auto-fill, minmax(${pixelSize}px, 1fr))`;
+            document.documentElement.style.setProperty('--grid-columns', `repeat(auto-fill, minmax(${pixelSize}px, 1fr))`);
             localStorage.setItem('cardSize', percentage);
         }
 
@@ -1123,6 +1122,7 @@
                 const reader = new FileReader();
                 reader.onload = (e) => {
                     currentTalentPhotos[talentId].push(e.target.result);
+                    localStorage.setItem('talentPhotos', JSON.stringify(currentTalentPhotos));
                     renderPhotos();
                     renderTalents();
                 };
@@ -1135,6 +1135,7 @@
 
             const talentId = talents[currentDetailTalentIndex].id || currentDetailTalentIndex;
             currentTalentPhotos[talentId].splice(index, 1);
+            localStorage.setItem('talentPhotos', JSON.stringify(currentTalentPhotos));
             renderPhotos();
             renderTalents();
         }
@@ -1320,6 +1321,14 @@
         const savedCardSize = localStorage.getItem('cardSize') || '100';
         document.getElementById('card-size').value = savedCardSize;
         updateCardSize();
+        const savedPhotos = localStorage.getItem('talentPhotos');
+        if (savedPhotos) {
+            try {
+                currentTalentPhotos = JSON.parse(savedPhotos);
+            } catch (e) {
+                currentTalentPhotos = {};
+            }
+        }
         renderTalents();
     </script>
 </body>
