@@ -1177,7 +1177,6 @@
             const ageMin = document.getElementById('age-min').value ? parseInt(document.getElementById('age-min').value) : null;
             const ageMax = document.getElementById('age-max').value ? parseInt(document.getElementById('age-max').value) : null;
             const genderFilter = document.getElementById('gender-filter').value;
-            const ratingFilter = document.getElementById('rating-filter').value ? parseInt(document.getElementById('rating-filter').value) : null;
             const favoriteFilter = document.getElementById('favorite-filter').value;
 
             let filtered = talents.filter(t => {
@@ -1186,9 +1185,8 @@
                 const matchPrice = (priceMin === null || t.price >= priceMin) && (priceMax === null || t.price <= priceMax);
                 const matchAge = (ageMin === null || t.age >= ageMin) && (ageMax === null || t.age <= ageMax);
                 const matchGender = !genderFilter || t.gender === genderFilter;
-                const matchRating = !ratingFilter || (t.rating || 0) >= ratingFilter;
                 const matchFavorite = !favoriteFilter || (favoriteFilter === 'true' ? t.isFavorite : !t.isFavorite);
-                return matchSearch && matchCategory && matchPrice && matchAge && matchGender && matchRating && matchFavorite;
+                return matchSearch && matchCategory && matchPrice && matchAge && matchGender && matchFavorite;
             });
 
             const html = filtered.map((talent, index) => {
