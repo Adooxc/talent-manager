@@ -1025,6 +1025,183 @@
                     </div>
                 </div>
 
+                <!-- Add Talent Page -->
+                <div id="add-talent-page" class="tab-content" style="display: none;">
+                    <div style="padding: 20px; height: 100%;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+                            <h1 style="font-size: 28px; font-weight: bold; color: var(--text);">Add New Model</h1>
+                            <button class="btn btn-secondary" onclick="showTab('talents-tab')">← Back</button>
+                        </div>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
+                            <div style="grid-column: 1 / -1;">
+                                <div class="form-group">
+                                    <label class="form-label">Name</label>
+                                    <input type="text" id="talent-name" class="form-input">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Category</label>
+                                    <select id="talent-category" class="form-select">
+                                        <option value="">Select Category</option>
+                                        <option value="Actors">Actors</option>
+                                        <option value="Influencers">Influencers</option>
+                                        <option value="Models">Models</option>
+                                        <option value="Extras">Extras</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Price (KD)</label>
+                                    <input type="number" id="talent-price" class="form-input">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Gender</label>
+                                    <select id="talent-gender" class="form-select">
+                                        <option value="">Select</option>
+                                        <option value="Male">Male</option>
+                                        <option value="Female">Female</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Date of Birth</label>
+                                    <input type="date" id="talent-birthdate" class="form-input" onchange="calculateAge()">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Age (Auto-calculated)</label>
+                                    <input type="number" id="talent-age" class="form-input" readonly style="background: var(--surface); cursor: not-allowed;">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Phone</label>
+                                    <input type="tel" id="talent-phone" class="form-input">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Instagram</label>
+                                    <input type="text" id="talent-instagram" class="form-input" placeholder="Username">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">TikTok</label>
+                                    <input type="text" id="talent-tiktok" class="form-input" placeholder="Username">
+                                </div>
+                                <div style="border-top: 1px solid var(--border); padding-top: 16px; margin-top: 16px;">
+                                    <h3 style="font-size: 14px; font-weight: 600; margin-bottom: 12px; color: var(--primary);">Measurements and Additional Data</h3>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Height (cm)</label>
+                                    <input type="number" id="talent-height" class="form-input" placeholder="Example: 180">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Weight (kg)</label>
+                                    <input type="number" id="talent-weight" class="form-input" placeholder="Example: 75">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Chest (cm)</label>
+                                    <input type="number" id="talent-chest" class="form-input" placeholder="Example: 95">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Waist (cm)</label>
+                                    <input type="number" id="talent-waist" class="form-input" placeholder="Example: 82">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Hips (cm)</label>
+                                    <input type="number" id="talent-hips" class="form-input" placeholder="Example: 92">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Shoe Size</label>
+                                    <input type="number" id="talent-shoe" class="form-input" placeholder="Example: 42">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Hair Color</label>
+                                    <input type="text" id="talent-hair" class="form-input" placeholder="Example: Black, Brown">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Eye Color</label>
+                                    <input type="text" id="talent-eyes" class="form-input" placeholder="Example: Black, Blue">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Skills and Experience</label>
+                                    <textarea id="talent-skills" class="form-input" placeholder="Example: Acting, Dancing, Fashion Show" style="min-height: 60px; resize: vertical;"></textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Photo</label>
+                                    <input type="file" id="talent-photo" class="form-input" accept="image/*" onchange="handleTalentPhotoUpload()">
+                                    <small style="color: var(--text-light); margin-top: 4px; display: block;">Select a photo for the model</small>
+                                    <div id="talent-photo-preview" style="margin-top: 8px;"></div>
+                                </div>
+                                <div class="form-actions">
+                                    <button class="btn btn-primary" onclick="saveTalent()" style="flex: 1;">Save</button>
+                                    <button class="btn btn-secondary" onclick="showTab('talents-tab')" style="flex: 1;">Cancel</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Add Project Page -->
+                <div id="add-project-page" class="tab-content" style="display: none;">
+                    <div style="padding: 20px; height: 100%;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+                            <h1 style="font-size: 28px; font-weight: bold; color: var(--text);">Create New Project</h1>
+                            <button class="btn btn-secondary" onclick="showTab('projects-tab')">← Back</button>
+                        </div>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
+                            <div style="grid-column: 1 / -1;">
+                                <input type="hidden" id="editing-project-index" value="">
+                                <div class="form-group">
+                                    <label class="form-label">Project Name</label>
+                                    <input type="text" id="project-name" class="form-input">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Executing Company</label>
+                                    <input type="text" id="project-executing-company" class="form-input" placeholder="Executing Company name">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Producing Company</label>
+                                    <input type="text" id="project-producing-company" class="form-input" placeholder="Producing Company name">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Director Name</label>
+                                    <input type="text" id="project-director" class="form-input" placeholder="Director Name">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Start Date</label>
+                                    <input type="date" id="project-start-date" class="form-input">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">End Date</label>
+                                    <input type="date" id="project-end-date" class="form-input">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Fitting Date</label>
+                                    <input type="date" id="project-fitting-date" class="form-input">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Casting Date</label>
+                                    <input type="date" id="project-casting-date" class="form-input">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Notes</label>
+                                    <textarea id="project-notes" class="form-input" placeholder="Additional notes about the project" style="min-height: 60px; resize: vertical;"></textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">WhatsApp Group Link</label>
+                                    <input type="text" id="project-whatsapp-group" class="form-input" placeholder="https://chat.whatsapp.com/...">
+                                    <small style="color: var(--text-light); margin-top: 4px; display: block;">Project WhatsApp Group Link</small>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Select Models</label>
+                                    <div id="talent-selector" style="max-height: 300px; overflow-y: auto; border: 1px solid var(--border); border-radius: 8px; padding: 12px;"></div>
+                                </div>
+                                <div style="background: var(--surface-alt); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+                                    <div style="font-size: 14px; color: var(--text-light);">Total Cost</div>
+                                    <div style="font-size: 24px; font-weight: 700; color: var(--primary);" id="project-total">KD 0</div>
+                                </div>
+                                <div class="form-actions">
+                                    <button class="btn btn-primary" id="save-project-btn" onclick="saveProject()" style="flex: 1;">Create</button>
+                                    <button class="btn btn-secondary" onclick="showTab('projects-tab')" style="flex: 1;">Cancel</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Talent Detail Page -->
                 <div id="talent-detail" class="detail-page">
                     <div class="detail-header">
