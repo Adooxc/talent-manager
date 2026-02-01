@@ -259,7 +259,7 @@
 
         .talent-card-image {
             width: 100%;
-            height: 240px;
+            aspect-ratio: 1 / 1;
             background: linear-gradient(135deg, var(--primary), var(--primary-light));
             display: flex;
             align-items: center;
@@ -436,62 +436,19 @@
         }
 
         .photo-upload-area {
-            border: 2px dashed var(--primary);
-            border-radius: 8px;
-            padding: 32px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            background: rgba(99, 102, 241, 0.05);
-        }
-
-        .photo-upload-area:hover {
-            background: rgba(99, 102, 241, 0.1);
-            border-color: var(--primary-light);
+            display: none;
         }
 
         .photos-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-            gap: 12px;
-            margin-top: 16px;
+            display: none;
         }
 
         .photo-item {
-            position: relative;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: var(--shadow-md);
-            transition: all 0.2s ease;
-        }
-
-        .photo-item img {
-            width: 100%;
-            height: 100px;
-            object-fit: cover;
+            display: none;
         }
 
         .photo-delete-btn {
-            position: absolute;
-            top: 4px;
-            right: 4px;
-            width: 28px;
-            height: 28px;
-            border-radius: 50%;
-            background: var(--danger);
-            color: white;
-            border: none;
-            cursor: pointer;
-            font-size: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            opacity: 0;
-            transition: opacity 0.2s ease;
-        }
-
-        .photo-item:hover .photo-delete-btn {
-            opacity: 1;
+            display: none;
         }
 
         .detail-page {
@@ -519,8 +476,8 @@
         }
 
         .detail-image {
-            width: 240px;
-            height: 240px;
+            width: 280px;
+            aspect-ratio: 1 / 1;
             border-radius: 12px;
             background: linear-gradient(135deg, var(--primary), var(--primary-light));
             display: flex;
