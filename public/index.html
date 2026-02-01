@@ -914,7 +914,20 @@
 
         function editTalentFromDetail() {
             if (currentDetailTalentIndex !== null) {
-                editTalent(null, currentDetailTalentIndex);
+                editingTalentId = currentDetailTalentIndex;
+                const talent = talents[currentDetailTalentIndex];
+                document.getElementById('talent-modal-title').textContent = 'تعديل الموديل';
+                document.getElementById('talent-name').value = talent.name;
+                document.getElementById('talent-category').value = talent.category;
+                document.getElementById('talent-gender').value = talent.gender || 'ذكر';
+                document.getElementById('talent-age').value = talent.age || '';
+                document.getElementById('talent-price').value = talent.price;
+                document.getElementById('talent-phone').value = talent.phone || '';
+                document.getElementById('talent-instagram').value = talent.instagram || '';
+                document.getElementById('talent-tiktok').value = talent.tiktok || '';
+                document.getElementById('talent-twitter').value = talent.twitter || '';
+                document.getElementById('talent-facebook').value = talent.facebook || '';
+                document.getElementById('talent-modal').classList.add('active');
             }
         }
 
