@@ -420,6 +420,16 @@
             font-size: 14px;
             font-family: inherit;
             transition: all 0.2s ease;
+            height: 44px;
+        }
+
+        .form-textarea {
+            height: auto;
+            min-height: 100px;
+        }
+
+        input[type="date"].form-input {
+            height: 44px;
         }
 
         .form-input:focus,
@@ -1022,6 +1032,39 @@
                                 <p><strong>Created by:</strong> Talent Manager Team</p>
                             </div>
                         </div>
+                    </div>
+                </div>
+
+                <!-- Add Talent Page -->
+                <div id="add-talent-page" class="tab-content">
+                    <div style="max-width: 900px; margin: 0 auto; padding: 20px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+                            <h2 style="color: var(--foreground); font-size: 28px; font-weight: 700; margin: 0;">Add New Talent</h2>
+                            <button onclick="showTab('talents-tab')" style="background: var(--primary); color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: 600;">Back</button>
+                        </div>
+                        <form onsubmit="saveTalent(event)" style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                            <div class="form-group"><label class="form-label">Name *</label><input type="text" id="talent-name" class="form-input" required></div>
+                            <div class="form-group"><label class="form-label">Category *</label><select id="talent-category" class="form-input" required><option value="">Select</option><option value="Actors">Actors</option><option value="Influencers">Influencers</option><option value="Models">Models</option><option value="Extras">Extras</option></select></div>
+                            <div class="form-group"><label class="form-label">Price (KD) *</label><input type="number" id="talent-price" class="form-input" required></div>
+                            <div class="form-group"><label class="form-label">Gender</label><select id="talent-gender" class="form-input"><option value="">Select</option><option value="Male">Male</option><option value="Female">Female</option></select></div>
+                            <div class="form-group"><label class="form-label">Date of Birth</label><input type="date" id="talent-birthdate" class="form-input" onchange="calculateAge()"></div>
+                            <div class="form-group"><label class="form-label">Age (Auto)</label><input type="number" id="talent-age" class="form-input" readonly style="opacity: 0.7;"></div>
+                            <div class="form-group"><label class="form-label">Phone</label><input type="tel" id="talent-phone" class="form-input"></div>
+                            <div class="form-group"><label class="form-label">Instagram</label><input type="text" id="talent-instagram" class="form-input" placeholder="Username"></div>
+                            <div class="form-group"><label class="form-label">TikTok</label><input type="text" id="talent-tiktok" class="form-input" placeholder="Username"></div>
+                            <div style="grid-column: 1 / -1;"><h3 style="color: var(--foreground); font-size: 18px; font-weight: 600; margin: 20px 0 15px 0;">Measurements</h3></div>
+                            <div class="form-group"><label class="form-label">Height (cm)</label><input type="number" id="talent-height" class="form-input"></div>
+                            <div class="form-group"><label class="form-label">Weight (kg)</label><input type="number" id="talent-weight" class="form-input"></div>
+                            <div class="form-group"><label class="form-label">Chest (cm)</label><input type="number" id="talent-chest" class="form-input"></div>
+                            <div class="form-group"><label class="form-label">Waist (cm)</label><input type="number" id="talent-waist" class="form-input"></div>
+                            <div class="form-group"><label class="form-label">Hips (cm)</label><input type="number" id="talent-hips" class="form-input"></div>
+                            <div class="form-group"><label class="form-label">Shoe Size</label><input type="number" id="talent-shoe" class="form-input"></div>
+                            <div class="form-group"><label class="form-label">Hair Color</label><input type="text" id="talent-hair" class="form-input"></div>
+                            <div class="form-group"><label class="form-label">Eye Color</label><input type="text" id="talent-eyes" class="form-input"></div>
+                            <div style="grid-column: 1 / -1;" class="form-group"><label class="form-label">Skills</label><textarea id="talent-skills" class="form-input" style="min-height: 100px;"></textarea></div>
+                            <div style="grid-column: 1 / -1;" class="form-group"><label class="form-label">Photo</label><input type="file" id="talent-photo" class="form-input" accept="image/*"></div>
+                            <div style="grid-column: 1 / -1; display: flex; gap: 12px; margin-top: 20px;"><button type="submit" class="btn" style="background: var(--primary); color: white; padding: 12px 24px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; flex: 1;">Save</button><button type="button" onclick="showTab('talents-tab')" class="btn" style="background: var(--border); color: var(--foreground); padding: 12px 24px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; flex: 1;">Cancel</button></div>
+                        </form>
                     </div>
                 </div>
 
