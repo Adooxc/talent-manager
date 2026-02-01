@@ -716,51 +716,59 @@
 
                 <!-- Stats Tab -->
                 <div id="stats-tab" class="tab-content">
-                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 30px;">
-                        <div class="stats-card" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 24px; border-radius: 12px; box-shadow: var(--shadow-lg);">
-                            <div style="font-size: 14px; opacity: 0.9; margin-bottom: 8px;">إجمالي الموديلز</div>
-                            <div style="font-size: 32px; font-weight: bold;" id="total-talents">0</div>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin-bottom: 30px;">
+                        <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 28px; border-radius: 16px; box-shadow: 0 8px 24px rgba(102, 126, 234, 0.3);">
+                            <div style="display: flex; justify-content: space-between; align-items: start;">
+                                <div>
+                                    <div style="font-size: 13px; opacity: 0.9; margin-bottom: 12px; font-weight: 500;">إجمالي الموديلز</div>
+                                    <div style="font-size: 42px; font-weight: 700;" id="total-talents">0</div>
+                                </div>
+                                <div style="font-size: 40px; opacity: 0.3;">👥</div>
+                            </div>
                         </div>
-                        <div class="stats-card" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; padding: 24px; border-radius: 12px; box-shadow: var(--shadow-lg);">
-                            <div style="font-size: 14px; opacity: 0.9; margin-bottom: 8px;">إجمالي المشاريع</div>
-                            <div style="font-size: 32px; font-weight: bold;" id="total-projects">0</div>
+                        
+                        <div style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; padding: 28px; border-radius: 16px; box-shadow: 0 8px 24px rgba(245, 87, 108, 0.3);">
+                            <div style="display: flex; justify-content: space-between; align-items: start;">
+                                <div>
+                                    <div style="font-size: 13px; opacity: 0.9; margin-bottom: 12px; font-weight: 500;">إجمالي المشاريع</div>
+                                    <div style="font-size: 42px; font-weight: 700;" id="total-projects">0</div>
+                                </div>
+                                <div style="font-size: 40px; opacity: 0.3;">📽️</div>
+                            </div>
                         </div>
-                        <div class="stats-card" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white; padding: 24px; border-radius: 12px; box-shadow: var(--shadow-lg);">
-                            <div style="font-size: 14px; opacity: 0.9; margin-bottom: 8px;">المفضلة</div>
-                            <div style="font-size: 32px; font-weight: bold;" id="total-favorites">0</div>
-                        </div>
-                        <div class="stats-card" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); color: white; padding: 24px; border-radius: 12px; box-shadow: var(--shadow-lg);">
-                            <div style="font-size: 14px; opacity: 0.9; margin-bottom: 8px;">الموديلز النشطة</div>
-                            <div style="font-size: 32px; font-weight: bold;" id="active-talents">0</div>
+                        
+                        <div style="background: linear-gradient(135deg, #f5576c 0%, #f093fb 100%); color: white; padding: 28px; border-radius: 16px; box-shadow: 0 8px 24px rgba(245, 87, 108, 0.3);">
+                            <div style="display: flex; justify-content: space-between; align-items: start;">
+                                <div>
+                                    <div style="font-size: 13px; opacity: 0.9; margin-bottom: 12px; font-weight: 500;">الموديلز المفضلة</div>
+                                    <div style="font-size: 42px; font-weight: 700;" id="total-favorites">0</div>
+                                </div>
+                                <div style="font-size: 40px; opacity: 0.3;">❤️</div>
+                            </div>
                         </div>
                     </div>
                     
-                    <div style="background: var(--surface); border-radius: 12px; padding: 20px; border: 1px solid var(--border); margin-bottom: 20px;">
-                        <h2 style="margin-bottom: 16px; color: var(--text);">إحصائيات إضافية</h2>
+                    <div style="background: var(--surface); border-radius: 16px; padding: 24px; border: 1px solid var(--border); margin-bottom: 20px;">
+                        <h2 style="margin: 0 0 20px 0; color: var(--text); font-size: 18px; font-weight: 600;">📊 إحصائيات مفصلة</h2>
                         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px;">
-                            <div style="background: var(--surface-alt); padding: 16px; border-radius: 8px;">
-                                <div style="font-size: 12px; color: var(--muted); margin-bottom: 8px;">متوسط سعر الموديل</div>
-                                <div style="font-size: 24px; font-weight: bold; color: var(--primary);" id="avg-price">0 KD</div>
+                            <div style="background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1)); padding: 16px; border-radius: 12px; border-left: 4px solid #667eea;">
+                                <div style="font-size: 12px; color: var(--muted); margin-bottom: 8px; font-weight: 500;">💰 متوسط السعر</div>
+                                <div style="font-size: 28px; font-weight: 700; color: #667eea;" id="avg-price">0 KD</div>
                             </div>
-                            <div style="background: var(--surface-alt); padding: 16px; border-radius: 8px;">
-                                <div style="font-size: 12px; color: var(--muted); margin-bottom: 8px;">إجمالي الفئات</div>
-                                <div style="font-size: 24px; font-weight: bold; color: var(--primary);" id="total-categories">0</div>
+                            <div style="background: linear-gradient(135deg, rgba(79, 172, 254, 0.1), rgba(0, 242, 254, 0.1)); padding: 16px; border-radius: 12px; border-left: 4px solid #4facfe;">
+                                <div style="font-size: 12px; color: var(--muted); margin-bottom: 8px; font-weight: 500;">🏷️ عدد الفئات</div>
+                                <div style="font-size: 28px; font-weight: 700; color: #4facfe;" id="total-categories">0</div>
                             </div>
-                            <div style="background: var(--surface-alt); padding: 16px; border-radius: 8px;">
-                                <div style="font-size: 12px; color: var(--muted); margin-bottom: 8px;">المشاريع المكتملة</div>
-                                <div style="font-size: 24px; font-weight: bold; color: var(--primary);" id="completed-projects">0</div>
+                            <div style="background: linear-gradient(135deg, rgba(67, 233, 123, 0.1), rgba(56, 249, 215, 0.1)); padding: 16px; border-radius: 12px; border-left: 4px solid #43e97b;">
+                                <div style="font-size: 12px; color: var(--muted); margin-bottom: 8px; font-weight: 500;">✅ مشاريع مكتملة</div>
+                                <div style="font-size: 28px; font-weight: 700; color: #43e97b;" id="completed-projects">0</div>
                             </div>
-                            <div style="background: var(--surface-alt); padding: 16px; border-radius: 8px;">
-                                <div style="font-size: 12px; color: var(--muted); margin-bottom: 8px;">المشاريع الجارية</div>
-                                <div style="font-size: 24px; font-weight: bold; color: var(--primary);" id="ongoing-projects">0</div>
+                            <div style="background: linear-gradient(135deg, rgba(240, 147, 251, 0.1), rgba(245, 87, 108, 0.1)); padding: 16px; border-radius: 12px; border-left: 4px solid #f5576c;">
+                                <div style="font-size: 12px; color: var(--muted); margin-bottom: 8px; font-weight: 500;">⏳ مشاريع جارية</div>
+                                <div style="font-size: 28px; font-weight: 700; color: #f5576c;" id="ongoing-projects">0</div>
                             </div>
                         </div>
                     </div>
-                    <div style="background: var(--surface); border-radius: 12px; padding: 20px; border: 1px solid var(--border); margin-top: 20px;">
-                        <h2 style="margin-bottom: 16px; color: var(--text);">تقويم المشاريع</h2>
-                        <div id="calendar-view" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px;"></div>
-                    </div>
-                    <div class="stats-grid" id="stats-grid"></div>
                 </div>
 
                 <!-- Settings Tab -->
@@ -1177,7 +1185,6 @@
             const ageMin = document.getElementById('age-min').value ? parseInt(document.getElementById('age-min').value) : null;
             const ageMax = document.getElementById('age-max').value ? parseInt(document.getElementById('age-max').value) : null;
             const genderFilter = document.getElementById('gender-filter').value;
-            const ratingFilter = document.getElementById('rating-filter').value ? parseInt(document.getElementById('rating-filter').value) : null;
             const favoriteFilter = document.getElementById('favorite-filter').value;
 
             let filtered = talents.filter(t => {
@@ -1186,9 +1193,8 @@
                 const matchPrice = (priceMin === null || t.price >= priceMin) && (priceMax === null || t.price <= priceMax);
                 const matchAge = (ageMin === null || t.age >= ageMin) && (ageMax === null || t.age <= ageMax);
                 const matchGender = !genderFilter || t.gender === genderFilter;
-                const matchRating = !ratingFilter || (t.rating || 0) >= ratingFilter;
                 const matchFavorite = !favoriteFilter || (favoriteFilter === 'true' ? t.isFavorite : !t.isFavorite);
-                return matchSearch && matchCategory && matchPrice && matchAge && matchGender && matchRating && matchFavorite;
+                return matchSearch && matchCategory && matchPrice && matchAge && matchGender && matchFavorite;
             });
 
             const html = filtered.map((talent, index) => {
