@@ -259,19 +259,21 @@
 
         .talent-card-image {
             width: 100%;
-            height: 200px;
+            height: 240px;
             background: linear-gradient(135deg, var(--primary), var(--primary-light));
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 80px;
             overflow: hidden;
+            position: relative;
         }
 
         .talent-card-image img {
             width: 100%;
             height: 100%;
             object-fit: cover;
+            display: block;
         }
 
         .talent-card-body {
@@ -517,8 +519,8 @@
         }
 
         .detail-image {
-            width: 200px;
-            height: 200px;
+            width: 240px;
+            height: 240px;
             border-radius: 12px;
             background: linear-gradient(135deg, var(--primary), var(--primary-light));
             display: flex;
@@ -528,12 +530,14 @@
             margin-bottom: 24px;
             overflow: hidden;
             box-shadow: var(--shadow-lg);
+            flex-shrink: 0;
         }
 
         .detail-image img {
             width: 100%;
             height: 100%;
             object-fit: cover;
+            display: block;
         }
 
         .detail-info {
