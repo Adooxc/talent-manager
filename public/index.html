@@ -2489,8 +2489,14 @@
             document.getElementById('detail-media-prev').onclick = prevDetailMedia;
             document.getElementById('detail-media-next').onclick = nextDetailMedia;
 
+            // Hide project detail page if coming from project
+            if (previousPageType === 'project') {
+                document.getElementById('project-detail').classList.remove('active');
+            } else {
+                document.getElementById('talents-tab').classList.remove('active');
+            }
+
             document.getElementById('talent-detail').classList.add('active');
-            document.getElementById('talents-tab').classList.remove('active');
 
             updateFavoriteButton();
             renderPhotos();
@@ -2531,19 +2537,18 @@
         let previousPageType = null;
         
         function backToTalents() {
+            document.getElementById('talent-detail').classList.remove('active');
             if (previousPageType === 'project') {
-                document.getElementById('talent-detail').classList.remove('active');
-                document.getElementById('project-details-page').style.display = 'block';
+                document.getElementById('project-detail').classList.add('active');
                 previousPageType = null;
             } else {
-                document.getElementById('talent-detail').classList.remove('active');
                 document.getElementById('talents-tab').classList.add('active');
             }
             currentDetailTalentIndex = null;
         }
         
         function viewTalentDetail(index) {
-            document.getElementById('project-details-page').style.display = 'none';
+            document.getElementById('project-detail').classList.remove('active');
             previousPageType = 'project';
             showTalentDetail(index);
         }
