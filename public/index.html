@@ -747,12 +747,18 @@
                     <!-- Calendar View -->
                     <div style="background: var(--surface); border-radius: 12px; padding: 20px; margin-bottom: 24px; border: 1px solid var(--border);">
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                            <button onclick="previousMonth()" style="background: var(--surface-alt); border: none; padding: 8px 12px; border-radius: 6px; cursor: pointer; color: var(--text);">Previous</button>
-                            <h3 id="calendar-title" style="color: var(--text); font-size: 20px; font-weight: 600;">February 2026</h3>
-                            <button onclick="nextMonth()" style="background: var(--surface-alt); border: none; padding: 8px 12px; border-radius: 6px; cursor: pointer; color: var(--text);">Next</button>
+                            <h3 id="calendar-title" style="color: var(--text); font-size: 18px; font-weight: 600;">Calendar</h3>
+                            <button id="calendar-toggle" onclick="toggleCalendar()" style="background: var(--primary); color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: 600;">−</button>
                         </div>
-                        <div id="calendar-header" style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; margin-bottom: 12px;"></div>
-                        <div id="calendar-grid" style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px;"></div>
+                        <div id="calendar-content">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                                <button onclick="previousMonth()" style="background: var(--surface-alt); border: none; padding: 8px 12px; border-radius: 6px; cursor: pointer; color: var(--text);">Previous</button>
+                                <h4 id="calendar-month" style="color: var(--text); font-size: 16px; font-weight: 600;">February 2026</h4>
+                                <button onclick="nextMonth()" style="background: var(--surface-alt); border: none; padding: 8px 12px; border-radius: 6px; cursor: pointer; color: var(--text);">Next</button>
+                            </div>
+                            <div id="calendar-header" style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; margin-bottom: 12px;"></div>
+                            <div id="calendar-grid" style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px;"></div>
+                        </div>
                     </div>
                     
                     <div id="projects-list"></div>
@@ -2144,6 +2150,9 @@
         }
 
         // Initialize
+        let currentMonth = new Date().getMonth();
+        let currentYear = new Date().getFullYear();
+        
         loadSettings();
         restoreAppearanceState();
         
@@ -2253,6 +2262,7 @@
         loadMenuNames();
         renderCategories();
         setLastUpdateDate();
+        renderCalendarGrid();
     
 
         function toggleSidebar() {
@@ -2286,6 +2296,20 @@
             }
         }
 
+        function toggleCalendar() {
+            const content = document.getElementById('calendar-content');
+            const button = document.getElementById('calendar-toggle');
+            if (content.style.display === 'none') {
+                content.style.display = 'block';
+                button.textContent = '−';
+                localStorage.setItem('calendarExpanded', 'true');
+            } else {
+                content.style.display = 'none';
+                button.textContent = '+';
+                localStorage.setItem('calendarExpanded', 'false');
+            }
+        }
+
         function restoreAppearanceState() {
             const sections = ['appearance', 'branding', 'menu', 'categories', 'financial', 'data'];
             sections.forEach(section => {
@@ -2302,6 +2326,20 @@
                     }
                 }
             });
+            
+            // Restore calendar state
+            const calendarExpanded = localStorage.getItem('calendarExpanded') !== 'false';
+            const calendarContent = document.getElementById('calendar-content');
+            const calendarButton = document.getElementById('calendar-toggle');
+            if (calendarContent && calendarButton) {
+                if (!calendarExpanded) {
+                    calendarContent.style.display = 'none';
+                    calendarButton.textContent = '+';
+                } else {
+                    calendarContent.style.display = 'block';
+                    calendarButton.textContent = '−';
+                }
+            }
         }
 
         
@@ -2468,9 +2506,6 @@
 
         loadSettings();
         
-        let currentMonth = new Date().getMonth();
-        let currentYear = new Date().getFullYear();
-        
         function renderCalendarGrid() {
             const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
             const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
@@ -2499,7 +2534,7 @@
             
             document.getElementById('calendar-grid').innerHTML = html;
             
-            const monthYear = document.getElementById('calendar-title');
+            const monthYear = document.getElementById('calendar-month');
             if (monthYear) {
                 monthYear.textContent = monthNames[currentMonth] + ' ' + currentYear;
             }
