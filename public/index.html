@@ -826,6 +826,15 @@
                         </div>
                     </div>
                     
+                    <!-- Create Project Page -->
+                    <div id="create-project-page" style="display: none; background: var(--surface); border-radius: 12px; padding: 24px; border: 1px solid var(--border);">
+                        <button onclick="backToProjectsList()" style="background: var(--primary); color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: 600; margin-bottom: 20px;">Back to Projects</button>
+                        <h1 style="color: var(--foreground); font-size: 28px; font-weight: 700; margin-bottom: 30px;">Create New Project</h1>
+                        <div style="max-height: 70vh; overflow-y: auto;">
+                            <div id="create-project-form"></div>
+                        </div>
+                    </div>
+                    
                     <!-- Inline Project Form -->
                     <div id="project-form-container" style="display: none; background: var(--surface); border-radius: 12px; padding: 24px; margin-bottom: 24px; border: 1px solid var(--border);">
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
@@ -2622,11 +2631,23 @@
 
         function openCreateProjectModal() {
             selectedProjectTalents = [];
-            document.getElementById('project-form-title').textContent = 'Create New Project';
             document.getElementById('editing-project-index').value = '';
             renderInlineProjectForm();
-            document.getElementById('project-form-container').style.display = 'block';
-            document.getElementById('project-form-container').scrollIntoView({ behavior: 'smooth', block: 'start' });
+            
+            // Hide projects list and details page
+            document.getElementById('projects-list').style.display = 'none';
+            document.getElementById('project-details-page').style.display = 'none';
+            
+            // Show create project page
+            document.getElementById('create-project-page').style.display = 'block';
+            document.getElementById('create-project-form').innerHTML = document.getElementById('inline-project-form').innerHTML;
+        }
+        
+        function backToProjectsList() {
+            document.getElementById('create-project-page').style.display = 'none';
+            document.getElementById('projects-list').style.display = 'block';
+            selectedProjectTalents = [];
+            renderProjects();
         }
         
         function closeProjectForm() {
