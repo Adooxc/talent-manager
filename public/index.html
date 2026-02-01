@@ -1455,6 +1455,156 @@
         let editingTalentIndex = null;
         let selectedProjectTalents = [];
         let draggedPhotoIndex = null;
+        
+        // Media Gallery Management
+        let talentMediaItems = {}; // Store media for each talent
+        let currentMediaItems = []; // Current media being added
+        let currentPrimaryMediaIndex = 0;
+        
+        function addMediaToTalent(event, type) {
+            const files = event.target.files;
+            for (let file of files) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    currentMediaItems.push({
+                        type: type,
+                        src: e.target.result,
+                        name: file.name
+                    });
+                    renderMediaGallery();
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+        
+        function renderMediaGallery() {
+            const thumbnailsContainer = document.getElementById('media-thumbnails');
+            const mainMedia = document.getElementById('main-media');
+            
+            if (!thumbnailsContainer || !mainMedia) return;
+            
+            thumbnailsContainer.innerHTML = '';
+            
+            if (currentMediaItems.length === 0) {
+                mainMedia.innerHTML = '<span style="color: white; font-size: 16px; opacity: 0.8;">📸 No media selected</span>';
+                return;
+            }
+            
+            // Display main media
+            const primary = currentMediaItems[currentPrimaryMediaIndex];
+            if (primary.type === 'image') {
+                mainMedia.innerHTML = `<img src="${primary.src}" style="width: 100%; height: 100%; object-fit: cover;">`;
+            } else {
+                mainMedia.innerHTML = `<video src="${primary.src}" style="width: 100%; height: 100%; object-fit: cover;" controls></video>`;
+            }
+            
+            // Display thumbnails
+            currentMediaItems.forEach((item, index) => {
+                const thumb = document.createElement('div');
+                thumb.style.cssText = `
+                    width: 80px;
+                    height: 80px;
+                    border-radius: 8px;
+                    cursor: pointer;
+                    border: 3px solid ${index === currentPrimaryMediaIndex ? 'var(--primary)' : 'transparent'};
+                    overflow: hidden;
+                    flex-shrink: 0;
+                    position: relative;
+                    transition: all 0.3s;
+                `;
+                
+                if (item.type === 'image') {
+                    thumb.innerHTML = `<img src="${item.src}" style="width: 100%; height: 100%; object-fit: cover;">`;
+                } else {
+                    thumb.innerHTML = `<video src="${item.src}" style="width: 100%; height: 100%; object-fit: cover;"></video><div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: white; font-size: 24px;">▶</div>`;
+                }
+                
+                thumb.onclick = () => {
+                    currentPrimaryMediaIndex = index;
+                    renderMediaGallery();
+                };
+                
+                // Delete button
+                const deleteBtn = document.createElement('button');
+                deleteBtn.innerHTML = '✕';
+                deleteBtn.style.cssText = `
+                    position: absolute;
+                    top: 2px;
+                    right: 2px;
+                    background: var(--danger);
+                    color: white;
+                    border: none;
+                    width: 20px;
+                    height: 20px;
+                    border-radius: 50%;
+                    cursor: pointer;
+                    font-size: 12px;
+                    padding: 0;
+                    display: none;
+                `;
+                deleteBtn.onclick = (e) => {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    currentMediaItems.splice(index, 1);
+                    if (currentPrimaryMediaIndex >= currentMediaItems.length && currentMediaItems.length > 0) {
+                        currentPrimaryMediaIndex = currentMediaItems.length - 1;
+                    }
+                    renderMediaGallery();
+                };
+                
+                thumb.appendChild(deleteBtn);
+                thumb.addEventListener('mouseenter', () => deleteBtn.style.display = 'block');
+                thumb.addEventListener('mouseleave', () => deleteBtn.style.display = 'none');
+                
+                thumbnailsContainer.appendChild(thumb);
+            });
+        }
+        
+        function renderEditMediaGallery(talentId) {
+            const thumbnailsContainer = document.getElementById('edit-media-thumbnails');
+            const mainMedia = document.getElementById('edit-main-media');
+            
+            if (!thumbnailsContainer || !mainMedia) return;
+            
+            const mediaItems = talentMediaItems[talentId] || [];
+            thumbnailsContainer.innerHTML = '';
+            
+            if (mediaItems.length === 0) {
+                mainMedia.innerHTML = '<span style="color: white; font-size: 16px; opacity: 0.8;">📸 No media selected</span>';
+                return;
+            }
+            
+            // Display main media
+            const primary = mediaItems[0];
+            if (primary.type === 'image') {
+                mainMedia.innerHTML = `<img src="${primary.src}" style="width: 100%; height: 100%; object-fit: cover;">`;
+            } else {
+                mainMedia.innerHTML = `<video src="${primary.src}" style="width: 100%; height: 100%; object-fit: cover;" controls></video>`;
+            }
+            
+            // Display thumbnails
+            mediaItems.forEach((item, index) => {
+                const thumb = document.createElement('div');
+                thumb.style.cssText = `
+                    width: 80px;
+                    height: 80px;
+                    border-radius: 8px;
+                    cursor: pointer;
+                    border: 3px solid ${index === 0 ? 'var(--primary)' : 'transparent'};
+                    overflow: hidden;
+                    flex-shrink: 0;
+                    position: relative;
+                `;
+                
+                if (item.type === 'image') {
+                    thumb.innerHTML = `<img src="${item.src}" style="width: 100%; height: 100%; object-fit: cover;">`;
+                } else {
+                    thumb.innerHTML = `<video src="${item.src}" style="width: 100%; height: 100%; object-fit: cover;"></video><div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: white; font-size: 24px;">▶</div>`;
+                }
+                
+                thumbnailsContainer.appendChild(thumb);
+            });
+        }
 
         function showTab(tabId) {
             // Close talent detail view if open
@@ -1528,7 +1678,20 @@
                 const actualIndex = talents.indexOf(talent);
                 const talentId = talent.id || actualIndex;
                 const photos = currentTalentPhotos[talentId] || [];
-                const photoDisplay = photos.length > 0 ? `<img src="${photos[0]}" alt="Photo" style="width: 100%; height: 100%; object-fit: cover;">` : '';
+                const mediaItems = talentMediaItems[talentId] || [];
+                let photoDisplay = '';
+                
+                // Use media gallery if available, otherwise use old photos
+                if (mediaItems.length > 0) {
+                    const firstMedia = mediaItems[0];
+                    if (firstMedia.type === 'image') {
+                        photoDisplay = `<img src="${firstMedia.src}" alt="Photo" style="width: 100%; height: 100%; object-fit: cover;">`;
+                    } else {
+                        photoDisplay = `<video src="${firstMedia.src}" style="width: 100%; height: 100%; object-fit: cover;"></video><div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: white; font-size: 32px; text-shadow: 0 2px 4px rgba(0,0,0,0.5);">▶</div>`;
+                    }
+                } else if (photos.length > 0) {
+                    photoDisplay = `<img src="${photos[0]}" alt="Photo" style="width: 100%; height: 100%; object-fit: cover;">`;
+                }
 
                 const isFavorite = talent.isFavorite || false;
                 return `
@@ -1658,7 +1821,8 @@
             document.getElementById('talent-age').value = age;
         }
 
-        function saveTalent() {
+        function saveTalent(event) {
+            if (event) event.preventDefault();
             const name = document.getElementById('talent-name').value;
             const category = document.getElementById('talent-category').value;
             const price = parseInt(document.getElementById('talent-price').value);
@@ -1684,17 +1848,34 @@
             }
 
             if (editingTalentIndex !== null) {
+                const talentId = talents[editingTalentIndex].id;
                 talents[editingTalentIndex] = { ...talents[editingTalentIndex], name, category, price, gender, birthdate, age, phone, instagram, tiktok, height, weight, chest, waist, hips, shoe, hair, eyes, skills };
+                if (currentMediaItems.length > 0) {
+                    talentMediaItems[talentId] = currentMediaItems;
+                }
                 if (currentDetailTalentIndex === editingTalentIndex) {
                     showTalentDetail(editingTalentIndex);
                 }
             } else {
-                talents.push({ id: Date.now(), name, category, price, gender, birthdate, age, phone, instagram, tiktok, height, weight, chest, waist, hips, shoe, hair, eyes, skills });
+                const newTalent = { id: Date.now(), name, category, price, gender, birthdate, age, phone, instagram, tiktok, height, weight, chest, waist, hips, shoe, hair, eyes, skills };
+                talents.push(newTalent);
+                if (currentMediaItems.length > 0) {
+                    talentMediaItems[newTalent.id] = currentMediaItems;
+                }
             }
 
             localStorage.setItem('talents', JSON.stringify(talents));
             localStorage.setItem('talentPhotos', JSON.stringify(currentTalentPhotos));
-            closeTalentModal();
+            localStorage.setItem('talentMediaItems', JSON.stringify(talentMediaItems));
+            
+            // Reset media
+            currentMediaItems = [];
+            currentPrimaryMediaIndex = 0;
+            
+            // Reset form
+            document.querySelector('form').reset();
+            
+            showTab('talents-tab');
             renderTalents();
             if (currentDetailTalentIndex !== null) {
                 showTalentDetail(currentDetailTalentIndex);
@@ -3006,6 +3187,32 @@
             editVideoInput.addEventListener('change', function(e) {
                 addEditMedia(e, 'video');
             });
+        }
+        
+        // Add event listeners for media upload in add talent page
+        const photoInput = document.getElementById('talent-photo');
+        const videoInput = document.getElementById('talent-video');
+        
+        if (photoInput) {
+            photoInput.addEventListener('change', function(e) {
+                addMediaToTalent(e, 'image');
+            });
+        }
+        
+        if (videoInput) {
+            videoInput.addEventListener('change', function(e) {
+                addMediaToTalent(e, 'video');
+            });
+        }
+        
+        // Load media items from localStorage on page load
+        const savedMediaItems = localStorage.getItem('talentMediaItems');
+        if (savedMediaItems) {
+            try {
+                talentMediaItems = JSON.parse(savedMediaItems);
+            } catch (e) {
+                console.error('Error loading media items:', e);
+            }
         }
 </script>
 </body>
