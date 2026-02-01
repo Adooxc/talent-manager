@@ -89,8 +89,10 @@
     
     .talent-price { font-size: 18px; font-weight: 700; color: #0a7ea4; margin-top: 12px; padding-top: 12px; border-top: 1px solid #f0f0f0; }
     .talent-social { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
-    .social-link { padding: 4px 8px; background: #f0f0f0; border-radius: 4px; font-size: 11px; cursor: pointer; transition: all 0.2s; }
+    .social-link { padding: 6px 12px; background: #f0f0f0; border-radius: 4px; font-size: 12px; cursor: pointer; transition: all 0.2s; border: none; }
     .social-link:hover { background: #0a7ea4; color: white; }
+    .whatsapp-btn { background: #25D366; color: white; padding: 8px 16px; border-radius: 4px; font-size: 12px; cursor: pointer; border: none; transition: all 0.2s; font-weight: 600; }
+    .whatsapp-btn:hover { background: #20BA5A; }
     
     .rating { display: flex; gap: 4px; margin-top: 8px; }
     .star { color: #ddd; cursor: pointer; font-size: 16px; }
@@ -99,80 +101,51 @@
     .tags { display: flex; gap: 6px; margin-top: 8px; flex-wrap: wrap; }
     .tag { background: #e3f2fd; color: #0a7ea4; padding: 4px 8px; border-radius: 4px; font-size: 11px; }
     
-    /* Empty State */
-    .empty-state { text-align: center; padding: 80px 20px; }
-    .empty-icon { font-size: 80px; margin-bottom: 20px; }
-    .empty-title { font-size: 24px; font-weight: 600; margin-bottom: 10px; }
-    .empty-text { color: #999; margin-bottom: 30px; }
+    /* Detail Page */
+    .detail-page { background: white; border-radius: 10px; padding: 30px; }
+    .detail-header { display: flex; gap: 30px; margin-bottom: 30px; }
+    .detail-image { width: 300px; height: 400px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 120px; overflow: hidden; flex-shrink: 0; }
+    .detail-image img { width: 100%; height: 100%; object-fit: cover; }
+    .detail-info { flex: 1; }
+    .detail-info h1 { font-size: 32px; margin-bottom: 10px; }
+    .detail-info .talent-category { margin-bottom: 15px; }
+    .detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 30px; }
+    .detail-item-large { }
+    .detail-item-large label { color: #666; font-size: 12px; display: block; margin-bottom: 5px; }
+    .detail-item-large value { font-size: 18px; font-weight: 600; display: block; }
+    .detail-actions { display: flex; gap: 15px; margin-top: 30px; }
+    .detail-actions .btn { padding: 12px 24px; font-size: 16px; }
     
-    /* Modals */
-    .modal { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center; overflow-y: auto; }
+    /* Gallery */
+    .gallery { margin-top: 30px; }
+    .gallery-title { font-size: 18px; font-weight: 600; margin-bottom: 15px; }
+    .gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 15px; }
+    .gallery-item { width: 150px; height: 150px; background: #f0f0f0; border-radius: 8px; overflow: hidden; cursor: pointer; }
+    .gallery-item img { width: 100%; height: 100%; object-fit: cover; }
+    
+    /* Modal */
+    .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center; }
     .modal.active { display: flex; }
-    .modal-content { background: white; border-radius: 10px; padding: 30px; max-width: 700px; width: 90%; max-height: 90vh; overflow-y: auto; margin: auto; }
-    .modal-header { font-size: 22px; font-weight: 600; margin-bottom: 20px; color: #333; }
+    .modal-content { background: white; border-radius: 10px; padding: 30px; max-width: 600px; width: 90%; max-height: 90vh; overflow-y: auto; }
+    .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+    .modal-header h2 { font-size: 24px; }
+    .modal-close { background: none; border: none; font-size: 24px; cursor: pointer; }
     
-    /* Forms */
-    .form-group { margin-bottom: 20px; }
-    .form-label { display: block; font-size: 14px; font-weight: 600; margin-bottom: 8px; color: #333; }
-    .form-input { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; transition: all 0.2s; }
-    .form-input:focus { outline: none; border-color: #0a7ea4; box-shadow: 0 0 0 3px rgba(10, 126, 164, 0.1); }
-    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-    .form-row.full { grid-template-columns: 1fr; }
-    .modal-footer { display: flex; gap: 12px; margin-top: 30px; justify-content: flex-end; }
+    /* Form */
+    .form-group { margin-bottom: 15px; }
+    .form-group label { display: block; margin-bottom: 5px; font-weight: 500; }
+    .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; }
+    .form-group textarea { resize: vertical; min-height: 100px; }
     
-    /* Projects */
-    .projects-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
-    .project-card { background: white; border-radius: 8px; padding: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
-    .project-name { font-size: 18px; font-weight: 600; margin-bottom: 10px; }
-    .project-status { display: inline-block; padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: 600; }
-    .project-budget { color: #0a7ea4; font-weight: 600; margin-top: 10px; }
-    .project-talents { margin-top: 10px; font-size: 13px; color: #666; }
-    
-    /* Stats */
+    /* Dashboard */
     .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 30px; }
-    .stat-card { background: white; border-radius: 8px; padding: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
-    .stat-label { color: #999; font-size: 14px; margin-bottom: 8px; }
+    .stat-card { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+    .stat-label { color: #666; font-size: 12px; margin-bottom: 10px; }
     .stat-value { font-size: 32px; font-weight: 700; color: #0a7ea4; }
     
-    /* Settings */
-    .settings-form { max-width: 600px; }
-    .settings-group { margin-bottom: 30px; padding-bottom: 30px; border-bottom: 1px solid #e0e0e0; }
-    .settings-group:last-child { border-bottom: none; }
-    .settings-title { font-size: 16px; font-weight: 600; margin-bottom: 15px; }
-    
-    /* Messages */
-    .message-templates { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 15px; }
-    .template-card { background: #f9f9f9; border-radius: 6px; padding: 15px; }
-    .template-name { font-weight: 600; margin-bottom: 10px; }
-    .template-content { font-size: 13px; color: #666; line-height: 1.5; margin-bottom: 10px; }
-    
-    /* Success Message */
-    .success-message { background: #d4edda; color: #155724; padding: 12px 16px; border-radius: 6px; margin-bottom: 15px; display: none; }
-    .success-message.show { display: block; }
-    
-    /* Photo Gallery */
-    .photo-gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 10px; margin-bottom: 20px; }
-    .photo-item { position: relative; width: 100%; aspect-ratio: 1; border-radius: 6px; overflow: hidden; background: #f0f0f0; cursor: pointer; }
-    .photo-item img { width: 100%; height: 100%; object-fit: cover; }
-    .photo-item .remove-btn { position: absolute; top: 5px; right: 5px; background: #ef4444; color: white; border: none; border-radius: 50%; width: 24px; height: 24px; cursor: pointer; display: none; }
-    .photo-item:hover .remove-btn { display: block; }
-    .add-photo-btn { width: 100%; aspect-ratio: 1; border: 2px dashed #ddd; border-radius: 6px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; }
-    .add-photo-btn:hover { border-color: #0a7ea4; background: #f9f9f9; }
-    
-    /* WhatsApp Button */
-    .whatsapp-btn { background: #25D366; color: white; padding: 8px 12px; border-radius: 4px; border: none; cursor: pointer; font-size: 12px; display: inline-flex; align-items: center; gap: 6px; }
-    .whatsapp-btn:hover { background: #20ba5a; }
-    
-    /* Responsive */
-    @media (max-width: 768px) {
-      .app-container { flex-direction: column; }
-      .sidebar { width: 100%; height: auto; max-height: 200px; }
-      .form-row { grid-template-columns: 1fr; }
-      .talents-grid { grid-template-columns: 1fr; }
-      .header { flex-direction: column; gap: 15px; }
-      .filters-bar { flex-direction: column; }
-      .search-input { min-width: 100%; }
-    }
+    /* Back Button */
+    .back-btn { background: none; border: none; color: #0a7ea4; cursor: pointer; font-size: 16px; margin-bottom: 20px; padding: 0; }
+    .back-btn:hover { text-decoration: underline; }
   </style>
 </head>
 <body>
@@ -180,47 +153,41 @@
     <!-- Sidebar -->
     <div class="sidebar" id="sidebar">
       <button class="toggle-sidebar" onclick="toggleSidebar()">☰</button>
-      <div class="logo">🎬 Talent Manager</div>
+      <div class="logo">👥 Talent Manager</div>
       
       <div class="nav-section">
-        <div class="nav-title">الرئيسية</div>
-        <div class="nav-item active" onclick="switchPage('talents', this)">👥 الموديلز والفنانين</div>
-        <div class="nav-item" onclick="switchPage('projects', this)">📋 المشاريع</div>
-        <div class="nav-item" onclick="switchPage('dashboard', this)">📊 لوحة التحكم</div>
-      </div>
-
-      <div class="nav-section">
-        <div class="nav-title">الإدارة</div>
-        <div class="nav-item" onclick="switchPage('messages', this)">💬 الرسائل</div>
-        <div class="nav-item" onclick="switchPage('categories', this)">🏷️ الفئات</div>
-      </div>
-
-      <div class="nav-section">
-        <div class="nav-title">أخرى</div>
-        <div class="nav-item" onclick="switchPage('settings', this)">⚙️ الإعدادات</div>
+        <div class="nav-title">القائمة الرئيسية</div>
+        <div class="nav-item active" onclick="showPage('talents')">👥 الموديلز والفنانين</div>
+        <div class="nav-item" onclick="showPage('projects')">📋 المشاريع</div>
+        <div class="nav-item" onclick="showPage('dashboard')">📊 لوحة التحكم</div>
+        <div class="nav-item" onclick="showPage('messages')">💬 الرسائل</div>
+        <div class="nav-item" onclick="showPage('categories')">🏷️ الفئات</div>
+        <div class="nav-item" onclick="showPage('settings')">⚙️ الإعدادات</div>
       </div>
     </div>
 
     <!-- Main Content -->
     <div class="main-content">
-      <!-- Header -->
       <div class="header">
         <h1>Talent Manager</h1>
         <div class="header-actions">
-          <button class="btn btn-primary" onclick="openAddTalentModal()">+ إضافة موديل</button>
+          <select id="language-select" onchange="changeLanguage(this.value)">
+            <option value="ar">العربية</option>
+            <option value="en">English</option>
+          </select>
         </div>
       </div>
 
-      <!-- Content -->
       <div class="content">
         <!-- Talents Page -->
-        <div id="talents-page" class="page active">
+        <div class="page active" id="talents-page">
           <div class="page-header">
             <h2 class="page-title">إدارة الموديلز والفنانين</h2>
             <p class="page-subtitle">أضف وأدر موديلاتك وفنانيك بسهولة</p>
           </div>
 
           <div class="filters-bar">
+            <button class="btn btn-primary" onclick="openAddTalentModal()">+ إضافة موديل</button>
             <input type="text" class="search-input" id="search-input" placeholder="ابحث عن موديل..." onkeyup="filterTalents()">
             <select class="filter-select" id="category-filter" onchange="filterTalents()">
               <option value="">جميع الفئات</option>
@@ -231,8 +198,8 @@
             </select>
             <select class="filter-select" id="gender-filter" onchange="filterTalents()">
               <option value="">الكل</option>
-              <option value="male">ذكر</option>
-              <option value="female">أنثى</option>
+              <option value="ذكر">ذكر</option>
+              <option value="أنثى">أنثى</option>
             </select>
             <select class="filter-select" id="sort-select" onchange="filterTalents()">
               <option value="name">الاسم</option>
@@ -246,89 +213,104 @@
             </div>
           </div>
 
-          <div id="talents-container" class="talents-grid"></div>
+          <div class="talents-grid" id="talents-container"></div>
+        </div>
+
+        <!-- Talent Detail Page -->
+        <div class="page" id="detail-page">
+          <button class="back-btn" onclick="showPage('talents')">← العودة</button>
+          <div class="detail-page" id="detail-content"></div>
         </div>
 
         <!-- Projects Page -->
-        <div id="projects-page" class="page">
+        <div class="page" id="projects-page">
           <div class="page-header">
             <h2 class="page-title">المشاريع</h2>
-            <p class="page-subtitle">أنشئ وأدر مشاريعك وربط الموديلز بها</p>
+            <p class="page-subtitle">أدر مشاريعك واختر الموديلز المناسبين</p>
           </div>
-          <button class="btn btn-primary" onclick="openAddProjectModal()">+ مشروع جديد</button>
-          <div id="projects-container" class="projects-grid" style="margin-top: 20px;"></div>
+          <button class="btn btn-primary" onclick="openAddProjectModal()">+ إضافة مشروع</button>
+          <div id="projects-container" style="margin-top: 20px;"></div>
         </div>
 
         <!-- Dashboard Page -->
-        <div id="dashboard-page" class="page">
+        <div class="page" id="dashboard-page">
           <div class="page-header">
             <h2 class="page-title">لوحة التحكم</h2>
             <p class="page-subtitle">إحصائيات وتقارير شاملة</p>
           </div>
-          <div class="stats-grid" id="stats-container"></div>
+          <div class="stats-grid">
+            <div class="stat-card">
+              <div class="stat-label">إجمالي الموديلز</div>
+              <div class="stat-value" id="total-talents">0</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">المشاريع</div>
+              <div class="stat-value" id="total-projects">0</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">الإيرادات المتوقعة</div>
+              <div class="stat-value" id="total-revenue">KD 0</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">المفضلة</div>
+              <div class="stat-value" id="total-favorites">0</div>
+            </div>
+          </div>
         </div>
 
         <!-- Messages Page -->
-        <div id="messages-page" class="page">
+        <div class="page" id="messages-page">
           <div class="page-header">
-            <h2 class="page-title">الرسائل والتواصل</h2>
-            <p class="page-subtitle">قوالب الرسائل والتواصل</p>
+            <h2 class="page-title">الرسائل</h2>
+            <p class="page-subtitle">قوالب الرسائل والاتصالات</p>
           </div>
-          <div style="background: white; border-radius: 8px; padding: 20px;">
-            <h3 style="margin-bottom: 15px;">قوالب الرسائل</h3>
-            <div class="message-templates" id="templates-container"></div>
-          </div>
+          <div id="messages-container"></div>
         </div>
 
         <!-- Categories Page -->
-        <div id="categories-page" class="page">
+        <div class="page" id="categories-page">
           <div class="page-header">
-            <h2 class="page-title">إدارة الفئات</h2>
-            <p class="page-subtitle">أضف وعدّل فئات الموديلز</p>
+            <h2 class="page-title">الفئات</h2>
+            <p class="page-subtitle">إدارة فئات الموديلز</p>
           </div>
-          <button class="btn btn-primary" onclick="openAddCategoryModal()">+ فئة جديدة</button>
-          <div id="categories-container" style="margin-top: 20px;"></div>
+          <div id="categories-container"></div>
         </div>
 
         <!-- Settings Page -->
-        <div id="settings-page" class="page">
+        <div class="page" id="settings-page">
           <div class="page-header">
             <h2 class="page-title">الإعدادات</h2>
+            <p class="page-subtitle">إعدادات المشروع والتفضيلات</p>
           </div>
-          <div class="success-message" id="success-message">✅ تم حفظ الإعدادات بنجاح!</div>
-          <div class="settings-form">
-            <div class="settings-group">
-              <div class="settings-title">الإعدادات الافتراضية</div>
-              <div class="form-group">
-                <label class="form-label">هامش الربح الافتراضي (%)</label>
-                <input type="number" class="form-input" id="settings-margin" value="15">
-              </div>
-              <div class="form-group">
-                <label class="form-label">رسالة WhatsApp الافتراضية</label>
-                <textarea class="form-input" id="settings-whatsapp" style="min-height: 100px; resize: vertical;">مرحباً {name}، أتواصل معك بخصوص فرصة عمل...</textarea>
-              </div>
-            </div>
-            <button class="btn btn-primary" onclick="saveSettings()">💾 حفظ الإعدادات</button>
+          <div class="form-group">
+            <label>هامش الربح الافتراضي (%)</label>
+            <input type="number" id="settings-margin" value="15">
           </div>
+          <div class="form-group">
+            <label>رسالة WhatsApp الافتراضية</label>
+            <textarea id="settings-whatsapp">مرحباً {name}، أتواصل معك بخصوص فرصة عمل...</textarea>
+          </div>
+          <button class="btn btn-primary" onclick="saveSettings()">💾 حفظ الإعدادات</button>
         </div>
       </div>
     </div>
   </div>
 
   <!-- Add/Edit Talent Modal -->
-  <div id="talent-modal" class="modal">
+  <div class="modal" id="talent-modal">
     <div class="modal-content">
-      <div class="modal-header" id="modal-title">إضافة موديل جديد</div>
-      
-      <div class="form-group">
-        <label class="form-label">الاسم</label>
-        <input type="text" class="form-input" id="talent-name" placeholder="أدخل اسم الموديل">
+      <div class="modal-header">
+        <h2>إضافة موديل جديد</h2>
+        <button class="modal-close" onclick="closeTalentModal()">×</button>
       </div>
-
-      <div class="form-row">
+      <form onsubmit="saveTalent(event)">
         <div class="form-group">
-          <label class="form-label">الفئة</label>
-          <select class="form-input" id="talent-category">
+          <label>الاسم</label>
+          <input type="text" id="talent-name" required>
+        </div>
+        <div class="form-group">
+          <label>الفئة</label>
+          <select id="talent-category" required>
             <option value="">اختر الفئة</option>
             <option value="ممثلين">ممثلين</option>
             <option value="مؤثرين">مؤثرين</option>
@@ -337,336 +319,379 @@
           </select>
         </div>
         <div class="form-group">
-          <label class="form-label">الجنس</label>
-          <select class="form-input" id="talent-gender">
-            <option value="male">ذكر</option>
-            <option value="female">أنثى</option>
-          </select>
-        </div>
-      </div>
-
-      <div class="form-row">
-        <div class="form-group">
-          <label class="form-label">السعر (لكل مشروع) - KD</label>
-          <input type="number" class="form-input" id="talent-price" placeholder="أدخل السعر">
-        </div>
-        <div class="form-group">
-          <label class="form-label">التقييم (1-5)</label>
-          <input type="number" class="form-input" id="talent-rating" min="0" max="5" value="0">
-        </div>
-      </div>
-
-      <div class="form-row">
-        <div class="form-group">
-          <label class="form-label">الهاتف (+965)</label>
-          <input type="tel" class="form-input" id="talent-phone" placeholder="501234567">
-        </div>
-        <div class="form-group">
-          <label class="form-label">العمر</label>
-          <input type="number" class="form-input" id="talent-age" placeholder="العمر">
-        </div>
-      </div>
-
-      <div class="form-row">
-        <div class="form-group">
-          <label class="form-label">الطول</label>
-          <input type="text" class="form-input" id="talent-height" placeholder="مثال: 175 سم">
-        </div>
-        <div class="form-group">
-          <label class="form-label">الوزن</label>
-          <input type="text" class="form-input" id="talent-weight" placeholder="مثال: 70 كغ">
-        </div>
-      </div>
-
-      <div class="form-row">
-        <div class="form-group">
-          <label class="form-label">الجنسية</label>
-          <input type="text" class="form-input" id="talent-nationality" placeholder="الجنسية">
-        </div>
-        <div class="form-group">
-          <label class="form-label">الموقع</label>
-          <input type="text" class="form-input" id="talent-location" placeholder="المدينة/الدولة">
-        </div>
-      </div>
-
-      <div class="form-row">
-        <div class="form-group">
-          <label class="form-label">Instagram</label>
-          <input type="text" class="form-input" id="talent-instagram" placeholder="@username">
-        </div>
-        <div class="form-group">
-          <label class="form-label">TikTok</label>
-          <input type="text" class="form-input" id="talent-tiktok" placeholder="@username">
-        </div>
-      </div>
-
-      <div class="form-row">
-        <div class="form-group">
-          <label class="form-label">Twitter</label>
-          <input type="text" class="form-input" id="talent-twitter" placeholder="@username">
-        </div>
-        <div class="form-group">
-          <label class="form-label">Facebook</label>
-          <input type="text" class="form-input" id="talent-facebook" placeholder="الرابط أو الاسم">
-        </div>
-      </div>
-
-      <div class="form-group">
-        <label class="form-label">الملاحظات</label>
-        <textarea class="form-input" id="talent-notes" style="min-height: 80px; resize: vertical;" placeholder="أي ملاحظات إضافية..."></textarea>
-      </div>
-
-      <div class="form-group">
-        <label class="form-label">الصور</label>
-        <div class="photo-gallery" id="photo-gallery"></div>
-        <input type="file" id="photo-input" multiple accept="image/*" style="display: none;" onchange="addPhotos()">
-        <button type="button" class="btn btn-secondary" onclick="document.getElementById('photo-input').click()">📷 إضافة صور</button>
-      </div>
-
-      <div class="modal-footer">
-        <button class="btn btn-secondary" onclick="closeModal('talent-modal')">إلغاء</button>
-        <button class="btn btn-danger" id="delete-btn" style="display: none;" onclick="confirmDeleteTalent()">حذف</button>
-        <button class="btn btn-primary" id="save-btn" onclick="saveTalent()">إضافة</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Add/Edit Project Modal -->
-  <div id="project-modal" class="modal">
-    <div class="modal-content">
-      <div class="modal-header">إضافة مشروع جديد</div>
-      
-      <div class="form-group">
-        <label class="form-label">اسم المشروع</label>
-        <input type="text" class="form-input" id="project-name" placeholder="أدخل اسم المشروع">
-      </div>
-
-      <div class="form-group">
-        <label class="form-label">الوصف</label>
-        <textarea class="form-input" id="project-description" style="min-height: 80px; resize: vertical;" placeholder="وصف المشروع..."></textarea>
-      </div>
-
-      <div class="form-row">
-        <div class="form-group">
-          <label class="form-label">تاريخ البداية</label>
-          <input type="date" class="form-input" id="project-start-date">
-        </div>
-        <div class="form-group">
-          <label class="form-label">تاريخ النهاية</label>
-          <input type="date" class="form-input" id="project-end-date">
-        </div>
-      </div>
-
-      <div class="form-row">
-        <div class="form-group">
-          <label class="form-label">الحالة</label>
-          <select class="form-input" id="project-status">
-            <option value="draft">مسودة</option>
-            <option value="active">نشط</option>
-            <option value="completed">مكتمل</option>
+          <label>الجنس</label>
+          <select id="talent-gender">
+            <option value="ذكر">ذكر</option>
+            <option value="أنثى">أنثى</option>
           </select>
         </div>
         <div class="form-group">
-          <label class="form-label">هامش الربح (%)</label>
-          <input type="number" class="form-input" id="project-margin" value="15">
+          <label>السعر (KD)</label>
+          <input type="number" id="talent-price" required>
         </div>
-      </div>
-
-      <div class="form-group">
-        <label class="form-label">اختر الموديلز</label>
-        <div id="talents-checklist" style="max-height: 200px; overflow-y: auto; border: 1px solid #ddd; border-radius: 6px; padding: 10px;"></div>
-      </div>
-
-      <div class="modal-footer">
-        <button class="btn btn-secondary" onclick="closeModal('project-modal')">إلغاء</button>
-        <button class="btn btn-primary" onclick="saveProject()">حفظ المشروع</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Add Category Modal -->
-  <div id="category-modal" class="modal">
-    <div class="modal-content">
-      <div class="modal-header">إضافة فئة جديدة</div>
-      
-      <div class="form-group">
-        <label class="form-label">اسم الفئة</label>
-        <input type="text" class="form-input" id="category-name" placeholder="أدخل اسم الفئة">
-      </div>
-
-      <div class="modal-footer">
-        <button class="btn btn-secondary" onclick="closeModal('category-modal')">إلغاء</button>
-        <button class="btn btn-primary" onclick="saveCategory()">حفظ الفئة</button>
-      </div>
+        <div class="form-group">
+          <label>التقييم</label>
+          <input type="number" id="talent-rating" min="0" max="5" value="0">
+        </div>
+        <div class="form-group">
+          <label>رقم الهاتف</label>
+          <input type="tel" id="talent-phone" placeholder="501234567">
+        </div>
+        <div class="form-group">
+          <label>العمر</label>
+          <input type="number" id="talent-age">
+        </div>
+        <div class="form-group">
+          <label>الطول</label>
+          <input type="text" id="talent-height" placeholder="مثال: 175 سم">
+        </div>
+        <div class="form-group">
+          <label>الوزن</label>
+          <input type="text" id="talent-weight" placeholder="مثال: 70 كغ">
+        </div>
+        <div class="form-group">
+          <label>الجنسية</label>
+          <input type="text" id="talent-nationality">
+        </div>
+        <div class="form-group">
+          <label>المدينة/الدولة</label>
+          <input type="text" id="talent-location">
+        </div>
+        <div class="form-group">
+          <label>Instagram</label>
+          <input type="text" id="talent-instagram" placeholder="@username">
+        </div>
+        <div class="form-group">
+          <label>TikTok</label>
+          <input type="text" id="talent-tiktok" placeholder="@username">
+        </div>
+        <div class="form-group">
+          <label>Twitter</label>
+          <input type="text" id="talent-twitter" placeholder="@username">
+        </div>
+        <div class="form-group">
+          <label>Facebook</label>
+          <input type="text" id="talent-facebook" placeholder="الرابط أو الاسم">
+        </div>
+        <div class="form-group">
+          <label>الملاحظات</label>
+          <textarea id="talent-notes"></textarea>
+        </div>
+        <div class="form-group">
+          <label>الصور</label>
+          <input type="file" id="talent-photos" multiple accept="image/*">
+        </div>
+        <div style="display: flex; gap: 10px; margin-top: 20px;">
+          <button type="submit" class="btn btn-primary">إضافة</button>
+          <button type="button" class="btn btn-secondary" onclick="closeTalentModal()">إلغاء</button>
+        </div>
+      </form>
     </div>
   </div>
 
   <script>
-    // ============ DATA STORAGE ============
-    let talents = [];
-    let projects = [];
-    let categories = ['ممثلين', 'مؤثرين', 'عارضين', 'كومبارس'];
-    let messageTemplates = [
-      { name: 'عرض عمل', content: 'مرحباً {name}، لدي فرصة عمل مميزة لك. هل أنت متاح في {date}؟' },
-      { name: 'تأكيد الحجز', content: 'مرحباً {name}، تم تأكيد حجزك لمشروع {project} في {date}. الموقع: {location}' },
-      { name: 'شكراً', content: 'شكراً {name} على عملك الرائع في {project}! نتطلع للعمل معك مرة أخرى.' },
-      { name: 'تذكير', content: 'مرحباً {name}، تذكير بموعدك غداً الساعة {time}. يرجى تأكيد حضورك.' },
-    ];
-    
-    let appSettings = {
-      margin: 15,
-      whatsappMessage: 'مرحباً {name}، أتواصل معك بخصوص فرصة عمل...'
-    };
-    
-    let viewMode = 'grid';
+    let talents = JSON.parse(localStorage.getItem('talents')) || [];
+    let projects = JSON.parse(localStorage.getItem('projects')) || [];
+    let currentViewMode = 'grid';
     let editingTalentId = null;
-    let talentPhotos = {};
 
-    // ============ INITIALIZATION ============
-    function init() {
-      loadData();
-      renderTalents();
-      renderProjects();
-      renderStats();
-      renderMessages();
-      renderCategories();
-      loadSettings();
+    // Sample data
+    if (talents.length === 0) {
+      talents = [
+        {
+          id: 1,
+          name: 'محمود حسن',
+          category: 'ممثلين',
+          gender: 'ذكر',
+          price: 3000,
+          rating: 4,
+          phone: '96550123456',
+          age: 22,
+          height: '175 سم',
+          weight: '70 كغ',
+          nationality: 'كويتي',
+          location: 'الكويت',
+          instagram: '@mahmoud',
+          tiktok: '@mahmoud',
+          twitter: '@mahmoud',
+          facebook: 'mahmoud',
+          notes: 'موديل محترف',
+          emoji: '👨',
+          tags: ['جديد'],
+          favorite: false,
+          photos: []
+        },
+        {
+          id: 2,
+          name: 'فاطمة محمد',
+          category: 'عارضين',
+          gender: 'أنثى',
+          price: 8000,
+          rating: 5,
+          phone: '96550234567',
+          age: 28,
+          height: '170 سم',
+          weight: '60 كغ',
+          nationality: 'كويتية',
+          location: 'الرياض',
+          instagram: '@fatima',
+          tiktok: '@fatima',
+          twitter: '@fatima',
+          facebook: 'fatima',
+          notes: 'عارضة محترفة',
+          emoji: '👩',
+          tags: ['Top Rated'],
+          favorite: true,
+          photos: []
+        },
+        {
+          id: 3,
+          name: 'أحمد علي',
+          category: 'مؤثرين',
+          gender: 'ذكر',
+          price: 5000,
+          rating: 4.5,
+          phone: '96550345678',
+          age: 25,
+          height: '180 سم',
+          weight: '75 كغ',
+          nationality: 'إماراتي',
+          location: 'الكويت',
+          instagram: '@ahmed',
+          tiktok: '@ahmed',
+          twitter: '@ahmed',
+          facebook: 'ahmed',
+          notes: 'مؤثر شهير',
+          emoji: '👨',
+          tags: ['VIP'],
+          favorite: false,
+          photos: []
+        }
+      ];
+      saveTalents();
     }
 
-    function loadData() {
-      const savedTalents = localStorage.getItem('talents');
-      const savedProjects = localStorage.getItem('projects');
-      const savedCategories = localStorage.getItem('categories');
-      const savedSettings = localStorage.getItem('appSettings');
-      const savedPhotos = localStorage.getItem('talentPhotos');
-
-      if (savedTalents) talents = JSON.parse(savedTalents);
-      if (savedProjects) projects = JSON.parse(savedProjects);
-      if (savedCategories) categories = JSON.parse(savedCategories);
-      if (savedSettings) appSettings = JSON.parse(savedSettings);
-      if (savedPhotos) talentPhotos = JSON.parse(savedPhotos);
-
-      // Load sample data if empty
-      if (talents.length === 0) {
-        talents = [
-          { id: '1', name: 'أحمد علي', category: 'ممثلين', gender: 'male', price: 5000, age: 25, phone: '501234567', instagram: '@ahmed', tiktok: '@ahmed', rating: 4, height: '175 سم', weight: '70 كغ', nationality: 'كويتي', location: 'الكويت', tags: ['VIP', 'متاح الآن'], isFavorite: false, createdAt: new Date().toISOString() },
-          { id: '2', name: 'فاطمة محمد', category: 'عارضين', gender: 'female', price: 8000, age: 28, phone: '509876543', instagram: '@fatima', tiktok: '@fatima', rating: 5, height: '168 سم', weight: '55 كغ', nationality: 'سعودية', location: 'الرياض', tags: ['Top Rated'], isFavorite: true, createdAt: new Date().toISOString() },
-          { id: '3', name: 'محمود حسن', category: 'كومبارس', gender: 'male', price: 3000, age: 22, phone: '505555555', instagram: '@mahmoud', tiktok: '@mahmoud', rating: 3, height: '180 سم', weight: '75 كغ', nationality: 'إماراتي', location: 'دبي', tags: ['New'], isFavorite: false, createdAt: new Date().toISOString() },
-        ];
-        saveData();
-      }
-    }
-
-    function saveData() {
+    function saveTalents() {
       localStorage.setItem('talents', JSON.stringify(talents));
-      localStorage.setItem('projects', JSON.stringify(projects));
-      localStorage.setItem('categories', JSON.stringify(categories));
-      localStorage.setItem('appSettings', JSON.stringify(appSettings));
-      localStorage.setItem('talentPhotos', JSON.stringify(talentPhotos));
     }
 
-    // ============ NAVIGATION ============
-    function switchPage(page, element) {
-      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-      document.getElementById(page + '-page').classList.add('active');
-      document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
-      element.classList.add('active');
+    function saveProjects() {
+      localStorage.setItem('projects', JSON.stringify(projects));
+    }
 
-      if (page === 'dashboard') renderStats();
-      if (page === 'messages') renderMessages();
-      if (page === 'projects') renderProjects();
-      if (page === 'categories') renderCategories();
-      if (page === 'settings') loadSettings();
+    function showPage(pageName) {
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      document.getElementById(pageName + '-page').classList.add('active');
+      
+      document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+      event.target.classList.add('active');
+
+      if (pageName === 'talents') {
+        renderTalents();
+      } else if (pageName === 'dashboard') {
+        updateDashboard();
+      } else if (pageName === 'projects') {
+        renderProjects();
+      } else if (pageName === 'categories') {
+        renderCategories();
+      } else if (pageName === 'messages') {
+        renderMessages();
+      }
     }
 
     function toggleSidebar() {
       document.getElementById('sidebar').classList.toggle('collapsed');
     }
 
-    // ============ TALENTS ============
-    function renderTalents(talentsToRender = talents) {
+    function renderTalents() {
       const container = document.getElementById('talents-container');
-      if (talentsToRender.length === 0) {
-        container.innerHTML = '<div style="grid-column: 1/-1;"><div class="empty-state"><div class="empty-icon">🔍</div><div class="empty-title">لم يتم العثور على نتائج</div></div></div>';
-        return;
+      const filtered = filterTalentsArray();
+      
+      if (currentViewMode === 'grid') {
+        container.className = 'talents-grid';
+      } else {
+        container.className = 'talents-list';
       }
 
-      const viewClass = viewMode === 'list' ? 'talent-card list' : 'talent-card';
-      const containerClass = viewMode === 'list' ? 'talents-list' : 'talents-grid';
-      
-      container.className = containerClass;
-      container.innerHTML = talentsToRender.map(t => `
-        <div class="${viewClass}">
+      container.innerHTML = filtered.map(talent => `
+        <div class="talent-card ${currentViewMode === 'list' ? 'list' : ''}" onclick="showTalentDetail(${talent.id})">
           <div class="talent-image-container">
-            <div class="talent-image">${t.gender === 'male' ? '👨' : '👩'}</div>
+            <div class="talent-image">${talent.emoji}</div>
           </div>
           <div class="talent-info">
             <div class="talent-header">
               <div>
-                <div class="talent-name">${t.name}</div>
-                <span class="talent-category">${t.category}</span>
+                <div class="talent-name">${talent.name}</div>
+                <div class="talent-category">${talent.category}</div>
               </div>
               <div class="talent-actions">
-                <button class="action-btn" onclick="toggleFavorite('${t.id}')" title="المفضلة">${t.isFavorite ? '❤️' : '🤍'}</button>
-                <button class="action-btn" onclick="editTalent('${t.id}')" title="تعديل">✏️</button>
-                <button class="action-btn" onclick="deleteTalent('${t.id}')" title="حذف">🗑️</button>
+                <button class="action-btn" onclick="event.stopPropagation(); toggleFavorite(${talent.id})" title="المفضلة">
+                  ${talent.favorite ? '❤️' : '🤍'}
+                </button>
+                <button class="action-btn" onclick="event.stopPropagation(); editTalent(${talent.id})" title="تعديل">✏️</button>
+                <button class="action-btn" onclick="event.stopPropagation(); deleteTalent(${talent.id})" title="حذف">🗑️</button>
               </div>
             </div>
             <div class="talent-details">
               <div class="detail-item">
-                <div class="detail-label">العمر</div>
-                <div class="detail-value">${t.age || '-'} سنة</div>
-              </div>
-              <div class="detail-item">
                 <div class="detail-label">الجنس</div>
-                <div class="detail-value">${t.gender === 'male' ? 'ذكر' : 'أنثى'}</div>
+                <div class="detail-value">${talent.gender}</div>
               </div>
               <div class="detail-item">
-                <div class="detail-label">الموقع</div>
-                <div class="detail-value">${t.location || '-'}</div>
+                <div class="detail-label">العمر</div>
+                <div class="detail-value">سنة ${talent.age || '-'}</div>
+              </div>
+              <div class="detail-item">
+                <div class="detail-label">المدينة</div>
+                <div class="detail-value">${talent.location || '-'}</div>
               </div>
             </div>
             <div class="rating">
-              ${[1,2,3,4,5].map(i => `<span class="star ${i <= (t.rating || 0) ? 'filled' : ''}">★</span>`).join('')}
+              ${[1,2,3,4,5].map(i => `<span class="star ${i <= talent.rating ? 'filled' : ''}">★</span>`).join('')}
             </div>
-            <div class="talent-price">${t.price.toLocaleString()} KD</div>
+            <div class="talent-price">KD ${talent.price}</div>
             <div class="talent-social">
-              ${t.phone ? `<button class="whatsapp-btn" onclick="openWhatsApp('${t.phone}', '${t.name}')">💬 واتس</button>` : ''}
-              ${t.instagram ? `<div class="social-link">📱 Instagram</div>` : ''}
-              ${t.tiktok ? `<div class="social-link">🎵 TikTok</div>` : ''}
+              <button class="whatsapp-btn" onclick="event.stopPropagation(); openWhatsApp('${talent.phone}', '${talent.name}')">💬 واتس</button>
+              ${talent.instagram ? `<button class="social-link" onclick="event.stopPropagation(); openSocial('instagram', '${talent.instagram}')">Instagram</button>` : ''}
+              ${talent.tiktok ? `<button class="social-link" onclick="event.stopPropagation(); openSocial('tiktok', '${talent.tiktok}')">TikTok</button>` : ''}
+              ${talent.facebook ? `<button class="social-link" onclick="event.stopPropagation(); openSocial('facebook', '${talent.facebook}')">Facebook</button>` : ''}
+              ${talent.twitter ? `<button class="social-link" onclick="event.stopPropagation(); openSocial('twitter', '${talent.twitter}')">Twitter</button>` : ''}
             </div>
           </div>
         </div>
       `).join('');
     }
 
-    function filterTalents() {
-      const query = document.getElementById('search-input').value.toLowerCase();
+    function showTalentDetail(id) {
+      const talent = talents.find(t => t.id === id);
+      if (!talent) return;
+
+      const detailContent = document.getElementById('detail-content');
+      detailContent.innerHTML = `
+        <div class="detail-header">
+          <div class="detail-image">${talent.emoji}</div>
+          <div class="detail-info">
+            <h1>${talent.name}</h1>
+            <div class="talent-category">${talent.category}</div>
+            <div class="detail-grid">
+              <div class="detail-item-large">
+                <label>الجنس</label>
+                <value>${talent.gender}</value>
+              </div>
+              <div class="detail-item-large">
+                <label>العمر</label>
+                <value>${talent.age || '-'} سنة</value>
+              </div>
+              <div class="detail-item-large">
+                <label>الطول</label>
+                <value>${talent.height || '-'}</value>
+              </div>
+              <div class="detail-item-large">
+                <label>الوزن</label>
+                <value>${talent.weight || '-'}</value>
+              </div>
+              <div class="detail-item-large">
+                <label>الجنسية</label>
+                <value>${talent.nationality || '-'}</value>
+              </div>
+              <div class="detail-item-large">
+                <label>المدينة</label>
+                <value>${talent.location || '-'}</value>
+              </div>
+              <div class="detail-item-large">
+                <label>السعر</label>
+                <value style="color: #0a7ea4; font-size: 24px;">KD ${talent.price}</value>
+              </div>
+              <div class="detail-item-large">
+                <label>التقييم</label>
+                <value>
+                  ${[1,2,3,4,5].map(i => `<span class="star ${i <= talent.rating ? 'filled' : ''}">★</span>`).join('')}
+                </value>
+              </div>
+            </div>
+            <div class="detail-actions">
+              <button class="btn btn-primary" onclick="openWhatsApp('${talent.phone}', '${talent.name}')">💬 واتس</button>
+              <button class="btn btn-secondary" onclick="editTalent(${talent.id})">✏️ تعديل</button>
+              <button class="btn btn-danger" onclick="deleteTalent(${talent.id})">🗑️ حذف</button>
+            </div>
+          </div>
+        </div>
+        <div>
+          <h3 style="margin: 20px 0 15px 0;">معلومات التواصل</h3>
+          <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px;">
+            ${talent.phone ? `<div><strong>الهاتف:</strong> <a href="tel:+965${talent.phone}" style="color: #0a7ea4;">${talent.phone}</a></div>` : ''}
+            ${talent.instagram ? `<div><strong>Instagram:</strong> <button class="social-link" onclick="openSocial('instagram', '${talent.instagram}')" style="border: none; background: none; color: #0a7ea4; cursor: pointer; text-decoration: underline;">@${talent.instagram}</button></div>` : ''}
+            ${talent.tiktok ? `<div><strong>TikTok:</strong> <button class="social-link" onclick="openSocial('tiktok', '${talent.tiktok}')" style="border: none; background: none; color: #0a7ea4; cursor: pointer; text-decoration: underline;">@${talent.tiktok}</button></div>` : ''}
+            ${talent.facebook ? `<div><strong>Facebook:</strong> <button class="social-link" onclick="openSocial('facebook', '${talent.facebook}')" style="border: none; background: none; color: #0a7ea4; cursor: pointer; text-decoration: underline;">${talent.facebook}</button></div>` : ''}
+            ${talent.twitter ? `<div><strong>Twitter:</strong> <button class="social-link" onclick="openSocial('twitter', '${talent.twitter}')" style="border: none; background: none; color: #0a7ea4; cursor: pointer; text-decoration: underline;">@${talent.twitter}</button></div>` : ''}
+          </div>
+        </div>
+        ${talent.notes ? `<div style="margin-top: 20px;"><h3>الملاحظات</h3><p>${talent.notes}</p></div>` : ''}
+      `;
+
+      document.getElementById('talents-page').classList.remove('active');
+      document.getElementById('detail-page').classList.add('active');
+    }
+
+    function openWhatsApp(phone, name) {
+      if (!phone) {
+        alert('لا يوجد رقم هاتف');
+        return;
+      }
+      const message = `مرحباً ${name}، أتواصل معك بخصوص فرصة عمل...`;
+      const url = `https://wa.me/965${phone}?text=${encodeURIComponent(message)}`;
+      window.open(url, '_blank');
+    }
+
+    function openSocial(platform, username) {
+      let url = '';
+      switch(platform) {
+        case 'instagram':
+          url = `https://instagram.com/${username.replace('@', '')}`;
+          break;
+        case 'tiktok':
+          url = `https://tiktok.com/@${username.replace('@', '')}`;
+          break;
+        case 'twitter':
+          url = `https://twitter.com/${username.replace('@', '')}`;
+          break;
+        case 'facebook':
+          url = `https://facebook.com/${username}`;
+          break;
+      }
+      if (url) window.open(url, '_blank');
+    }
+
+    function filterTalentsArray() {
+      const search = document.getElementById('search-input').value.toLowerCase();
       const category = document.getElementById('category-filter').value;
       const gender = document.getElementById('gender-filter').value;
       const sort = document.getElementById('sort-select').value;
 
       let filtered = talents.filter(t => {
-        const matchesSearch = t.name.toLowerCase().includes(query);
-        const matchesCategory = !category || t.category === category;
-        const matchesGender = !gender || t.gender === gender;
-        return matchesSearch && matchesCategory && matchesGender;
+        return (t.name.toLowerCase().includes(search) || t.category.includes(search)) &&
+               (!category || t.category === category) &&
+               (!gender || t.gender === gender);
       });
 
       filtered.sort((a, b) => {
         switch(sort) {
           case 'price': return a.price - b.price;
-          case 'rating': return (b.rating || 0) - (a.rating || 0);
-          case 'date': return new Date(b.createdAt) - new Date(a.createdAt);
+          case 'rating': return b.rating - a.rating;
+          case 'date': return b.id - a.id;
           default: return a.name.localeCompare(b.name);
         }
       });
 
-      renderTalents(filtered);
+      return filtered;
+    }
+
+    function filterTalents() {
+      renderTalents();
     }
 
     function setViewMode(mode) {
-      viewMode = mode;
+      currentViewMode = mode;
       document.querySelectorAll('.view-btn').forEach(btn => btn.classList.remove('active'));
       event.target.classList.add('active');
       renderTalents();
@@ -674,12 +699,24 @@
 
     function openAddTalentModal() {
       editingTalentId = null;
-      talentPhotos = {};
-      document.getElementById('modal-title').textContent = 'إضافة موديل جديد';
-      document.getElementById('save-btn').textContent = 'إضافة';
-      document.getElementById('delete-btn').style.display = 'none';
-      clearTalentForm();
-      renderPhotoGallery();
+      document.getElementById('talent-modal').querySelector('h2').textContent = 'إضافة موديل جديد';
+      document.getElementById('talent-modal').querySelector('button[type="submit"]').textContent = 'إضافة';
+      document.getElementById('talent-name').value = '';
+      document.getElementById('talent-category').value = '';
+      document.getElementById('talent-gender').value = 'ذكر';
+      document.getElementById('talent-price').value = '';
+      document.getElementById('talent-rating').value = '0';
+      document.getElementById('talent-phone').value = '';
+      document.getElementById('talent-age').value = '';
+      document.getElementById('talent-height').value = '';
+      document.getElementById('talent-weight').value = '';
+      document.getElementById('talent-nationality').value = '';
+      document.getElementById('talent-location').value = '';
+      document.getElementById('talent-instagram').value = '';
+      document.getElementById('talent-tiktok').value = '';
+      document.getElementById('talent-twitter').value = '';
+      document.getElementById('talent-facebook').value = '';
+      document.getElementById('talent-notes').value = '';
       document.getElementById('talent-modal').classList.add('active');
     }
 
@@ -688,16 +725,14 @@
       if (!talent) return;
 
       editingTalentId = id;
-      talentPhotos = {};
-      document.getElementById('modal-title').textContent = 'تعديل الموديل';
-      document.getElementById('save-btn').textContent = 'حفظ التغييرات';
-      document.getElementById('delete-btn').style.display = 'block';
-
+      document.getElementById('talent-modal').querySelector('h2').textContent = 'تعديل الموديل';
+      document.getElementById('talent-modal').querySelector('button[type="submit"]').textContent = 'حفظ';
       document.getElementById('talent-name').value = talent.name;
       document.getElementById('talent-category').value = talent.category;
       document.getElementById('talent-gender').value = talent.gender;
       document.getElementById('talent-price').value = talent.price;
-      document.getElementById('talent-phone').value = talent.phone || '';
+      document.getElementById('talent-rating').value = talent.rating;
+      document.getElementById('talent-phone').value = talent.phone;
       document.getElementById('talent-age').value = talent.age || '';
       document.getElementById('talent-height').value = talent.height || '';
       document.getElementById('talent-weight').value = talent.weight || '';
@@ -707,319 +742,125 @@
       document.getElementById('talent-tiktok').value = talent.tiktok || '';
       document.getElementById('talent-twitter').value = talent.twitter || '';
       document.getElementById('talent-facebook').value = talent.facebook || '';
-      document.getElementById('talent-rating').value = talent.rating || 0;
       document.getElementById('talent-notes').value = talent.notes || '';
-
-      renderPhotoGallery();
       document.getElementById('talent-modal').classList.add('active');
     }
 
-    function clearTalentForm() {
-      document.querySelectorAll('#talent-modal .form-input').forEach(input => {
-        if (input.id !== 'talent-rating') input.value = '';
-        if (input.id === 'talent-rating') input.value = '0';
-      });
-    }
-
-    function saveTalent() {
-      const name = document.getElementById('talent-name').value;
-      const category = document.getElementById('talent-category').value;
-      const gender = document.getElementById('talent-gender').value;
-      const price = parseInt(document.getElementById('talent-price').value);
-
-      if (!name || !category || !price) {
-        alert('يرجى ملء جميع الحقول المطلوبة');
-        return;
-      }
-
+    function saveTalent(event) {
+      event.preventDefault();
+      
       const talentData = {
-        name,
-        category,
-        gender,
-        price,
-        age: parseInt(document.getElementById('talent-age').value) || 0,
+        name: document.getElementById('talent-name').value,
+        category: document.getElementById('talent-category').value,
+        gender: document.getElementById('talent-gender').value,
+        price: parseFloat(document.getElementById('talent-price').value),
+        rating: parseFloat(document.getElementById('talent-rating').value),
         phone: document.getElementById('talent-phone').value,
-        instagram: document.getElementById('talent-instagram').value,
-        tiktok: document.getElementById('talent-tiktok').value,
-        twitter: document.getElementById('talent-twitter').value,
-        facebook: document.getElementById('talent-facebook').value,
+        age: parseInt(document.getElementById('talent-age').value) || null,
         height: document.getElementById('talent-height').value,
         weight: document.getElementById('talent-weight').value,
         nationality: document.getElementById('talent-nationality').value,
         location: document.getElementById('talent-location').value,
+        instagram: document.getElementById('talent-instagram').value,
+        tiktok: document.getElementById('talent-tiktok').value,
+        twitter: document.getElementById('talent-twitter').value,
+        facebook: document.getElementById('talent-facebook').value,
         notes: document.getElementById('talent-notes').value,
-        rating: parseInt(document.getElementById('talent-rating').value) || 0,
+        emoji: '👨',
+        tags: [],
+        photos: []
       };
 
       if (editingTalentId) {
-        const talentIndex = talents.findIndex(t => t.id === editingTalentId);
-        if (talentIndex !== -1) {
-          talents[talentIndex] = { ...talents[talentIndex], ...talentData };
-        }
+        const talent = talents.find(t => t.id === editingTalentId);
+        Object.assign(talent, talentData);
       } else {
         talents.push({
-          id: Date.now().toString(),
-          ...talentData,
-          tags: [],
-          isFavorite: false,
-          createdAt: new Date().toISOString()
+          id: Math.max(...talents.map(t => t.id), 0) + 1,
+          favorite: false,
+          ...talentData
         });
       }
 
-      saveData();
+      saveTalents();
+      closeTalentModal();
       renderTalents();
-      closeModal('talent-modal');
+    }
+
+    function closeTalentModal() {
+      document.getElementById('talent-modal').classList.remove('active');
     }
 
     function deleteTalent(id) {
-      if (confirm('هل تريد حذف هذا الموديل؟')) {
+      if (confirm('هل أنت متأكد من حذف هذا الموديل؟')) {
         talents = talents.filter(t => t.id !== id);
-        saveData();
+        saveTalents();
         renderTalents();
-        closeModal('talent-modal');
+        if (document.getElementById('detail-page').classList.contains('active')) {
+          showPage('talents');
+        }
       }
-    }
-
-    function confirmDeleteTalent() {
-      if (editingTalentId) deleteTalent(editingTalentId);
     }
 
     function toggleFavorite(id) {
       const talent = talents.find(t => t.id === id);
       if (talent) {
-        talent.isFavorite = !talent.isFavorite;
-        saveData();
+        talent.favorite = !talent.favorite;
+        saveTalents();
         renderTalents();
       }
     }
 
-    function openWhatsApp(phone, name) {
-      const message = appSettings.whatsappMessage.replace('{name}', name);
-      const url = `https://wa.me/965${phone}?text=${encodeURIComponent(message)}`;
-      window.open(url, '_blank');
+    function updateDashboard() {
+      document.getElementById('total-talents').textContent = talents.length;
+      document.getElementById('total-projects').textContent = projects.length;
+      document.getElementById('total-revenue').textContent = 'KD ' + talents.reduce((sum, t) => sum + t.price, 0);
+      document.getElementById('total-favorites').textContent = talents.filter(t => t.favorite).length;
     }
 
-    function addPhotos() {
-      const input = document.getElementById('photo-input');
-      const files = input.files;
-      for (let file of files) {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          const photoId = Date.now().toString();
-          if (!talentPhotos[editingTalentId || 'new']) talentPhotos[editingTalentId || 'new'] = [];
-          talentPhotos[editingTalentId || 'new'].push(e.target.result);
-          renderPhotoGallery();
-        };
-        reader.readAsDataURL(file);
-      }
-    }
-
-    function renderPhotoGallery() {
-      const gallery = document.getElementById('photo-gallery');
-      const photos = talentPhotos[editingTalentId || 'new'] || [];
-      gallery.innerHTML = photos.map((photo, idx) => `
-        <div class="photo-item">
-          <img src="${photo}" alt="photo">
-          <button class="remove-btn" onclick="removePhoto(${idx})">×</button>
-        </div>
-      `).join('') + `<div class="add-photo-btn" onclick="document.getElementById('photo-input').click()">+ إضافة صورة</div>`;
-    }
-
-    function removePhoto(idx) {
-      const key = editingTalentId || 'new';
-      if (talentPhotos[key]) {
-        talentPhotos[key].splice(idx, 1);
-        renderPhotoGallery();
-      }
-    }
-
-    // ============ PROJECTS ============
     function renderProjects() {
       const container = document.getElementById('projects-container');
-      if (projects.length === 0) {
-        container.innerHTML = '<div style="grid-column: 1/-1;"><div class="empty-state"><div class="empty-icon">📋</div><div class="empty-title">لا توجد مشاريع</div></div></div>';
-        return;
-      }
+      container.innerHTML = projects.length === 0 ? '<p>لا توجد مشاريع حالياً</p>' : projects.map(p => `
+        <div style="background: white; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
+          <h3>${p.name}</h3>
+          <p>عدد الموديلز: ${p.talents.length}</p>
+        </div>
+      `).join('');
+    }
 
-      container.innerHTML = projects.map(p => {
-        const projectTalents = p.talents ? p.talents.map(tid => talents.find(t => t.id === tid)?.name).filter(Boolean).join(', ') : '';
-        const totalCost = p.talents ? p.talents.reduce((sum, tid) => {
-          const talent = talents.find(t => t.id === tid);
-          return sum + (talent?.price || 0);
-        }, 0) : 0;
-        const profitMargin = totalCost * (p.margin || 15) / 100;
-        const totalPrice = totalCost + profitMargin;
+    function renderCategories() {
+      const container = document.getElementById('categories-container');
+      const categories = ['ممثلين', 'مؤثرين', 'عارضين', 'كومبارس'];
+      container.innerHTML = categories.map(cat => `
+        <div style="background: white; padding: 15px; border-radius: 8px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center;">
+          <span>${cat}</span>
+          <span style="color: #666;">${talents.filter(t => t.category === cat).length} موديل</span>
+        </div>
+      `).join('');
+    }
 
-        return `
-          <div class="project-card">
-            <div class="project-name">${p.name}</div>
-            <div class="project-status" style="background: ${p.status === 'active' ? '#e3f2fd' : '#f0f0f0'}; color: ${p.status === 'active' ? '#0a7ea4' : '#666'};">${p.status === 'active' ? 'نشط' : p.status === 'completed' ? 'مكتمل' : 'مسودة'}</div>
-            <div class="project-talents">الموديلز: ${projectTalents || '-'}</div>
-            <div class="project-budget">التكلفة: ${totalCost.toLocaleString()} KD</div>
-            <div class="project-budget">السعر النهائي: ${totalPrice.toLocaleString()} KD</div>
-          </div>
-        `;
-      }).join('');
+    function renderMessages() {
+      const container = document.getElementById('messages-container');
+      container.innerHTML = '<p>قوالب الرسائل ستظهر هنا</p>';
     }
 
     function openAddProjectModal() {
-      document.getElementById('project-name').value = '';
-      document.getElementById('project-description').value = '';
-      document.getElementById('project-status').value = 'draft';
-      document.getElementById('project-margin').value = appSettings.margin;
-      
-      const checklist = document.getElementById('talents-checklist');
-      checklist.innerHTML = talents.map(t => `
-        <div style="padding: 8px; border-bottom: 1px solid #eee;">
-          <input type="checkbox" id="talent-${t.id}" value="${t.id}">
-          <label for="talent-${t.id}" style="margin-right: 8px; cursor: pointer;">${t.name} (${t.price} KD)</label>
-        </div>
-      `).join('');
-
-      document.getElementById('project-modal').classList.add('active');
-    }
-
-    function saveProject() {
-      const name = document.getElementById('project-name').value;
-      if (!name) {
-        alert('يرجى أدخل اسم المشروع');
-        return;
-      }
-
-      const selectedTalents = Array.from(document.querySelectorAll('#talents-checklist input:checked')).map(cb => cb.value);
-      if (selectedTalents.length === 0) {
-        alert('يرجى اختر موديل واحد على الأقل');
-        return;
-      }
-
-      projects.push({
-        id: Date.now().toString(),
-        name,
-        description: document.getElementById('project-description').value,
-        status: document.getElementById('project-status').value,
-        talents: selectedTalents,
-        margin: parseInt(document.getElementById('project-margin').value),
-        createdAt: new Date().toISOString()
-      });
-
-      saveData();
-      renderProjects();
-      closeModal('project-modal');
-    }
-
-    // ============ DASHBOARD ============
-    function renderStats() {
-      const container = document.getElementById('stats-container');
-      const totalTalents = talents.length;
-      const totalProjects = projects.length;
-      const totalRevenue = projects.reduce((sum, p) => {
-        const cost = p.talents ? p.talents.reduce((s, tid) => s + (talents.find(t => t.id === tid)?.price || 0), 0) : 0;
-        const profit = cost * (p.margin || 15) / 100;
-        return sum + cost + profit;
-      }, 0);
-      const favoriteTalents = talents.filter(t => t.isFavorite).length;
-
-      container.innerHTML = `
-        <div class="stat-card">
-          <div class="stat-label">إجمالي الموديلز</div>
-          <div class="stat-value">${totalTalents}</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-label">المشاريع</div>
-          <div class="stat-value">${totalProjects}</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-label">الإيرادات المتوقعة</div>
-          <div class="stat-value">${totalRevenue.toLocaleString()} KD</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-label">المفضلة</div>
-          <div class="stat-value">${favoriteTalents}</div>
-        </div>
-      `;
-    }
-
-    // ============ MESSAGES ============
-    function renderMessages() {
-      const container = document.getElementById('templates-container');
-      container.innerHTML = messageTemplates.map(t => `
-        <div class="template-card">
-          <div class="template-name">${t.name}</div>
-          <div class="template-content">${t.content}</div>
-          <button class="btn btn-small btn-primary" style="width: 100%;">نسخ</button>
-        </div>
-      `).join('');
-    }
-
-    // ============ CATEGORIES ============
-    function renderCategories() {
-      const container = document.getElementById('categories-container');
-      container.innerHTML = `
-        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 15px;">
-          ${categories.map((cat, idx) => `
-            <div style="background: white; border-radius: 8px; padding: 15px; text-align: center; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
-              <div style="font-size: 24px; margin-bottom: 10px;">🏷️</div>
-              <div style="font-weight: 600; margin-bottom: 10px;">${cat}</div>
-              <button class="btn btn-small btn-danger" onclick="deleteCategory(${idx})">حذف</button>
-            </div>
-          `).join('')}
-        </div>
-      `;
-    }
-
-    function openAddCategoryModal() {
-      document.getElementById('category-name').value = '';
-      document.getElementById('category-modal').classList.add('active');
-    }
-
-    function saveCategory() {
-      const name = document.getElementById('category-name').value;
-      if (!name) {
-        alert('يرجى أدخل اسم الفئة');
-        return;
-      }
-      if (categories.includes(name)) {
-        alert('هذه الفئة موجودة بالفعل');
-        return;
-      }
-      categories.push(name);
-      saveData();
-      renderCategories();
-      closeModal('category-modal');
-    }
-
-    function deleteCategory(idx) {
-      if (confirm('هل تريد حذف هذه الفئة؟')) {
-        categories.splice(idx, 1);
-        saveData();
-        renderCategories();
-      }
-    }
-
-    // ============ SETTINGS ============
-    function loadSettings() {
-      document.getElementById('settings-margin').value = appSettings.margin;
-      document.getElementById('settings-whatsapp').value = appSettings.whatsappMessage;
+      alert('إضافة مشروع جديد');
     }
 
     function saveSettings() {
-      appSettings.margin = parseInt(document.getElementById('settings-margin').value);
-      appSettings.whatsappMessage = document.getElementById('settings-whatsapp').value;
-      
-      saveData();
-      
-      const msg = document.getElementById('success-message');
-      msg.classList.add('show');
-      setTimeout(() => msg.classList.remove('show'), 3000);
+      const margin = document.getElementById('settings-margin').value;
+      const whatsapp = document.getElementById('settings-whatsapp').value;
+      localStorage.setItem('settings', JSON.stringify({ margin, whatsapp }));
+      alert('تم حفظ الإعدادات بنجاح');
     }
 
-    // ============ UTILITIES ============
-    function closeModal(modalId) {
-      document.getElementById(modalId).classList.remove('active');
+    function changeLanguage(lang) {
+      // Language change functionality
     }
 
-    // Initialize on load
-    window.addEventListener('load', init);
+    // Initial render
+    renderTalents();
   </script>
 </body>
 </html>
