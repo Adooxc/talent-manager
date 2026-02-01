@@ -151,6 +151,7 @@
             overflow: hidden;
             box-shadow: 0 2px 8px rgba(0,0,0,0.1);
             transition: all 0.3s;
+            cursor: pointer;
         }
 
         .talent-card:hover {
@@ -166,7 +167,6 @@
             align-items: center;
             justify-content: center;
             font-size: 60px;
-            cursor: pointer;
         }
 
         .talent-card-body {
@@ -444,6 +444,109 @@
         .hidden {
             display: none !important;
         }
+
+        .detail-page {
+            display: none;
+        }
+
+        .detail-page.active {
+            display: block;
+        }
+
+        .detail-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .detail-header button {
+            padding: 10px 20px;
+            background: var(--secondary);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .detail-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .detail-image {
+            width: 100%;
+            height: 400px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 120px;
+        }
+
+        .detail-info {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .detail-info-section {
+            background: var(--surface);
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .detail-info-label {
+            font-size: 12px;
+            color: var(--text-light);
+            text-transform: uppercase;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+
+        .detail-info-value {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .detail-info-value.price {
+            color: var(--primary);
+            font-size: 24px;
+        }
+
+        .detail-social {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .social-btn {
+            padding: 10px 15px;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.3s;
+        }
+
+        .social-btn:hover {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        @media (max-width: 768px) {
+            .detail-content {
+                grid-template-columns: 1fr;
+            }
+        }
     </style>
 </head>
 <body>
@@ -478,6 +581,50 @@
                 </div>
 
                 <div class="grid" id="talents-grid"></div>
+            </div>
+
+            <!-- Talent Detail Page -->
+            <div id="talent-detail" class="detail-page">
+                <div class="detail-header">
+                    <h1 id="detail-name"></h1>
+                    <button onclick="backToTalents()">← العودة</button>
+                </div>
+
+                <div class="detail-content">
+                    <div class="detail-image">😊</div>
+                    <div class="detail-info">
+                        <div class="detail-info-section">
+                            <div class="detail-info-label">الفئة</div>
+                            <div class="detail-info-value" id="detail-category"></div>
+                        </div>
+                        <div class="detail-info-section">
+                            <div class="detail-info-label">السعر</div>
+                            <div class="detail-info-value price" id="detail-price"></div>
+                        </div>
+                        <div class="detail-info-section">
+                            <div class="detail-info-label">الجنس</div>
+                            <div class="detail-info-value" id="detail-gender"></div>
+                        </div>
+                        <div class="detail-info-section">
+                            <div class="detail-info-label">العمر</div>
+                            <div class="detail-info-value" id="detail-age"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3 style="margin-bottom: 15px;">معلومات التواصل</h3>
+                    <div class="detail-info-section" style="margin-bottom: 15px;">
+                        <div class="detail-info-label">رقم الهاتف</div>
+                        <div class="detail-info-value" id="detail-phone">-</div>
+                    </div>
+                    <div class="detail-social" id="detail-social-links"></div>
+                </div>
+
+                <div class="card">
+                    <button class="btn btn-primary" style="width: 100%;" id="whatsapp-btn" onclick="handleWhatsAppClick()">💬 فتح محادثة WhatsApp</button>
+                    <button class="btn btn-secondary" style="width: 100%; margin-top: 10px;" onclick="editTalentFromDetail()">✏️ تعديل الموديل</button>
+                </div>
             </div>
 
             <!-- Projects Tab -->
@@ -632,12 +779,12 @@
         let selectedTalentsForProject = [];
         let editingId = null;
         let editingType = null;
+        let currentTalentDetail = null;
 
         // Initialize
         document.addEventListener('DOMContentLoaded', function() {
             renderTalents();
             renderStats();
-            loadSettings();
         });
 
         // Tab Navigation
@@ -660,18 +807,18 @@
             }
 
             grid.innerHTML = talents.map(t => `
-                <div class="talent-card">
-                    <div class="talent-card-image" onclick="showTalentDetail(${t.id})">😊</div>
+                <div class="talent-card" onclick="showTalentDetail(${t.id})">
+                    <div class="talent-card-image">😊</div>
                     <div class="talent-card-body">
                         <div class="talent-card-name">${t.name}</div>
                         <div class="talent-card-info">${t.category}</div>
                         <div class="talent-card-info">العمر: ${t.age || '-'}</div>
                         <div class="talent-card-price">KD ${t.price}</div>
                         <div class="talent-card-actions">
-                            <button class="btn btn-secondary btn-small" onclick="editTalent(${t.id})">✏️ تعديل</button>
-                            <button class="btn btn-danger btn-small" onclick="deleteTalent(${t.id})">🗑️ حذف</button>
+                            <button class="btn btn-secondary btn-small" onclick="event.stopPropagation(); editTalent(${t.id})">✏️ تعديل</button>
+                            <button class="btn btn-danger btn-small" onclick="event.stopPropagation(); deleteTalent(${t.id})">🗑️ حذف</button>
                         </div>
-                        ${t.phone ? `<button class="btn btn-primary btn-small" style="width: 100%; margin-top: 8px;" onclick="openWhatsApp('${t.phone}')">💬 واتس</button>` : ''}
+                        ${t.phone ? `<button class="btn btn-primary btn-small" style="width: 100%; margin-top: 8px;" onclick="event.stopPropagation(); openWhatsApp('${t.phone}')">💬 واتس</button>` : ''}
                     </div>
                 </div>
             `).join('');
@@ -693,21 +840,64 @@
             }
 
             grid.innerHTML = filtered.map(t => `
-                <div class="talent-card">
-                    <div class="talent-card-image" onclick="showTalentDetail(${t.id})">😊</div>
+                <div class="talent-card" onclick="showTalentDetail(${t.id})">
+                    <div class="talent-card-image">😊</div>
                     <div class="talent-card-body">
                         <div class="talent-card-name">${t.name}</div>
                         <div class="talent-card-info">${t.category}</div>
                         <div class="talent-card-info">العمر: ${t.age || '-'}</div>
                         <div class="talent-card-price">KD ${t.price}</div>
                         <div class="talent-card-actions">
-                            <button class="btn btn-secondary btn-small" onclick="editTalent(${t.id})">✏️ تعديل</button>
-                            <button class="btn btn-danger btn-small" onclick="deleteTalent(${t.id})">🗑️ حذف</button>
+                            <button class="btn btn-secondary btn-small" onclick="event.stopPropagation(); editTalent(${t.id})">✏️ تعديل</button>
+                            <button class="btn btn-danger btn-small" onclick="event.stopPropagation(); deleteTalent(${t.id})">🗑️ حذف</button>
                         </div>
-                        ${t.phone ? `<button class="btn btn-primary btn-small" style="width: 100%; margin-top: 8px;" onclick="openWhatsApp('${t.phone}')">💬 واتس</button>` : ''}
+                        ${t.phone ? `<button class="btn btn-primary btn-small" style="width: 100%; margin-top: 8px;" onclick="event.stopPropagation(); openWhatsApp('${t.phone}')">💬 واتس</button>` : ''}
                     </div>
                 </div>
             `).join('');
+        }
+
+        function showTalentDetail(id) {
+            const talent = talents.find(t => t.id === id);
+            if (!talent) return;
+
+            currentTalentDetail = talent;
+            document.getElementById('detail-name').textContent = talent.name;
+            document.getElementById('detail-category').textContent = talent.category;
+            document.getElementById('detail-price').textContent = `KD ${talent.price}`;
+            document.getElementById('detail-gender').textContent = talent.gender === 'female' ? 'أنثى' : 'ذكر';
+            document.getElementById('detail-age').textContent = talent.age || '-';
+            document.getElementById('detail-phone').textContent = talent.phone || '-';
+
+            // Social links
+            let socialHTML = '';
+            if (talent.instagram) socialHTML += `<button class="social-btn" onclick="window.open('https://instagram.com/${talent.instagram.replace('@', '')}', '_blank')">📷 Instagram</button>`;
+            if (talent.tiktok) socialHTML += `<button class="social-btn" onclick="window.open('https://tiktok.com/@${talent.tiktok.replace('@', '')}', '_blank')">🎵 TikTok</button>`;
+            if (talent.twitter) socialHTML += `<button class="social-btn" onclick="window.open('https://twitter.com/${talent.twitter.replace('@', '')}', '_blank')">𝕏 Twitter</button>`;
+            if (talent.facebook) socialHTML += `<button class="social-btn" onclick="window.open('https://facebook.com/${talent.facebook}', '_blank')">👍 Facebook</button>`;
+            document.getElementById('detail-social-links').innerHTML = socialHTML || '<p style="color: var(--text-light);">لا توجد وسائل تواصل</p>';
+
+            // Hide talents tab and show detail page
+            document.getElementById('talents-tab').classList.add('hidden');
+            document.getElementById('talent-detail').classList.add('active');
+        }
+
+        function backToTalents() {
+            document.getElementById('talent-detail').classList.remove('active');
+            document.getElementById('talents-tab').classList.remove('hidden');
+            currentTalentDetail = null;
+        }
+
+        function handleWhatsAppClick() {
+            if (currentTalentDetail && currentTalentDetail.phone) {
+                openWhatsApp(currentTalentDetail.phone);
+            }
+        }
+
+        function editTalentFromDetail() {
+            if (currentTalentDetail) {
+                editTalent(currentTalentDetail.id);
+            }
         }
 
         function openAddTalentModal() {
@@ -790,13 +980,6 @@
 
         function closeTalentModal() {
             document.getElementById('talent-modal').classList.remove('active');
-        }
-
-        function showTalentDetail(id) {
-            const talent = talents.find(t => t.id === id);
-            if (!talent) return;
-
-            alert(`${talent.name}\nالفئة: ${talent.category}\nالسعر: KD ${talent.price}\nالهاتف: ${talent.phone || 'غير متوفر'}`);
         }
 
         function openWhatsApp(phone) {
