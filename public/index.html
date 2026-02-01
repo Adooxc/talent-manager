@@ -1019,6 +1019,13 @@
             closeTalentModal();
             renderTalents();
             updateStats();
+            
+            if (currentDetailTalentIndex !== null && editingTalentId === currentDetailTalentIndex) {
+                showTalentDetail(currentDetailTalentIndex);
+                document.getElementById('talent-detail').classList.add('active');
+            }
+            
+            editingTalentId = null;
         }
 
         function deleteTalent(event, index) {
