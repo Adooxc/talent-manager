@@ -746,58 +746,121 @@
 
                 <!-- Settings Tab -->
                 <div id="settings-tab" class="tab-content">
-                    <div class="settings-card">
-                        <div class="settings-card-title">المظهر</div>
-                        <div class="form-group">
-                            <label class="form-label">
-                                <input type="checkbox" id="dark-mode" onchange="toggleDarkMode()"> المظهر الداكن
-                            </label>
+                    <div style="max-width: 800px;">
+                        <!-- Appearance Section -->
+                        <div class="settings-card" style="background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1)); border-left: 4px solid var(--primary);">
+                            <div class="settings-card-title" style="font-size: 18px; margin-bottom: 20px;">المظهر والألوان</div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">المظهر</label>
+                                <div style="display: flex; gap: 12px; margin-top: 8px;">
+                                    <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                                        <input type="radio" name="theme" value="light" checked onchange="setTheme('light')"> فاتح
+                                    </label>
+                                    <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                                        <input type="radio" name="theme" value="dark" onchange="setTheme('dark')"> داكن
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">اللون الأساسي</label>
+                                <div style="display: flex; gap: 12px; margin-top: 8px; flex-wrap: wrap;">
+                                    <input type="color" id="primary-color" class="form-input" value="#667eea" onchange="changePrimaryColor()" style="width: 60px; height: 40px; cursor: pointer; border-radius: 8px;">
+                                    <div style="display: flex; align-items: center; color: var(--text-light);">
+                                        <span id="color-value">#667eea</span>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                    </div>
 
-                    <div class="settings-card">
-                        <div class="settings-card-title">💰 الإعدادات المالية</div>
-                        <div class="form-group">
-                            <label class="form-label">هامش الربح (%)</label>
-                            <input type="number" id="profit-margin" class="form-input" value="20" onchange="saveSettings()">
+                        <!-- Company Information -->
+                        <div class="settings-card" style="background: linear-gradient(135deg, rgba(240, 147, 251, 0.1), rgba(245, 87, 108, 0.1)); border-left: 4px solid #f093fb;">
+                            <div class="settings-card-title" style="font-size: 18px; margin-bottom: 20px;">معلومات الشركة</div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">اسم الشركة</label>
+                                <input type="text" id="company-name" class="form-input" placeholder="أدخل اسم الشركة" onchange="saveSettings()">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">البريد الإلكتروني</label>
+                                <input type="email" id="company-email" class="form-input" placeholder="example@company.com" onchange="saveSettings()">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">رقم الهاتف</label>
+                                <input type="tel" id="default-phone" class="form-input" placeholder="رقم الهاتف الرئيسي" onchange="saveSettings()">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">العنوان</label>
+                                <input type="text" id="company-address" class="form-input" placeholder="عنوان الشركة" onchange="saveSettings()">
+                            </div>
                         </div>
-                    </div>
 
-                    <div class="settings-card">
-                        <div class="settings-card-title">معلومات الشركة</div>
-                        <div class="form-group">
-                            <label class="form-label">اسم الشركة</label>
-                            <input type="text" id="company-name" class="form-input" onchange="saveSettings()">
+                        <!-- Financial Settings -->
+                        <div class="settings-card" style="background: linear-gradient(135deg, rgba(79, 172, 254, 0.1), rgba(0, 242, 254, 0.1)); border-left: 4px solid #4facfe;">
+                            <div class="settings-card-title" style="font-size: 18px; margin-bottom: 20px;">الإعدادات المالية</div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">هامش الربح (%)</label>
+                                <input type="number" id="profit-margin" class="form-input" value="20" min="0" max="100" onchange="saveSettings()">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">العملة الافتراضية</label>
+                                <select id="default-currency" class="form-select" onchange="saveSettings()">
+                                    <option value="USD">دولار أمريكي (USD)</option>
+                                    <option value="EUR">يورو (EUR)</option>
+                                    <option value="AED">درهم إماراتي (AED)</option>
+                                    <option value="SAR">ريال سعودي (SAR)</option>
+                                    <option value="KWD">دينار كويتي (KWD)</option>
+                                </select>
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <label class="form-label">رقم الهاتف الافتراضي</label>
-                            <input type="tel" id="default-phone" class="form-input" onchange="saveSettings()">
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">البريد الإلكتروني</label>
-                            <input type="email" id="company-email" class="form-input" onchange="saveSettings()">
-                        </div>
-                    </div>
 
-                    <div class="settings-card">
-                        <div class="settings-card-title">تخصيص القوائم</div>
-                        <div class="form-group">
-                            <label class="form-label">اسم قائمة الموديلز</label>
-                            <input type="text" id="talents-menu-name" class="form-input" value="الموديلز" onchange="saveMenuNames()">
+                        <!-- Menu Customization -->
+                        <div class="settings-card" style="background: linear-gradient(135deg, rgba(67, 233, 123, 0.1), rgba(56, 249, 215, 0.1)); border-left: 4px solid #43e97b;">
+                            <div class="settings-card-title" style="font-size: 18px; margin-bottom: 20px;">تخصيص القوائم</div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">اسم قائمة الموديلز</label>
+                                <input type="text" id="talents-menu-name" class="form-input" value="الموديلز" onchange="saveMenuNames()">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">اسم قائمة المشاريع</label>
+                                <input type="text" id="projects-menu-name" class="form-input" value="المشاريع" onchange="saveMenuNames()">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">اسم قائمة لوحة التحكم</label>
+                                <input type="text" id="dashboard-menu-name" class="form-input" value="لوحة التحكم" onchange="saveMenuNames()">
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <label class="form-label">اسم قائمة المشاريع</label>
-                            <input type="text" id="projects-menu-name" class="form-input" value="المشاريع" onchange="saveMenuNames()">
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">اسم قائمة الإحصائيات</label>
-                            <input type="text" id="dashboard-menu-name" class="form-input" value="الإحصائيات" onchange="saveMenuNames()">
-                        </div>
-                    </div>
 
-                    <div class="settings-card">
-                        <div class="settings-card-title">إدارة البيانات</div>
-                        <button class="btn btn-danger" onclick="clearAllData()">حذف جميع البيانات</button>
+                        <!-- Data Management -->
+                        <div class="settings-card" style="background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(249, 115, 115, 0.1)); border-left: 4px solid #ef4444;">
+                            <div class="settings-card-title" style="font-size: 18px; margin-bottom: 20px; color: #ef4444;">إدارة البيانات</div>
+                            
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px;">
+                                <button class="btn" style="background: linear-gradient(135deg, #43e97b, #38f9d7);" onclick="exportData()">تصدير البيانات</button>
+                                <button class="btn" style="background: linear-gradient(135deg, #4facfe, #00f2fe);" onclick="importData()">استيراد البيانات</button>
+                                <button class="btn" style="background: linear-gradient(135deg, #f093fb, #f5576c);" onclick="backupData()">عمل نسخة احتياطية</button>
+                                <button class="btn" style="background: linear-gradient(135deg, #ef4444, #f87171);" onclick="clearAllData()">حذف جميع البيانات</button>
+                            </div>
+                        </div>
+
+                        <!-- About -->
+                        <div class="settings-card" style="background: var(--surface-alt); border-left: 4px solid var(--text-light);">
+                            <div class="settings-card-title" style="font-size: 18px; margin-bottom: 20px;">حول التطبيق</div>
+                            <div style="color: var(--text-light); font-size: 14px;">
+                                <p style="margin-bottom: 8px;"><strong>الإصدار:</strong> 1.0.0</p>
+                                <p style="margin-bottom: 8px;"><strong>آخر تحديث:</strong> <span id="last-update">-</span></p>
+                                <p><strong>تم إنشاؤه بواسطة:</strong> Talent Manager Team</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -1583,21 +1646,21 @@
             document.getElementById('avg-rating').textContent = avgRating;
 
             document.getElementById('stats-grid').innerHTML = `
-                <div class="stat-card">
-                    <div class="stat-label">إجمالي الموديلز</div>
-                    <div class="stat-value">${totalTalents}</div>
+                <div class="stat-card" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 24px; border-radius: 12px; box-shadow: var(--shadow-lg);">
+                    <div style="font-size: 14px; opacity: 0.9; margin-bottom: 8px;">إجمالي الموديلز</div>
+                    <div style="font-size: 32px; font-weight: bold;">${totalTalents}</div>
                 </div>
-                <div class="stat-card">
-                    <div class="stat-label">إجمالي المشاريع</div>
-                    <div class="stat-value">${totalProjects}</div>
+                <div class="stat-card" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; padding: 24px; border-radius: 12px; box-shadow: var(--shadow-lg);">
+                    <div style="font-size: 14px; opacity: 0.9; margin-bottom: 8px;">إجمالي المشاريع</div>
+                    <div style="font-size: 32px; font-weight: bold;">${totalProjects}</div>
                 </div>
-                <div class="stat-card">
-                    <div class="stat-label">المفضلة</div>
-                    <div class="stat-value">${totalFavorites}</div>
+                <div class="stat-card" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white; padding: 24px; border-radius: 12px; box-shadow: var(--shadow-lg);">
+                    <div style="font-size: 14px; opacity: 0.9; margin-bottom: 8px;">الموديلز المفضلة</div>
+                    <div style="font-size: 32px; font-weight: bold;">${totalFavorites}</div>
                 </div>
-                <div class="stat-card">
-                    <div class="stat-label">متوسط التقييم</div>
-                    <div class="stat-value">${avgRating}</div>
+                <div class="stat-card" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); color: white; padding: 24px; border-radius: 12px; box-shadow: var(--shadow-lg);">
+                    <div style="font-size: 14px; opacity: 0.9; margin-bottom: 8px;">متوسط التقييم</div>
+                    <div style="font-size: 32px; font-weight: bold;">${avgRating} ⭐</div>
                 </div>
             `;
             
@@ -1680,6 +1743,160 @@
             }
         }
         renderTalents();
-    </script>
+    
+        function setTheme(theme) {
+            localStorage.setItem('theme', theme);
+            if (theme === 'dark') {
+                document.body.classList.add('dark-mode');
+            } else {
+                document.body.classList.remove('dark-mode');
+            }
+        }
+
+        function changePrimaryColor() {
+            const color = document.getElementById('primary-color').value;
+            document.documentElement.style.setProperty('--primary', color);
+            document.getElementById('color-value').textContent = color;
+            localStorage.setItem('primaryColor', color);
+        }
+
+        function exportData() {
+            const data = {
+                talents: talents,
+                projects: projects,
+                settings: {
+                    companyName: document.getElementById('company-name').value,
+                    companyEmail: document.getElementById('company-email').value,
+                    defaultPhone: document.getElementById('default-phone').value,
+                    profitMargin: document.getElementById('profit-margin').value
+                }
+            };
+            const json = JSON.stringify(data, null, 2);
+            const blob = new Blob([json], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'talent-manager-backup.json';
+            a.click();
+            alert('تم تصدير البيانات بنجاح');
+        }
+
+        function importData() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.json';
+            input.onchange = (e) => {
+                const file = e.target.files[0];
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    try {
+                        const data = JSON.parse(event.target.result);
+                        talents = data.talents || [];
+                        projects = data.projects || [];
+                        localStorage.setItem('talents', JSON.stringify(talents));
+                        localStorage.setItem('projects', JSON.stringify(projects));
+                        alert('تم استيراد البيانات بنجاح');
+                        renderTalents();
+                    } catch (err) {
+                        alert('خطأ في قراءة الملف');
+                    }
+                };
+                reader.readAsText(file);
+            };
+            input.click();
+        }
+
+        function backupData() {
+            exportData();
+        }
+
+        function saveSettings() {
+            const settings = {
+                companyName: document.getElementById('company-name').value,
+                companyEmail: document.getElementById('company-email').value,
+                defaultPhone: document.getElementById('default-phone').value,
+                companyAddress: document.getElementById('company-address').value,
+                profitMargin: document.getElementById('profit-margin').value,
+                defaultCurrency: document.getElementById('default-currency').value
+            };
+            localStorage.setItem('appSettings', JSON.stringify(settings));
+            alert('تم حفظ الإعدادات');
+        }
+
+        function loadSettings() {
+            const settings = JSON.parse(localStorage.getItem('appSettings') || '{}');
+            if (settings.companyName) document.getElementById('company-name').value = settings.companyName;
+            if (settings.companyEmail) document.getElementById('company-email').value = settings.companyEmail;
+            if (settings.defaultPhone) document.getElementById('default-phone').value = settings.defaultPhone;
+            if (settings.companyAddress) document.getElementById('company-address').value = settings.companyAddress;
+            if (settings.profitMargin) document.getElementById('profit-margin').value = settings.profitMargin;
+            if (settings.defaultCurrency) document.getElementById('default-currency').value = settings.defaultCurrency;
+            
+            const theme = localStorage.getItem('theme') || 'light';
+            const themeRadio = document.querySelector('input[name="theme"][value="' + theme + '"]');
+            if (themeRadio) themeRadio.checked = true;
+            
+            const color = localStorage.getItem('primaryColor') || '#667eea';
+            document.getElementById('primary-color').value = color;
+            document.getElementById('color-value').textContent = color;
+            document.documentElement.style.setProperty('--primary', color);
+            
+            const today = new Date().toLocaleDateString('ar-SA');
+            document.getElementById('last-update').textContent = today;
+        }
+
+        loadSettings();
+
+        let currentMonth = new Date().getMonth();
+        let currentYear = new Date().getFullYear();
+        
+        function renderCalendarGrid() {
+            const monthNames = ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو', 'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'];
+            const dayNames = ['ح', 'ن', 'ث', 'ع', 'خ', 'ج', 'س'];
+            
+            document.getElementById('calendar-header').innerHTML = dayNames.map(d => `<div style="text-align: center; padding: 8px; font-weight: bold; color: var(--primary);">${d}</div>`).join('');
+            
+            const firstDay = new Date(currentYear, currentMonth, 1).getDay();
+            const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+            
+            let html = '';
+            for (let i = 0; i < firstDay; i++) {
+                html += '<div></div>';
+            }
+            
+            for (let day = 1; day <= daysInMonth; day++) {
+                const dateStr = new Date(currentYear, currentMonth, day).toLocaleDateString('ar-SA');
+                const projectsOnDay = projects.filter(p => p.startDate && new Date(p.startDate).toLocaleDateString('ar-SA') === dateStr);
+                const hasProject = projectsOnDay.length > 0;
+                
+                html += `<div style="padding: 8px; border-radius: 8px; text-align: center; background: ${hasProject ? 'var(--primary)' : 'var(--surface-alt)'}; color: ${hasProject ? 'white' : 'var(--text)'}; cursor: pointer; font-weight: 500;">${day}${hasProject ? '<div style="font-size: 10px; margin-top: 2px;">' + projectsOnDay.length + ' مشروع</div>' : ''}</div>`;
+            }
+            
+            document.getElementById('calendar-grid').innerHTML = html;
+            
+            const monthYear = document.querySelector('h3');
+            if (monthYear) {
+                monthYear.textContent = monthNames[currentMonth] + ' ' + currentYear;
+            }
+        }
+        
+        function previousMonth() {
+            currentMonth--;
+            if (currentMonth < 0) {
+                currentMonth = 11;
+                currentYear--;
+            }
+            renderCalendarGrid();
+        }
+        
+        function nextMonth() {
+            currentMonth++;
+            if (currentMonth > 11) {
+                currentMonth = 0;
+                currentYear++;
+            }
+            renderCalendarGrid();
+        }
+</script>
 </body>
 </html>
