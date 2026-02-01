@@ -1035,18 +1035,45 @@
 
                 <!-- Add Talent Page -->
                 <div id="add-talent-page" class="tab-content">
-                    <div style="max-width: 900px; margin: 0 auto; padding: 20px;">
+                    <div style="max-width: 1000px; margin: 0 auto; padding: 20px;">
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
                             <h2 style="color: var(--foreground); font-size: 28px; font-weight: 700; margin: 0;">Add New Talent</h2>
                             <button onclick="showTab('talents-tab')" style="background: var(--primary); color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: 600;">Back</button>
                         </div>
+
+                        <!-- Media Gallery Section -->
+                        <div style="background: var(--surface); border-radius: 12px; padding: 24px; margin-bottom: 30px; border: 1px solid var(--border);">
+                            <h3 style="color: var(--foreground); font-size: 18px; font-weight: 600; margin: 0 0 20px 0;">Photos & Videos</h3>
+                            
+                            <!-- Main Display Area -->
+                            <div id="media-display" style="background: linear-gradient(135deg, var(--active-menu-gradient-start), var(--active-menu-gradient-end)); border-radius: 12px; width: 100%; height: 400px; display: flex; align-items: center; justify-content: center; margin-bottom: 20px; position: relative; overflow: hidden;">
+                                <div id="main-media" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;">
+                                    <span style="color: white; font-size: 16px;">No media selected</span>
+                                </div>
+                            </div>
+
+                            <!-- Thumbnails Gallery -->
+                            <div id="media-thumbnails" style="display: flex; gap: 12px; overflow-x: auto; padding: 12px 0; margin-bottom: 20px; min-height: 100px;"></div>
+
+                            <!-- Upload Buttons -->
+                            <div style="display: flex; gap: 12px;">
+                                <label style="flex: 1; cursor: pointer;">
+                                    <input type="file" id="talent-photo" multiple accept="image/*" style="display: none;" onchange="addMedia(event, 'image')">
+                                    <div style="background: var(--primary); color: white; padding: 12px 20px; border-radius: 8px; text-align: center; font-weight: 600; cursor: pointer;">+ Add Photos</div>
+                                </label>
+                                <label style="flex: 1; cursor: pointer;">
+                                    <input type="file" id="talent-video" multiple accept="video/*" style="display: none;" onchange="addMedia(event, 'video')">
+                                    <div style="background: var(--primary); color: white; padding: 12px 20px; border-radius: 8px; text-align: center; font-weight: 600; cursor: pointer;">+ Add Videos</div>
+                                </label>
+                            </div>
+                        </div>
+
                         <form onsubmit="saveTalent(event)" style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; row-gap: 30px;">
                             <div class="form-group"><label class="form-label">Name *</label><input type="text" id="talent-name" class="form-input" required></div>
                             <div class="form-group"><label class="form-label">Category *</label><select id="talent-category" class="form-input" required><option value="">Select</option><option value="Actors">Actors</option><option value="Influencers">Influencers</option><option value="Models">Models</option><option value="Extras">Extras</option></select></div>
                             <div class="form-group"><label class="form-label">Price (KD) *</label><input type="number" id="talent-price" class="form-input" required></div>
                             <div class="form-group"><label class="form-label">Gender</label><select id="talent-gender" class="form-input"><option value="">Select</option><option value="Male">Male</option><option value="Female">Female</option></select></div>
                             <div class="form-group"><label class="form-label">Date of Birth</label><input type="date" id="talent-birthdate" class="form-input" onchange="calculateAge()"></div>
-                            <div class="form-group"><label class="form-label">Age (Auto)</label><input type="number" id="talent-age" class="form-input" readonly style="opacity: 0.7;"></div>
                             <div class="form-group"><label class="form-label">Phone</label><input type="tel" id="talent-phone" class="form-input"></div>
                             <div class="form-group"><label class="form-label">Instagram</label><input type="text" id="talent-instagram" class="form-input" placeholder="Username"></div>
                             <div class="form-group"><label class="form-label">TikTok</label><input type="text" id="talent-tiktok" class="form-input" placeholder="Username"></div>
@@ -1060,7 +1087,6 @@
                             <div class="form-group"><label class="form-label">Hair Color</label><input type="text" id="talent-hair" class="form-input"></div>
                             <div class="form-group"><label class="form-label">Eye Color</label><input type="text" id="talent-eyes" class="form-input"></div>
                             <div style="grid-column: 1 / -1;" class="form-group"><label class="form-label">Skills</label><textarea id="talent-skills" class="form-input" style="min-height: 100px;"></textarea></div>
-                            <div style="grid-column: 1 / -1;" class="form-group"><label class="form-label">Photo</label><input type="file" id="talent-photo" class="form-input" accept="image/*"></div>
                             <div style="grid-column: 1 / -1; display: flex; gap: 12px; margin-top: 20px;"><button type="submit" class="btn" style="background: var(--primary); color: white; padding: 12px 24px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; flex: 1;">Save</button><button type="button" onclick="showTab('talents-tab')" class="btn" style="background: var(--border); color: var(--foreground); padding: 12px 24px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; flex: 1;">Cancel</button></div>
                         </form>
                     </div>
@@ -2736,3 +2762,78 @@
 </script>
 </body>
 </html>
+
+        // Media Gallery Management
+        let mediaItems = [];
+        let primaryMediaIndex = 0;
+
+        function addMedia(event, type) {
+            const files = event.target.files;
+            for (let file of files) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    mediaItems.push({
+                        type: type,
+                        src: e.target.result,
+                        name: file.name
+                    });
+                    renderMediaGallery();
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function renderMediaGallery() {
+            const thumbnailsContainer = document.getElementById('media-thumbnails');
+            const mainMedia = document.getElementById('main-media');
+            
+            thumbnailsContainer.innerHTML = '';
+            
+            if (mediaItems.length === 0) {
+                mainMedia.innerHTML = '<span style="color: white; font-size: 16px;">No media selected</span>';
+                return;
+            }
+
+            // Display main media
+            const primary = mediaItems[primaryMediaIndex];
+            if (primary.type === 'image') {
+                mainMedia.innerHTML = '<img src="' + primary.src + '" style="width: 100%; height: 100%; object-fit: cover;">';
+            } else {
+                mainMedia.innerHTML = '<video src="' + primary.src + '" style="width: 100%; height: 100%; object-fit: cover;" controls></video>';
+            }
+
+            // Display thumbnails
+            mediaItems.forEach((item, index) => {
+                const thumb = document.createElement('div');
+                const borderColor = index === primaryMediaIndex ? 'var(--primary)' : 'var(--border)';
+                thumb.style.cssText = 'position: relative; width: 80px; height: 80px; border-radius: 8px; cursor: pointer; border: 3px solid ' + borderColor + '; flex-shrink: 0; overflow: hidden;';
+                
+                if (item.type === 'image') {
+                    thumb.innerHTML = '<img src="' + item.src + '" style="width: 100%; height: 100%; object-fit: cover;">';
+                } else {
+                    thumb.innerHTML = '<video src="' + item.src + '" style="width: 100%; height: 100%; object-fit: cover;"></video><div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: white; font-size: 24px;">▶</div>';
+                }
+
+                // Add delete button
+                const deleteBtn = document.createElement('button');
+                deleteBtn.style.cssText = 'position: absolute; top: -8px; right: -8px; background: var(--error); color: white; border: none; width: 24px; height: 24px; border-radius: 50%; cursor: pointer; font-size: 14px; display: flex; align-items: center; justify-content: center; padding: 0;';
+                deleteBtn.textContent = '×';
+                deleteBtn.onclick = function(e) {
+                    e.preventDefault();
+                    mediaItems.splice(index, 1);
+                    if (primaryMediaIndex >= mediaItems.length) {
+                        primaryMediaIndex = Math.max(0, mediaItems.length - 1);
+                    }
+                    renderMediaGallery();
+                };
+                thumb.appendChild(deleteBtn);
+
+                // Set as primary on click
+                thumb.onclick = function() {
+                    primaryMediaIndex = index;
+                    renderMediaGallery();
+                };
+
+                thumbnailsContainer.appendChild(thumb);
+            });
+        }
