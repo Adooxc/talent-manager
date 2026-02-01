@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Talent Manager - مدير الموديلز والفنانين</title>
+    <link rel="icon" id="favicon" type="image/png" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%236366f1' width='100' height='100'/><text x='50' y='65' font-size='60' font-weight='bold' fill='white' text-anchor='middle'>T</text></svg>">
+    <link rel="apple-touch-icon" id="apple-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'><rect fill='%236366f1' width='180' height='180'/><text x='90' y='120' font-size='100' font-weight='bold' fill='white' text-anchor='middle'>T</text></svg>">
     <style>
         * {
             margin: 0;
@@ -700,8 +702,13 @@
                     
                     <!-- Calendar View -->
                     <div style="background: var(--surface); border-radius: 12px; padding: 20px; margin-bottom: 24px; border: 1px solid var(--border);">
-                        <h3 style="margin-bottom: 16px; color: var(--text);">التقويم</h3>
-                        <div id="calendar-view" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px;"></div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                            <button onclick="previousMonth()" style="background: var(--surface-alt); border: none; padding: 8px 12px; border-radius: 6px; cursor: pointer; color: var(--text);">Previous</button>
+                            <h3 id="calendar-title" style="color: var(--text); font-size: 20px; font-weight: 600;">February 2026</h3>
+                            <button onclick="nextMonth()" style="background: var(--surface-alt); border: none; padding: 8px 12px; border-radius: 6px; cursor: pointer; color: var(--text);">Next</button>
+                        </div>
+                        <div id="calendar-header" style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; margin-bottom: 12px;"></div>
+                        <div id="calendar-grid" style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px;"></div>
                     </div>
                     
                     <div id="projects-list"></div>
@@ -1861,13 +1868,23 @@
             if (savedLogo) {
                 const logoContent = document.getElementById('logo-preview-content');
                 logoContent.innerHTML = '<img src="' + savedLogo + '" style="width: 100%; height: 100%; object-fit: cover;">';
+                updateFavicon(savedLogo);
             }
+            
+            updateSiteTitle();
         }
 
         function saveWebTitle() {
             const title = document.getElementById('web-title').value || 'Talent Manager';
             localStorage.setItem('webTitle', title);
             document.title = title;
+            updateSiteTitle();
+        }
+        
+        function updateSiteTitle() {
+            const title = localStorage.getItem('webTitle') || 'Talent Manager';
+            const siteTitle = document.querySelector('h1');
+            if (siteTitle) siteTitle.textContent = title;
         }
         
         function handleLogoUpload() {
@@ -1879,9 +1896,17 @@
                     localStorage.setItem('appLogo', logoData);
                     const logoContent = document.getElementById('logo-preview-content');
                     logoContent.innerHTML = '<img src="' + logoData + '" style="width: 100%; height: 100%; object-fit: cover;">';
+                    updateFavicon(logoData);
                 };
                 reader.readAsDataURL(file);
             }
+        }
+        
+        function updateFavicon(logoData) {
+            const favicon = document.getElementById('favicon');
+            const appleIcon = document.getElementById('apple-icon');
+            if (favicon) favicon.href = logoData;
+            if (appleIcon) appleIcon.href = logoData;
         }
 
         function clearAllData() {
@@ -2044,12 +2069,15 @@
                 const projectsOnDay = projects.filter(p => p.startDate && new Date(p.startDate).toLocaleDateString('en-US') === dateStr);
                 const hasProject = projectsOnDay.length > 0;
                 
-                html += `<div style="padding: 8px; border-radius: 8px; text-align: center; background: ${hasProject ? 'var(--primary)' : 'var(--surface-alt)'}; color: ${hasProject ? 'white' : 'var(--text)'}; cursor: pointer; font-weight: 500;">${day}${hasProject ? '<div style="font-size: 10px; margin-top: 2px;">' + projectsOnDay.length + ' project</div>' : ''}</div>`;
+                const isToday = new Date().toLocaleDateString('en-US') === dateStr;
+                const bgColor = (isToday || hasProject) ? 'var(--primary)' : 'transparent';
+                const textColor = (isToday || hasProject) ? 'white' : 'var(--text)';
+                html += `<div style="padding: 12px 4px; border-radius: 8px; text-align: center; background: ${bgColor}; color: ${textColor}; cursor: pointer; font-weight: 500; min-height: 50px; display: flex; flex-direction: column; justify-content: center;">${day}${hasProject ? '<div style="font-size: 9px; margin-top: 2px;">' + projectsOnDay.length + ' event</div>' : ''}</div>`;
             }
             
             document.getElementById('calendar-grid').innerHTML = html;
             
-            const monthYear = document.querySelector('h3');
+            const monthYear = document.getElementById('calendar-title');
             if (monthYear) {
                 monthYear.textContent = monthNames[currentMonth] + ' ' + currentYear;
             }
