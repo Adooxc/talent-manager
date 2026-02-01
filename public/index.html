@@ -1,1490 +1,1000 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Talent Manager</title>
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    
-    :root {
-      --primary: #0a7ea4;
-      --secondary: #25D366;
-      --danger: #ef4444;
-      --bg: #f5f7fa;
-      --surface: #ffffff;
-      --text: #1a1a1a;
-      --text-light: #666;
-      --border: #e0e0e0;
-    }
-    
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      line-height: 1.6;
-    }
-    
-    .container {
-      display: flex;
-      height: 100vh;
-    }
-    
-    /* Sidebar */
-    .sidebar {
-      width: 280px;
-      background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
-      color: white;
-      padding: 25px;
-      overflow-y: auto;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-    }
-    
-    .logo {
-      font-size: 20px;
-      font-weight: 700;
-      margin-bottom: 40px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    
-    .nav-item {
-      padding: 12px 16px;
-      margin: 8px 0;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: all 0.3s;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      font-size: 14px;
-      font-weight: 500;
-    }
-    
-    .nav-item:hover {
-      background: rgba(255,255,255,0.1);
-    }
-    
-    .nav-item.active {
-      background: var(--primary);
-      font-weight: 600;
-    }
-    
-    /* Main Content */
-    .main {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-    }
-    
-    .header {
-      background: var(--surface);
-      padding: 20px 30px;
-      border-bottom: 1px solid var(--border);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-    }
-    
-    .header h1 {
-      font-size: 24px;
-      font-weight: 700;
-    }
-    
-    .content {
-      flex: 1;
-      overflow-y: auto;
-      padding: 30px;
-    }
-    
-    .page {
-      display: none;
-    }
-    
-    .page.active {
-      display: block;
-      animation: fadeIn 0.3s ease;
-    }
-    
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
-    }
-    
-    /* Page Title */
-    .page-title {
-      font-size: 28px;
-      font-weight: 700;
-      margin-bottom: 8px;
-    }
-    
-    .page-subtitle {
-      color: var(--text-light);
-      font-size: 14px;
-      margin-bottom: 30px;
-    }
-    
-    /* Controls */
-    .controls {
-      display: flex;
-      gap: 15px;
-      margin-bottom: 25px;
-      flex-wrap: wrap;
-      align-items: center;
-    }
-    
-    .search-input {
-      flex: 1;
-      min-width: 250px;
-      padding: 10px 15px;
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      font-size: 14px;
-      transition: all 0.2s;
-    }
-    
-    .search-input:focus {
-      outline: none;
-      border-color: var(--primary);
-      box-shadow: 0 0 0 3px rgba(10, 126, 164, 0.1);
-    }
-    
-    .select {
-      padding: 10px 12px;
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      background: var(--surface);
-      cursor: pointer;
-      font-size: 14px;
-    }
-    
-    .btn {
-      padding: 10px 20px;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      font-weight: 600;
-      font-size: 14px;
-      transition: all 0.2s;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-    }
-    
-    .btn-primary {
-      background: var(--primary);
-      color: white;
-    }
-    
-    .btn-primary:hover {
-      background: #086c8f;
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(10, 126, 164, 0.3);
-    }
-    
-    .btn-secondary {
-      background: var(--bg);
-      color: var(--text);
-      border: 1px solid var(--border);
-    }
-    
-    .btn-secondary:hover {
-      background: var(--border);
-    }
-    
-    .btn-danger {
-      background: var(--danger);
-      color: white;
-    }
-    
-    .btn-danger:hover {
-      background: #dc2626;
-    }
-    
-    .btn-whatsapp {
-      background: var(--secondary);
-      color: white;
-    }
-    
-    .btn-whatsapp:hover {
-      background: #20BA5A;
-    }
-    
-    /* Grid */
-    .talents-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-      gap: 20px;
-    }
-    
-    /* Card */
-    .card {
-      background: var(--surface);
-      border-radius: 12px;
-      overflow: hidden;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-      transition: all 0.3s;
-      border: 1px solid var(--border);
-      cursor: pointer;
-    }
-    
-    .card:hover {
-      transform: translateY(-8px);
-      box-shadow: 0 8px 24px rgba(0,0,0,0.12);
-      border-color: var(--primary);
-    }
-    
-    .card-image {
-      width: 100%;
-      height: 220px;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 80px;
-      overflow: hidden;
-      position: relative;
-    }
-    
-    .card-image img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-    
-    .card-image-count {
-      position: absolute;
-      top: 10px;
-      left: 10px;
-      background: rgba(0,0,0,0.6);
-      color: white;
-      padding: 4px 10px;
-      border-radius: 20px;
-      font-size: 12px;
-      font-weight: 600;
-    }
-    
-    .card-body {
-      padding: 16px;
-    }
-    
-    .card-category {
-      display: inline-block;
-      background: var(--primary);
-      color: white;
-      padding: 4px 10px;
-      border-radius: 6px;
-      font-size: 11px;
-      font-weight: 600;
-      margin-bottom: 10px;
-    }
-    
-    .card-title {
-      font-size: 16px;
-      font-weight: 700;
-      margin-bottom: 8px;
-    }
-    
-    .card-info {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 8px;
-      margin-bottom: 12px;
-      font-size: 12px;
-    }
-    
-    .info-item {
-      display: flex;
-      flex-direction: column;
-    }
-    
-    .info-label {
-      color: var(--text-light);
-      font-size: 11px;
-      margin-bottom: 2px;
-    }
-    
-    .info-value {
-      font-weight: 600;
-    }
-    
-    .card-price {
-      font-size: 18px;
-      font-weight: 700;
-      color: var(--primary);
-      margin-top: 12px;
-      padding-top: 12px;
-      border-top: 1px solid var(--border);
-    }
-    
-    .card-actions {
-      display: flex;
-      gap: 8px;
-      margin-top: 12px;
-    }
-    
-    .card-actions .btn {
-      flex: 1;
-      padding: 8px;
-      font-size: 12px;
-    }
-    
-    /* Detail Page */
-    .detail-page {
-      background: var(--surface);
-      border-radius: 12px;
-      overflow: hidden;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-    }
-    
-    .detail-header {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 30px;
-      padding: 40px;
-      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-    }
-    
-    .detail-image-section {
-      display: flex;
-      flex-direction: column;
-      gap: 15px;
-    }
-    
-    .detail-main-image {
-      width: 100%;
-      height: 400px;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      border-radius: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 120px;
-      overflow: hidden;
-      position: relative;
-    }
-    
-    .detail-main-image img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-    
-    .gallery-thumbnails {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 10px;
-    }
-    
-    .gallery-thumb {
-      width: 100%;
-      height: 80px;
-      background: var(--bg);
-      border-radius: 8px;
-      cursor: pointer;
-      border: 2px solid transparent;
-      transition: all 0.2s;
-      overflow: hidden;
-      position: relative;
-    }
-    
-    .gallery-thumb:hover {
-      border-color: var(--primary);
-      transform: scale(1.05);
-    }
-    
-    .gallery-thumb.active {
-      border-color: var(--primary);
-      box-shadow: 0 0 0 3px rgba(10, 126, 164, 0.2);
-    }
-    
-    .gallery-thumb img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-    
-    .gallery-thumb-delete {
-      position: absolute;
-      top: 2px;
-      right: 2px;
-      background: rgba(239, 68, 68, 0.9);
-      color: white;
-      border: none;
-      width: 20px;
-      height: 20px;
-      border-radius: 50%;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 12px;
-      opacity: 0;
-      transition: opacity 0.2s;
-    }
-    
-    .gallery-thumb:hover .gallery-thumb-delete {
-      opacity: 1;
-    }
-    
-    .detail-info h1 {
-      font-size: 36px;
-      font-weight: 700;
-      margin-bottom: 12px;
-    }
-    
-    .detail-category {
-      display: inline-block;
-      background: var(--primary);
-      color: white;
-      padding: 6px 14px;
-      border-radius: 6px;
-      font-size: 12px;
-      font-weight: 600;
-      margin-bottom: 20px;
-    }
-    
-    .detail-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 20px;
-      margin-bottom: 30px;
-    }
-    
-    .detail-field {
-      display: flex;
-      flex-direction: column;
-    }
-    
-    .detail-field-label {
-      font-size: 12px;
-      color: var(--text-light);
-      margin-bottom: 6px;
-      font-weight: 600;
-      text-transform: uppercase;
-    }
-    
-    .detail-field-value {
-      font-size: 18px;
-      font-weight: 700;
-    }
-    
-    .detail-actions {
-      display: flex;
-      gap: 12px;
-    }
-    
-    .detail-actions .btn {
-      flex: 1;
-      padding: 12px;
-    }
-    
-    .detail-content {
-      padding: 40px;
-    }
-    
-    .section {
-      margin-bottom: 40px;
-    }
-    
-    .section-title {
-      font-size: 18px;
-      font-weight: 700;
-      margin-bottom: 20px;
-      padding-bottom: 12px;
-      border-bottom: 2px solid var(--primary);
-      display: inline-block;
-    }
-    
-    .info-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 20px;
-    }
-    
-    .social-links {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
-    
-    .social-link {
-      padding: 10px 16px;
-      background: var(--bg);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      cursor: pointer;
-      font-size: 13px;
-      font-weight: 600;
-      transition: all 0.2s;
-    }
-    
-    .social-link:hover {
-      background: var(--primary);
-      color: white;
-      border-color: var(--primary);
-    }
-    
-    .back-btn {
-      background: none;
-      border: none;
-      color: var(--primary);
-      cursor: pointer;
-      font-size: 16px;
-      font-weight: 600;
-      margin-bottom: 20px;
-      padding: 0;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      transition: all 0.2s;
-    }
-    
-    .back-btn:hover {
-      gap: 12px;
-    }
-    
-    /* Photo Gallery Section */
-    .photo-gallery-section {
-      margin-top: 40px;
-    }
-    
-    .photo-upload-area {
-      border: 2px dashed var(--border);
-      border-radius: 12px;
-      padding: 30px;
-      text-align: center;
-      cursor: pointer;
-      transition: all 0.2s;
-      background: var(--bg);
-    }
-    
-    .photo-upload-area:hover {
-      border-color: var(--primary);
-      background: rgba(10, 126, 164, 0.05);
-    }
-    
-    .photo-upload-area.dragover {
-      border-color: var(--primary);
-      background: rgba(10, 126, 164, 0.1);
-    }
-    
-    .upload-icon {
-      font-size: 48px;
-      margin-bottom: 12px;
-    }
-    
-    .upload-text {
-      font-weight: 600;
-      margin-bottom: 4px;
-    }
-    
-    .upload-subtext {
-      color: var(--text-light);
-      font-size: 13px;
-    }
-    
-    .photo-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-      gap: 15px;
-      margin-top: 20px;
-    }
-    
-    .photo-item {
-      position: relative;
-      border-radius: 8px;
-      overflow: hidden;
-      background: var(--bg);
-      aspect-ratio: 1;
-      cursor: grab;
-      transition: all 0.2s;
-      border: 2px solid transparent;
-    }
-    
-    .photo-item:hover {
-      border-color: var(--primary);
-      transform: scale(1.02);
-    }
-    
-    .photo-item.dragging {
-      opacity: 0.5;
-      cursor: grabbing;
-    }
-    
-    .photo-item img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-    
-    .photo-item-overlay {
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: rgba(0,0,0,0.5);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      opacity: 0;
-      transition: opacity 0.2s;
-    }
-    
-    .photo-item:hover .photo-item-overlay {
-      opacity: 1;
-    }
-    
-    .photo-item-btn {
-      background: white;
-      border: none;
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 18px;
-      transition: all 0.2s;
-    }
-    
-    .photo-item-btn:hover {
-      transform: scale(1.1);
-    }
-    
-    .photo-item-delete {
-      background: var(--danger);
-      color: white;
-    }
-    
-    /* Modal */
-    .modal {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0,0,0,0.5);
-      z-index: 1000;
-      align-items: center;
-      justify-content: center;
-    }
-    
-    .modal.active {
-      display: flex;
-    }
-    
-    .modal-content {
-      background: var(--surface);
-      border-radius: 12px;
-      padding: 30px;
-      max-width: 600px;
-      width: 90%;
-      max-height: 90vh;
-      overflow-y: auto;
-    }
-    
-    .modal-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 20px;
-    }
-    
-    .modal-header h2 {
-      font-size: 24px;
-    }
-    
-    .modal-close {
-      background: none;
-      border: none;
-      font-size: 24px;
-      cursor: pointer;
-    }
-    
-    .form-group {
-      margin-bottom: 15px;
-    }
-    
-    .form-group label {
-      display: block;
-      margin-bottom: 5px;
-      font-weight: 600;
-      font-size: 14px;
-    }
-    
-    .form-group input,
-    .form-group select,
-    .form-group textarea {
-      width: 100%;
-      padding: 10px;
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      font-size: 14px;
-      font-family: inherit;
-    }
-    
-    .form-group textarea {
-      resize: vertical;
-      min-height: 80px;
-    }
-    
-    .form-actions {
-      display: flex;
-      gap: 10px;
-      margin-top: 20px;
-    }
-    
-    .form-actions .btn {
-      flex: 1;
-    }
-    
-    .file-input {
-      display: none;
-    }
-    
-    /* Dashboard */
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 20px;
-    }
-    
-    .stat-card {
-      background: var(--surface);
-      padding: 25px;
-      border-radius: 12px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-      border-left: 4px solid var(--primary);
-    }
-    
-    .stat-label {
-      color: var(--text-light);
-      font-size: 13px;
-      margin-bottom: 10px;
-      font-weight: 600;
-    }
-    
-    .stat-value {
-      font-size: 32px;
-      font-weight: 700;
-      color: var(--primary);
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Talent Manager - مدير الموديلز والفنانين</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #1abc9c;
+            --secondary: #3498db;
+            --danger: #e74c3c;
+            --warning: #f39c12;
+            --success: #27ae60;
+            --bg: #f8f9fa;
+            --surface: #ffffff;
+            --text: #2c3e50;
+            --text-light: #7f8c8d;
+            --border: #ecf0f1;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 250px;
+            background: var(--surface);
+            border-left: 1px solid var(--border);
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .nav-item {
+            padding: 12px 15px;
+            margin-bottom: 8px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: var(--bg);
+            border: none;
+            width: 100%;
+            text-align: right;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .nav-item:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        .nav-item.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        .main {
+            flex: 1;
+            padding: 30px;
+            overflow-y: auto;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            color: var(--text);
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #16a085;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: var(--secondary);
+            color: white;
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+
+        .btn-small {
+            padding: 6px 12px;
+            font-size: 12px;
+        }
+
+        .card {
+            background: var(--surface);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+        }
+
+        .card:hover {
+            box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+            transform: translateY(-2px);
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .talent-card {
+            background: var(--surface);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+        }
+
+        .talent-card:hover {
+            box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+            transform: translateY(-4px);
+        }
+
+        .talent-card-image {
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 60px;
+            cursor: pointer;
+        }
+
+        .talent-card-body {
+            padding: 15px;
+        }
+
+        .talent-card-name {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .talent-card-info {
+            font-size: 13px;
+            color: var(--text-light);
+            margin-bottom: 4px;
+        }
+
+        .talent-card-price {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--primary);
+            margin: 10px 0;
+        }
+
+        .talent-card-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .talent-card-actions button {
+            flex: 1;
+            padding: 8px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.3s;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            overflow-y: auto;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--surface);
+            border-radius: 12px;
+            padding: 30px;
+            max-width: 600px;
+            width: 90%;
+            margin: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-header h2 {
+            font-size: 24px;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 28px;
+            cursor: pointer;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 14px;
+            font-family: inherit;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .talent-selector {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 10px;
+            margin-bottom: 15px;
+            max-height: 300px;
+            overflow-y: auto;
+            padding: 10px;
+            background: var(--bg);
+            border-radius: 6px;
+        }
+
+        .talent-selector-item {
+            padding: 12px;
+            border: 2px solid var(--border);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+            background: var(--surface);
+        }
+
+        .talent-selector-item:hover {
+            border-color: var(--primary);
+            background: var(--bg);
+        }
+
+        .talent-selector-item.selected {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .talent-selector-item-name {
+            font-weight: 600;
+            font-size: 13px;
+            margin-bottom: 5px;
+        }
+
+        .talent-selector-item-price {
+            font-size: 12px;
+            opacity: 0.8;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .form-actions button {
+            flex: 1;
+        }
+
+        .search-box {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .search-box input,
+        .search-box select {
+            padding: 10px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        .search-box input {
+            flex: 1;
+        }
+
+        .project-card {
+            background: var(--surface);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-left: 4px solid var(--primary);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .project-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 10px;
+        }
+
+        .project-card-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .project-card-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .project-card-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid var(--border);
+        }
+
+        .project-card-stat {
+            font-size: 13px;
+        }
+
+        .project-card-stat-label {
+            color: var(--text-light);
+            font-size: 12px;
+            margin-bottom: 3px;
+        }
+
+        .project-card-stat-value {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: var(--text-light);
+        }
+
+        .empty-state-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: var(--surface);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .stat-card-value {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 8px;
+        }
+
+        .stat-card-label {
+            font-size: 14px;
+            color: var(--text-light);
+        }
+
+        .hidden {
+            display: none !important;
+        }
+    </style>
 </head>
 <body>
-  <div class="container">
-    <!-- Sidebar -->
-    <div class="sidebar">
-      <div class="logo">👥 Talent Manager</div>
-      <div class="nav-item active" onclick="showPage('talents')">👥 الموديلز</div>
-      <div class="nav-item" onclick="showPage('projects')">📋 المشاريع</div>
-      <div class="nav-item" onclick="showPage('dashboard')">📊 الإحصائيات</div>
-      <div class="nav-item" onclick="showPage('settings')">⚙️ الإعدادات</div>
+    <div class="container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <h2 style="margin-bottom: 20px; font-size: 18px;">Talent Manager</h2>
+            <button class="nav-item active" onclick="showTab('talents')">👥 الموديلز</button>
+            <button class="nav-item" onclick="showTab('projects')">📋 المشاريع</button>
+            <button class="nav-item" onclick="showTab('stats')">📊 الإحصائيات</button>
+            <button class="nav-item" onclick="showTab('settings')">⚙️ الإعدادات</button>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main">
+            <!-- Talents Tab -->
+            <div id="talents-tab" class="tab-content">
+                <div class="header">
+                    <h1>الموديلز والفنانين</h1>
+                    <button class="btn btn-primary" onclick="openAddTalentModal()">+ إضافة موديل</button>
+                </div>
+
+                <div class="search-box">
+                    <input type="text" id="search" placeholder="ابحث عن موديل..." onkeyup="filterTalents()">
+                    <select id="category" onchange="filterTalents()">
+                        <option value="">جميع الفئات</option>
+                        <option value="ممثلين">ممثلين</option>
+                        <option value="مؤثرين">مؤثرين</option>
+                        <option value="عارضين">عارضين</option>
+                        <option value="كومبارس">كومبارس</option>
+                    </select>
+                </div>
+
+                <div class="grid" id="talents-grid"></div>
+            </div>
+
+            <!-- Projects Tab -->
+            <div id="projects-tab" class="tab-content hidden">
+                <div class="header">
+                    <h1>المشاريع</h1>
+                    <button class="btn btn-primary" onclick="openAddProjectModal()">+ إنشاء مشروع</button>
+                </div>
+
+                <div id="projects-list"></div>
+            </div>
+
+            <!-- Stats Tab -->
+            <div id="stats-tab" class="tab-content hidden">
+                <div class="header">
+                    <h1>الإحصائيات</h1>
+                </div>
+
+                <div class="stats-grid" id="stats-grid"></div>
+            </div>
+
+            <!-- Settings Tab -->
+            <div id="settings-tab" class="tab-content hidden">
+                <div class="header">
+                    <h1>الإعدادات</h1>
+                </div>
+
+                <div class="card">
+                    <h3 style="margin-bottom: 15px;">الإعدادات العامة</h3>
+                    <div class="form-group">
+                        <label>هامش الربح (%)</label>
+                        <input type="number" id="profit-margin" value="20" onchange="saveSettings()">
+                    </div>
+                    <div class="form-group">
+                        <label>العملة</label>
+                        <input type="text" value="KD" disabled style="background: var(--bg);">
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <!-- Main -->
-    <div class="main">
-      <div class="header">
-        <h1>Talent Manager</h1>
-        <button class="btn btn-primary" onclick="openAddModal()">+ إضافة موديل</button>
-      </div>
-
-      <div class="content">
-        <!-- Talents Page -->
-        <div class="page active" id="talents-page">
-          <h2 class="page-title">الموديلز والفنانين</h2>
-          <p class="page-subtitle">أدر موديلاتك وفنانيك بسهولة</p>
-
-          <div class="controls">
-            <input type="text" class="search-input" id="search" placeholder="ابحث عن موديل..." onkeyup="filterTalents()">
-            <select class="select" id="category" onchange="filterTalents()">
-              <option value="">جميع الفئات</option>
-              <option value="ممثلين">ممثلين</option>
-              <option value="مؤثرين">مؤثرين</option>
-              <option value="عارضين">عارضين</option>
-              <option value="كومبارس">كومبارس</option>
-            </select>
-            <select class="select" id="sort" onchange="filterTalents()">
-              <option value="name">الاسم</option>
-              <option value="price">السعر</option>
-              <option value="rating">التقييم</option>
-            </select>
-          </div>
-
-          <div class="talents-grid" id="talents-grid"></div>
-        </div>
-
-        <!-- Detail Page -->
-        <div class="page" id="detail-page">
-          <button class="back-btn" onclick="showPage('talents')">← العودة</button>
-          <div id="detail-content"></div>
-        </div>
-
-        <!-- Projects Page -->
-        <div class="page" id="projects-page">
-          <h2 class="page-title">المشاريع</h2>
-          <p class="page-subtitle">أدر مشاريعك واختر الموديلز المناسبين</p>
-          <p style="color: var(--text-light); margin-top: 30px;">لا توجد مشاريع حالياً</p>
-        </div>
-
-        <!-- Dashboard Page -->
-        <div class="page" id="dashboard-page">
-          <h2 class="page-title">الإحصائيات</h2>
-          <p class="page-subtitle">ملخص شامل لعملك</p>
-          <div class="stats-grid" id="stats" style="margin-top: 30px;"></div>
-        </div>
-
-        <!-- Settings Page -->
-        <div class="page" id="settings-page">
-          <h2 class="page-title">الإعدادات</h2>
-          <p class="page-subtitle">إدارة إعدادات المشروع</p>
-          <div style="background: var(--surface); padding: 30px; border-radius: 12px; margin-top: 30px; max-width: 600px;">
-            <div class="form-group">
-              <label>هامش الربح الافتراضي (%)</label>
-              <input type="number" id="margin" value="15">
+    <!-- Add/Edit Talent Modal -->
+    <div class="modal" id="talent-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="talent-modal-title">إضافة موديل جديد</h2>
+                <button class="modal-close" onclick="closeTalentModal()">×</button>
             </div>
-            <div class="form-group">
-              <label>رسالة WhatsApp</label>
-              <textarea id="whatsapp-msg">مرحباً {name}، أتواصل معك بخصوص فرصة عمل...</textarea>
-            </div>
-            <button class="btn btn-primary" onclick="saveSettings()">💾 حفظ</button>
-          </div>
+            <form onsubmit="saveTalent(event)">
+                <div class="form-group">
+                    <label>الاسم</label>
+                    <input type="text" id="talent-name" required>
+                </div>
+                <div class="form-group">
+                    <label>الفئة</label>
+                    <select id="talent-category" required>
+                        <option value="">اختر الفئة</option>
+                        <option value="ممثلين">ممثلين</option>
+                        <option value="مؤثرين">مؤثرين</option>
+                        <option value="عارضين">عارضين</option>
+                        <option value="كومبارس">كومبارس</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>الجنس</label>
+                    <select id="talent-gender">
+                        <option value="male">ذكر</option>
+                        <option value="female">أنثى</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>العمر</label>
+                    <input type="number" id="talent-age">
+                </div>
+                <div class="form-group">
+                    <label>السعر (KD)</label>
+                    <input type="number" id="talent-price" required>
+                </div>
+                <div class="form-group">
+                    <label>رقم الهاتف</label>
+                    <input type="tel" id="talent-phone">
+                </div>
+                <div class="form-group">
+                    <label>Instagram</label>
+                    <input type="text" id="talent-instagram" placeholder="@username">
+                </div>
+                <div class="form-group">
+                    <label>TikTok</label>
+                    <input type="text" id="talent-tiktok" placeholder="@username">
+                </div>
+                <div class="form-group">
+                    <label>Twitter</label>
+                    <input type="text" id="talent-twitter" placeholder="@username">
+                </div>
+                <div class="form-group">
+                    <label>Facebook</label>
+                    <input type="text" id="talent-facebook">
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">حفظ</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeTalentModal()">إلغاء</button>
+                </div>
+            </form>
         </div>
-      </div>
     </div>
-  </div>
 
-  <!-- Add/Edit Modal -->
-  <div class="modal" id="modal">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h2 id="modal-title">إضافة موديل جديد</h2>
-        <button class="modal-close" onclick="closeModal()">×</button>
-      </div>
-      <form onsubmit="saveTalent(event)">
-        <div class="form-group">
-          <label>الاسم</label>
-          <input type="text" id="name" required>
+    <!-- Add/Edit Project Modal -->
+    <div class="modal" id="project-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="project-modal-title">إنشاء مشروع جديد</h2>
+                <button class="modal-close" onclick="closeProjectModal()">×</button>
+            </div>
+            <form onsubmit="saveProject(event)">
+                <div class="form-group">
+                    <label>اسم المشروع</label>
+                    <input type="text" id="project-name" required>
+                </div>
+                <div class="form-group">
+                    <label>الوصف</label>
+                    <textarea id="project-description"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>تاريخ البداية</label>
+                    <input type="date" id="project-start-date">
+                </div>
+                <div class="form-group">
+                    <label>تاريخ النهاية</label>
+                    <input type="date" id="project-end-date">
+                </div>
+                <div class="form-group">
+                    <label>اختر الموديلز</label>
+                    <div class="talent-selector" id="talent-selector"></div>
+                </div>
+                <div class="form-group">
+                    <label>إجمالي التكاليف المتوقعة (KD)</label>
+                    <input type="number" id="project-total-cost" readonly style="background: var(--bg);">
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">إنشاء</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeProjectModal()">إلغاء</button>
+                </div>
+            </form>
         </div>
-        <div class="form-group">
-          <label>الفئة</label>
-          <select id="category-input" required>
-            <option value="">اختر الفئة</option>
-            <option value="ممثلين">ممثلين</option>
-            <option value="مؤثرين">مؤثرين</option>
-            <option value="عارضين">عارضين</option>
-            <option value="كومبارس">كومبارس</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label>الجنس</label>
-          <select id="gender">
-            <option value="ذكر">ذكر</option>
-            <option value="أنثى">أنثى</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label>السعر (KD)</label>
-          <input type="number" id="price" required>
-        </div>
-        <div class="form-group">
-          <label>التقييم (0-5)</label>
-          <input type="number" id="rating" min="0" max="5" value="0">
-        </div>
-        <div class="form-group">
-          <label>رقم الهاتف</label>
-          <input type="tel" id="phone" placeholder="501234567">
-        </div>
-        <div class="form-group">
-          <label>العمر</label>
-          <input type="number" id="age">
-        </div>
-        <div class="form-group">
-          <label>الطول</label>
-          <input type="text" id="height" placeholder="مثال: 175 سم">
-        </div>
-        <div class="form-group">
-          <label>الوزن</label>
-          <input type="text" id="weight" placeholder="مثال: 70 كغ">
-        </div>
-        <div class="form-group">
-          <label>الجنسية</label>
-          <input type="text" id="nationality">
-        </div>
-        <div class="form-group">
-          <label>المدينة/الدولة</label>
-          <input type="text" id="location">
-        </div>
-        <div class="form-group">
-          <label>Instagram</label>
-          <input type="text" id="instagram" placeholder="@username">
-        </div>
-        <div class="form-group">
-          <label>TikTok</label>
-          <input type="text" id="tiktok" placeholder="@username">
-        </div>
-        <div class="form-group">
-          <label>Twitter</label>
-          <input type="text" id="twitter" placeholder="@username">
-        </div>
-        <div class="form-group">
-          <label>Facebook</label>
-          <input type="text" id="facebook" placeholder="الرابط أو الاسم">
-        </div>
-        <div class="form-group">
-          <label>الملاحظات</label>
-          <textarea id="notes"></textarea>
-        </div>
-        <div class="form-actions">
-          <button type="submit" class="btn btn-primary">إضافة</button>
-          <button type="button" class="btn btn-secondary" onclick="closeModal()">إلغاء</button>
-        </div>
-      </form>
     </div>
-  </div>
 
-  <!-- Photo Upload Modal -->
-  <div class="modal" id="photo-modal">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h2>إضافة صور</h2>
-        <button class="modal-close" onclick="closePhotoModal()">×</button>
-      </div>
-      <div class="photo-upload-area" id="upload-area" ondrop="handleDrop(event)" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" onclick="document.getElementById('photo-input').click()">
-        <div class="upload-icon">📸</div>
-        <div class="upload-text">اسحب الصور هنا أو انقر للاختيار</div>
-        <div class="upload-subtext">PNG, JPG, GIF (الحد الأقصى 5 ميجابايت)</div>
-      </div>
-      <input type="file" id="photo-input" class="file-input" multiple accept="image/*" onchange="handlePhotoSelect(event)">
-      <div class="photo-grid" id="photo-grid"></div>
-      <div style="margin-top: 20px; display: flex; gap: 10px;">
-        <button class="btn btn-primary" onclick="uploadPhotos()" style="flex: 1;">✓ تم</button>
-        <button class="btn btn-secondary" onclick="closePhotoModal()" style="flex: 1;">إلغاء</button>
-      </div>
-    </div>
-  </div>
+    <script>
+        // Data
+        let talents = JSON.parse(localStorage.getItem('talents')) || [];
+        let projects = JSON.parse(localStorage.getItem('projects')) || [];
+        let selectedTalentsForProject = [];
+        let editingId = null;
+        let editingType = null;
 
-  <script>
-    let talents = JSON.parse(localStorage.getItem('talents')) || [];
-    let editingId = null;
-    let currentTalentPhotos = [];
-    let draggedPhotoIndex = null;
-
-    // Sample data
-    if (talents.length === 0) {
-      talents = [
-        {
-          id: 1,
-          name: 'محمود حسن',
-          category: 'ممثلين',
-          gender: 'ذكر',
-          price: 3000,
-          rating: 4,
-          phone: '96550123456',
-          age: 22,
-          height: '175 سم',
-          weight: '70 كغ',
-          nationality: 'كويتي',
-          location: 'الكويت',
-          instagram: '@mahmoud',
-          tiktok: '@mahmoud',
-          twitter: '@mahmoud',
-          facebook: 'mahmoud',
-          notes: 'موديل محترف',
-          emoji: '👨',
-          photos: []
-        },
-        {
-          id: 2,
-          name: 'فاطمة محمد',
-          category: 'عارضين',
-          gender: 'أنثى',
-          price: 8000,
-          rating: 5,
-          phone: '96550234567',
-          age: 28,
-          height: '170 سم',
-          weight: '60 كغ',
-          nationality: 'كويتية',
-          location: 'الرياض',
-          instagram: '@fatima',
-          tiktok: '@fatima',
-          twitter: '@fatima',
-          facebook: 'fatima',
-          notes: 'عارضة محترفة',
-          emoji: '👩',
-          photos: []
-        },
-        {
-          id: 3,
-          name: 'أحمد علي',
-          category: 'مؤثرين',
-          gender: 'ذكر',
-          price: 5000,
-          rating: 4.5,
-          phone: '96550345678',
-          age: 25,
-          height: '180 سم',
-          weight: '75 كغ',
-          nationality: 'إماراتي',
-          location: 'الكويت',
-          instagram: '@ahmed',
-          tiktok: '@ahmed',
-          twitter: '@ahmed',
-          facebook: 'ahmed',
-          notes: 'مؤثر شهير',
-          emoji: '👨',
-          photos: []
-        }
-      ];
-      saveTalents();
-    }
-
-    function saveTalents() {
-      localStorage.setItem('talents', JSON.stringify(talents));
-    }
-
-    function showPage(page) {
-      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-      document.getElementById(page + '-page').classList.add('active');
-      
-      document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
-      event.target.classList.add('active');
-
-      if (page === 'talents') renderTalents();
-      else if (page === 'dashboard') renderDashboard();
-    }
-
-    function renderTalents() {
-      const filtered = getFilteredTalents();
-      const grid = document.getElementById('talents-grid');
-      
-      grid.innerHTML = filtered.map(t => `
-        <div class="card" onclick="showDetail(${t.id})">
-          <div class="card-image">
-            ${t.photos && t.photos.length > 0 ? `
-              <img src="${t.photos[0]}" alt="${t.name}">
-              <div class="card-image-count">📸 ${t.photos.length}</div>
-            ` : t.emoji}
-          </div>
-          <div class="card-body">
-            <div class="card-category">${t.category}</div>
-            <div class="card-title">${t.name}</div>
-            <div class="card-info">
-              <div class="info-item">
-                <div class="info-label">الجنس</div>
-                <div class="info-value">${t.gender}</div>
-              </div>
-              <div class="info-item">
-                <div class="info-label">العمر</div>
-                <div class="info-value">${t.age || '-'}</div>
-              </div>
-            </div>
-            <div class="card-price">KD ${t.price}</div>
-            <div class="card-actions">
-              <button class="btn btn-whatsapp" onclick="event.stopPropagation(); openWhatsApp('${t.phone}', '${t.name}')">💬 واتس</button>
-              <button class="btn btn-danger" onclick="event.stopPropagation(); deleteTalent(${t.id})">🗑️</button>
-            </div>
-          </div>
-        </div>
-      `).join('');
-    }
-
-    function showDetail(id) {
-      const talent = talents.find(t => t.id === id);
-      if (!talent) return;
-
-      const stars = Array(5).fill().map((_, i) => i < talent.rating ? '★' : '☆').join('');
-      const mainPhoto = talent.photos && talent.photos.length > 0 ? talent.photos[0] : null;
-      
-      const detail = document.getElementById('detail-content');
-      detail.innerHTML = `
-        <div class="detail-page">
-          <div class="detail-header">
-            <div class="detail-image-section">
-              <div class="detail-main-image" id="main-image">
-                ${mainPhoto ? `<img src="${mainPhoto}" alt="${talent.name}">` : talent.emoji}
-              </div>
-              <div class="gallery-thumbnails" id="gallery-thumbs">
-                ${talent.photos && talent.photos.length > 0 ? talent.photos.map((photo, idx) => `
-                  <div class="gallery-thumb ${idx === 0 ? 'active' : ''}" onclick="switchMainImage('${photo}', this)">
-                    <img src="${photo}" alt="صورة ${idx + 1}">
-                    <button class="gallery-thumb-delete" onclick="event.stopPropagation(); deletePhoto(${id}, ${idx})">×</button>
-                  </div>
-                `).join('') : '<p style="color: var(--text-light); font-size: 13px;">لا توجد صور</p>'}
-              </div>
-            </div>
-            <div class="detail-info">
-              <h1>${talent.name}</h1>
-              <div class="detail-category">${talent.category}</div>
-              <div class="detail-grid">
-                <div class="detail-field">
-                  <div class="detail-field-label">الجنس</div>
-                  <div class="detail-field-value">${talent.gender}</div>
-                </div>
-                <div class="detail-field">
-                  <div class="detail-field-label">العمر</div>
-                  <div class="detail-field-value">${talent.age || '-'} سنة</div>
-                </div>
-                <div class="detail-field">
-                  <div class="detail-field-label">الطول</div>
-                  <div class="detail-field-value">${talent.height || '-'}</div>
-                </div>
-                <div class="detail-field">
-                  <div class="detail-field-label">الوزن</div>
-                  <div class="detail-field-value">${talent.weight || '-'}</div>
-                </div>
-                <div class="detail-field">
-                  <div class="detail-field-label">التقييم</div>
-                  <div class="detail-field-value" style="color: #ffc107; font-size: 20px;">${stars}</div>
-                </div>
-                <div class="detail-field">
-                  <div class="detail-field-label">السعر</div>
-                  <div class="detail-field-value" style="color: var(--primary); font-size: 24px;">KD ${talent.price}</div>
-                </div>
-              </div>
-              <div class="detail-actions">
-                <button class="btn btn-primary btn-whatsapp" onclick="openWhatsApp('${talent.phone}', '${talent.name}')">💬 واتس</button>
-                <button class="btn btn-secondary" onclick="editTalent(${talent.id})">✏️ تعديل</button>
-                <button class="btn btn-danger" onclick="deleteTalent(${talent.id})">🗑️ حذف</button>
-              </div>
-            </div>
-          </div>
-          
-          <div class="detail-content">
-            <div class="section photo-gallery-section">
-              <h3 class="section-title">معرض الصور</h3>
-              <button class="btn btn-primary" onclick="openPhotoModal(${id})" style="margin-bottom: 20px;">📸 إضافة صور</button>
-            </div>
-
-            <div class="section">
-              <h3 class="section-title">معلومات التواصل</h3>
-              <div class="info-grid">
-                <div>
-                  <div class="info-label">الهاتف</div>
-                  <div class="info-value">${talent.phone}</div>
-                </div>
-                <div>
-                  <div class="info-label">الجنسية</div>
-                  <div class="info-value">${talent.nationality || '-'}</div>
-                </div>
-                <div>
-                  <div class="info-label">المدينة</div>
-                  <div class="info-value">${talent.location || '-'}</div>
-                </div>
-              </div>
-              <div style="margin-top: 20px;">
-                <div class="info-label">وسائل التواصل</div>
-                <div class="social-links">
-                  ${talent.instagram ? `<button class="social-link" onclick="openSocial('instagram', '${talent.instagram}')">Instagram</button>` : ''}
-                  ${talent.tiktok ? `<button class="social-link" onclick="openSocial('tiktok', '${talent.tiktok}')">TikTok</button>` : ''}
-                  ${talent.twitter ? `<button class="social-link" onclick="openSocial('twitter', '${talent.twitter}')">Twitter</button>` : ''}
-                  ${talent.facebook ? `<button class="social-link" onclick="openSocial('facebook', '${talent.facebook}')">Facebook</button>` : ''}
-                </div>
-              </div>
-            </div>
-            
-            ${talent.notes ? `
-            <div class="section">
-              <h3 class="section-title">ملاحظات</h3>
-              <p style="color: var(--text-light); line-height: 1.6;">${talent.notes}</p>
-            </div>
-            ` : ''}
-          </div>
-        </div>
-      `;
-
-      document.getElementById('talents-page').classList.remove('active');
-      document.getElementById('detail-page').classList.add('active');
-    }
-
-    function switchMainImage(photo, element) {
-      document.getElementById('main-image').innerHTML = `<img src="${photo}" alt="صورة">`;
-      document.querySelectorAll('.gallery-thumb').forEach(t => t.classList.remove('active'));
-      element.classList.add('active');
-    }
-
-    function openPhotoModal(talentId) {
-      const talent = talents.find(t => t.id === talentId);
-      if (!talent) return;
-      
-      editingId = talentId;
-      currentTalentPhotos = [...(talent.photos || [])];
-      renderPhotoGrid();
-      document.getElementById('photo-modal').classList.add('active');
-    }
-
-    function closePhotoModal() {
-      document.getElementById('photo-modal').classList.remove('active');
-      document.getElementById('photo-input').value = '';
-      currentTalentPhotos = [];
-    }
-
-    function handleDragOver(e) {
-      e.preventDefault();
-      document.getElementById('upload-area').classList.add('dragover');
-    }
-
-    function handleDragLeave(e) {
-      e.preventDefault();
-      document.getElementById('upload-area').classList.remove('dragover');
-    }
-
-    function handleDrop(e) {
-      e.preventDefault();
-      document.getElementById('upload-area').classList.remove('dragover');
-      const files = e.dataTransfer.files;
-      handlePhotoSelect({ target: { files } });
-    }
-
-    function handlePhotoSelect(e) {
-      const files = Array.from(e.target.files);
-      files.forEach(file => {
-        const reader = new FileReader();
-        reader.onload = (event) => {
-          currentTalentPhotos.push(event.target.result);
-          renderPhotoGrid();
-        };
-        reader.readAsDataURL(file);
-      });
-    }
-
-    function renderPhotoGrid() {
-      const grid = document.getElementById('photo-grid');
-      grid.innerHTML = currentTalentPhotos.map((photo, idx) => `
-        <div class="photo-item" draggable="true" ondragstart="startDrag(${idx})" ondragover="allowDrop(event)" ondrop="dropPhoto(${idx}, event)">
-          <img src="${photo}" alt="صورة ${idx + 1}">
-          <div class="photo-item-overlay">
-            <button class="photo-item-btn photo-item-delete" onclick="deletePhotoFromList(${idx})">🗑️</button>
-          </div>
-        </div>
-      `).join('');
-    }
-
-    function startDrag(idx) {
-      draggedPhotoIndex = idx;
-    }
-
-    function allowDrop(e) {
-      e.preventDefault();
-    }
-
-    function dropPhoto(idx, e) {
-      e.preventDefault();
-      if (draggedPhotoIndex !== null && draggedPhotoIndex !== idx) {
-        const temp = currentTalentPhotos[draggedPhotoIndex];
-        currentTalentPhotos[draggedPhotoIndex] = currentTalentPhotos[idx];
-        currentTalentPhotos[idx] = temp;
-        renderPhotoGrid();
-      }
-    }
-
-    function deletePhotoFromList(idx) {
-      currentTalentPhotos.splice(idx, 1);
-      renderPhotoGrid();
-    }
-
-    function deletePhoto(talentId, photoIdx) {
-      const talent = talents.find(t => t.id === talentId);
-      if (talent && talent.photos) {
-        talent.photos.splice(photoIdx, 1);
-        saveTalents();
-        showDetail(talentId);
-      }
-    }
-
-    function uploadPhotos() {
-      const talent = talents.find(t => t.id === editingId);
-      if (talent) {
-        talent.photos = currentTalentPhotos;
-        saveTalents();
-        showDetail(editingId);
-        closePhotoModal();
-      }
-    }
-
-    function openWhatsApp(phone, name) {
-      if (!phone) { alert('لا يوجد رقم هاتف'); return; }
-      const msg = `مرحباً ${name}، أتواصل معك بخصوص فرصة عمل...`;
-      window.open(`https://wa.me/965${phone}?text=${encodeURIComponent(msg)}`, '_blank');
-    }
-
-    function openSocial(platform, username) {
-      const urls = {
-        instagram: `https://instagram.com/${username.replace('@', '')}`,
-        tiktok: `https://tiktok.com/@${username.replace('@', '')}`,
-        twitter: `https://twitter.com/${username.replace('@', '')}`,
-        facebook: `https://facebook.com/${username}`
-      };
-      if (urls[platform]) window.open(urls[platform], '_blank');
-    }
-
-    function getFilteredTalents() {
-      const search = document.getElementById('search').value.toLowerCase();
-      const category = document.getElementById('category').value;
-      const sort = document.getElementById('sort').value;
-
-      let filtered = talents.filter(t => 
-        (t.name.toLowerCase().includes(search) || t.category.includes(search)) &&
-        (!category || t.category === category)
-      );
-
-      filtered.sort((a, b) => {
-        if (sort === 'price') return a.price - b.price;
-        if (sort === 'rating') return b.rating - a.rating;
-        return a.name.localeCompare(b.name);
-      });
-
-      return filtered;
-    }
-
-    function filterTalents() {
-      renderTalents();
-    }
-
-    function openAddModal() {
-      editingId = null;
-      document.getElementById('modal-title').textContent = 'إضافة موديل جديد';
-      document.getElementById('name').value = '';
-      document.getElementById('category-input').value = '';
-      document.getElementById('gender').value = 'ذكر';
-      document.getElementById('price').value = '';
-      document.getElementById('rating').value = '0';
-      document.getElementById('phone').value = '';
-      document.getElementById('age').value = '';
-      document.getElementById('height').value = '';
-      document.getElementById('weight').value = '';
-      document.getElementById('nationality').value = '';
-      document.getElementById('location').value = '';
-      document.getElementById('instagram').value = '';
-      document.getElementById('tiktok').value = '';
-      document.getElementById('twitter').value = '';
-      document.getElementById('facebook').value = '';
-      document.getElementById('notes').value = '';
-      document.getElementById('modal').classList.add('active');
-    }
-
-    function editTalent(id) {
-      const talent = talents.find(t => t.id === id);
-      if (!talent) return;
-
-      editingId = id;
-      document.getElementById('modal-title').textContent = 'تعديل الموديل';
-      document.getElementById('name').value = talent.name;
-      document.getElementById('category-input').value = talent.category;
-      document.getElementById('gender').value = talent.gender;
-      document.getElementById('price').value = talent.price;
-      document.getElementById('rating').value = talent.rating;
-      document.getElementById('phone').value = talent.phone;
-      document.getElementById('age').value = talent.age || '';
-      document.getElementById('height').value = talent.height || '';
-      document.getElementById('weight').value = talent.weight || '';
-      document.getElementById('nationality').value = talent.nationality || '';
-      document.getElementById('location').value = talent.location || '';
-      document.getElementById('instagram').value = talent.instagram || '';
-      document.getElementById('tiktok').value = talent.tiktok || '';
-      document.getElementById('twitter').value = talent.twitter || '';
-      document.getElementById('facebook').value = talent.facebook || '';
-      document.getElementById('notes').value = talent.notes || '';
-      document.getElementById('modal').classList.add('active');
-    }
-
-    function saveTalent(event) {
-      event.preventDefault();
-      
-      const data = {
-        name: document.getElementById('name').value,
-        category: document.getElementById('category-input').value,
-        gender: document.getElementById('gender').value,
-        price: parseFloat(document.getElementById('price').value),
-        rating: parseFloat(document.getElementById('rating').value),
-        phone: document.getElementById('phone').value,
-        age: parseInt(document.getElementById('age').value) || null,
-        height: document.getElementById('height').value,
-        weight: document.getElementById('weight').value,
-        nationality: document.getElementById('nationality').value,
-        location: document.getElementById('location').value,
-        instagram: document.getElementById('instagram').value,
-        tiktok: document.getElementById('tiktok').value,
-        twitter: document.getElementById('twitter').value,
-        facebook: document.getElementById('facebook').value,
-        notes: document.getElementById('notes').value,
-        emoji: '👨'
-      };
-
-      if (editingId) {
-        const talent = talents.find(t => t.id === editingId);
-        Object.assign(talent, data);
-      } else {
-        talents.push({
-          id: Math.max(...talents.map(t => t.id), 0) + 1,
-          ...data,
-          photos: []
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            renderTalents();
+            renderStats();
+            loadSettings();
         });
-      }
 
-      saveTalents();
-      closeModal();
-      renderTalents();
-    }
+        // Tab Navigation
+        function showTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.add('hidden'));
+            document.getElementById(tabName + '-tab').classList.remove('hidden');
+            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+            event.target.classList.add('active');
 
-    function closeModal() {
-      document.getElementById('modal').classList.remove('active');
-    }
-
-    function deleteTalent(id) {
-      if (confirm('هل أنت متأكد من حذف هذا الموديل؟')) {
-        talents = talents.filter(t => t.id !== id);
-        saveTalents();
-        if (document.getElementById('detail-page').classList.contains('active')) {
-          showPage('talents');
-        } else {
-          renderTalents();
+            if (tabName === 'projects') renderProjects();
+            if (tabName === 'stats') renderStats();
         }
-      }
-    }
 
-    function renderDashboard() {
-      const stats = document.getElementById('stats');
-      const totalPrice = talents.reduce((sum, t) => sum + t.price, 0);
-      const totalPhotos = talents.reduce((sum, t) => sum + (t.photos ? t.photos.length : 0), 0);
-      
-      stats.innerHTML = `
-        <div class="stat-card">
-          <div class="stat-label">إجمالي الموديلز</div>
-          <div class="stat-value">${talents.length}</div>
-        </div>
-        <div class="stat-card" style="border-left-color: #25D366;">
-          <div class="stat-label">الإيرادات المتوقعة</div>
-          <div class="stat-value" style="color: #25D366;">KD ${totalPrice}</div>
-        </div>
-        <div class="stat-card" style="border-left-color: #ffc107;">
-          <div class="stat-label">متوسط السعر</div>
-          <div class="stat-value" style="color: #ffc107;">KD ${talents.length ? Math.round(totalPrice / talents.length) : 0}</div>
-        </div>
-        <div class="stat-card" style="border-left-color: #8b5cf6;">
-          <div class="stat-label">إجمالي الصور</div>
-          <div class="stat-value" style="color: #8b5cf6;">${totalPhotos}</div>
-        </div>
-      `;
-    }
+        // Talents
+        function renderTalents() {
+            const grid = document.getElementById('talents-grid');
+            if (talents.length === 0) {
+                grid.innerHTML = '<div class="empty-state" style="grid-column: 1/-1;"><div class="empty-state-icon">👥</div><p>لا توجد موديلز بعد</p></div>';
+                return;
+            }
 
-    function saveSettings() {
-      const margin = document.getElementById('margin').value;
-      const msg = document.getElementById('whatsapp-msg').value;
-      localStorage.setItem('settings', JSON.stringify({ margin, msg }));
-      alert('تم حفظ الإعدادات بنجاح');
-    }
+            grid.innerHTML = talents.map(t => `
+                <div class="talent-card">
+                    <div class="talent-card-image" onclick="showTalentDetail(${t.id})">😊</div>
+                    <div class="talent-card-body">
+                        <div class="talent-card-name">${t.name}</div>
+                        <div class="talent-card-info">${t.category}</div>
+                        <div class="talent-card-info">العمر: ${t.age || '-'}</div>
+                        <div class="talent-card-price">KD ${t.price}</div>
+                        <div class="talent-card-actions">
+                            <button class="btn btn-secondary btn-small" onclick="editTalent(${t.id})">✏️ تعديل</button>
+                            <button class="btn btn-danger btn-small" onclick="deleteTalent(${t.id})">🗑️ حذف</button>
+                        </div>
+                        ${t.phone ? `<button class="btn btn-primary btn-small" style="width: 100%; margin-top: 8px;" onclick="openWhatsApp('${t.phone}')">💬 واتس</button>` : ''}
+                    </div>
+                </div>
+            `).join('');
+        }
 
-    renderTalents();
-  </script>
+        function filterTalents() {
+            const search = document.getElementById('search').value.toLowerCase();
+            const category = document.getElementById('category').value;
+
+            const filtered = talents.filter(t => 
+                (t.name.toLowerCase().includes(search)) &&
+                (!category || t.category === category)
+            );
+
+            const grid = document.getElementById('talents-grid');
+            if (filtered.length === 0) {
+                grid.innerHTML = '<div class="empty-state" style="grid-column: 1/-1;"><p>لا توجد نتائج</p></div>';
+                return;
+            }
+
+            grid.innerHTML = filtered.map(t => `
+                <div class="talent-card">
+                    <div class="talent-card-image" onclick="showTalentDetail(${t.id})">😊</div>
+                    <div class="talent-card-body">
+                        <div class="talent-card-name">${t.name}</div>
+                        <div class="talent-card-info">${t.category}</div>
+                        <div class="talent-card-info">العمر: ${t.age || '-'}</div>
+                        <div class="talent-card-price">KD ${t.price}</div>
+                        <div class="talent-card-actions">
+                            <button class="btn btn-secondary btn-small" onclick="editTalent(${t.id})">✏️ تعديل</button>
+                            <button class="btn btn-danger btn-small" onclick="deleteTalent(${t.id})">🗑️ حذف</button>
+                        </div>
+                        ${t.phone ? `<button class="btn btn-primary btn-small" style="width: 100%; margin-top: 8px;" onclick="openWhatsApp('${t.phone}')">💬 واتس</button>` : ''}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function openAddTalentModal() {
+            editingId = null;
+            editingType = 'talent';
+            document.getElementById('talent-modal-title').textContent = 'إضافة موديل جديد';
+            document.getElementById('talent-name').value = '';
+            document.getElementById('talent-category').value = '';
+            document.getElementById('talent-gender').value = 'male';
+            document.getElementById('talent-age').value = '';
+            document.getElementById('talent-price').value = '';
+            document.getElementById('talent-phone').value = '';
+            document.getElementById('talent-instagram').value = '';
+            document.getElementById('talent-tiktok').value = '';
+            document.getElementById('talent-twitter').value = '';
+            document.getElementById('talent-facebook').value = '';
+            document.getElementById('talent-modal').classList.add('active');
+        }
+
+        function editTalent(id) {
+            const talent = talents.find(t => t.id === id);
+            if (!talent) return;
+
+            editingId = id;
+            editingType = 'talent';
+            document.getElementById('talent-modal-title').textContent = 'تعديل الموديل';
+            document.getElementById('talent-name').value = talent.name;
+            document.getElementById('talent-category').value = talent.category;
+            document.getElementById('talent-gender').value = talent.gender || 'male';
+            document.getElementById('talent-age').value = talent.age || '';
+            document.getElementById('talent-price').value = talent.price;
+            document.getElementById('talent-phone').value = talent.phone || '';
+            document.getElementById('talent-instagram').value = talent.instagram || '';
+            document.getElementById('talent-tiktok').value = talent.tiktok || '';
+            document.getElementById('talent-twitter').value = talent.twitter || '';
+            document.getElementById('talent-facebook').value = talent.facebook || '';
+            document.getElementById('talent-modal').classList.add('active');
+        }
+
+        function saveTalent(event) {
+            event.preventDefault();
+
+            const data = {
+                name: document.getElementById('talent-name').value,
+                category: document.getElementById('talent-category').value,
+                gender: document.getElementById('talent-gender').value,
+                age: parseInt(document.getElementById('talent-age').value) || 0,
+                price: parseFloat(document.getElementById('talent-price').value),
+                phone: document.getElementById('talent-phone').value,
+                instagram: document.getElementById('talent-instagram').value,
+                tiktok: document.getElementById('talent-tiktok').value,
+                twitter: document.getElementById('talent-twitter').value,
+                facebook: document.getElementById('talent-facebook').value
+            };
+
+            if (editingId) {
+                const talent = talents.find(t => t.id === editingId);
+                Object.assign(talent, data);
+            } else {
+                talents.push({
+                    id: Math.max(...talents.map(t => t.id), 0) + 1,
+                    ...data
+                });
+            }
+
+            localStorage.setItem('talents', JSON.stringify(talents));
+            closeTalentModal();
+            renderTalents();
+            renderStats();
+        }
+
+        function deleteTalent(id) {
+            if (confirm('هل أنت متأكد من حذف هذا الموديل؟')) {
+                talents = talents.filter(t => t.id !== id);
+                localStorage.setItem('talents', JSON.stringify(talents));
+                renderTalents();
+                renderStats();
+            }
+        }
+
+        function closeTalentModal() {
+            document.getElementById('talent-modal').classList.remove('active');
+        }
+
+        function showTalentDetail(id) {
+            const talent = talents.find(t => t.id === id);
+            if (!talent) return;
+
+            alert(`${talent.name}\nالفئة: ${talent.category}\nالسعر: KD ${talent.price}\nالهاتف: ${talent.phone || 'غير متوفر'}`);
+        }
+
+        function openWhatsApp(phone) {
+            const url = `https://wa.me/${phone.replace(/\D/g, '')}`;
+            window.open(url, '_blank');
+        }
+
+        // Projects
+        function renderProjects() {
+            const list = document.getElementById('projects-list');
+            if (projects.length === 0) {
+                list.innerHTML = '<div class="empty-state"><div class="empty-state-icon">📋</div><p>لا توجد مشاريع بعد</p></div>';
+                return;
+            }
+
+            list.innerHTML = projects.map(p => {
+                const projectTalents = talents.filter(t => p.talentIds.includes(t.id));
+                const totalCost = projectTalents.reduce((sum, t) => sum + t.price, 0);
+
+                return `
+                    <div class="project-card">
+                        <div class="project-card-header">
+                            <div>
+                                <div class="project-card-title">${p.name}</div>
+                                <div style="color: var(--text-light); font-size: 13px; margin-top: 5px;">${p.description || ''}</div>
+                            </div>
+                            <div class="project-card-actions">
+                                <button class="btn btn-secondary btn-small" onclick="editProject(${p.id})">✏️</button>
+                                <button class="btn btn-danger btn-small" onclick="deleteProject(${p.id})">🗑️</button>
+                            </div>
+                        </div>
+                        <div class="project-card-info">
+                            <div class="project-card-stat">
+                                <div class="project-card-stat-label">عدد الموديلز</div>
+                                <div class="project-card-stat-value">${projectTalents.length}</div>
+                            </div>
+                            <div class="project-card-stat">
+                                <div class="project-card-stat-label">إجمالي التكاليف</div>
+                                <div class="project-card-stat-value">KD ${totalCost}</div>
+                            </div>
+                            <div class="project-card-stat">
+                                <div class="project-card-stat-label">تاريخ البداية</div>
+                                <div class="project-card-stat-value">${p.startDate || '-'}</div>
+                            </div>
+                            <div class="project-card-stat">
+                                <div class="project-card-stat-label">تاريخ النهاية</div>
+                                <div class="project-card-stat-value">${p.endDate || '-'}</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function openAddProjectModal() {
+            editingId = null;
+            editingType = 'project';
+            selectedTalentsForProject = [];
+            document.getElementById('project-modal-title').textContent = 'إنشاء مشروع جديد';
+            document.getElementById('project-name').value = '';
+            document.getElementById('project-description').value = '';
+            document.getElementById('project-start-date').value = '';
+            document.getElementById('project-end-date').value = '';
+            document.getElementById('project-total-cost').value = '0';
+            renderTalentSelector();
+            document.getElementById('project-modal').classList.add('active');
+        }
+
+        function editProject(id) {
+            const project = projects.find(p => p.id === id);
+            if (!project) return;
+
+            editingId = id;
+            editingType = 'project';
+            selectedTalentsForProject = [...project.talentIds];
+            document.getElementById('project-modal-title').textContent = 'تعديل المشروع';
+            document.getElementById('project-name').value = project.name;
+            document.getElementById('project-description').value = project.description || '';
+            document.getElementById('project-start-date').value = project.startDate || '';
+            document.getElementById('project-end-date').value = project.endDate || '';
+            renderTalentSelector();
+            updateProjectCost();
+            document.getElementById('project-modal').classList.add('active');
+        }
+
+        function renderTalentSelector() {
+            const selector = document.getElementById('talent-selector');
+            selector.innerHTML = talents.map(t => `
+                <div class="talent-selector-item ${selectedTalentsForProject.includes(t.id) ? 'selected' : ''}" onclick="toggleTalentSelection(${t.id})">
+                    <div class="talent-selector-item-name">${t.name}</div>
+                    <div class="talent-selector-item-price">KD ${t.price}</div>
+                </div>
+            `).join('');
+        }
+
+        function toggleTalentSelection(talentId) {
+            const idx = selectedTalentsForProject.indexOf(talentId);
+            if (idx > -1) {
+                selectedTalentsForProject.splice(idx, 1);
+            } else {
+                selectedTalentsForProject.push(talentId);
+            }
+            renderTalentSelector();
+            updateProjectCost();
+        }
+
+        function updateProjectCost() {
+            const totalCost = selectedTalentsForProject.reduce((sum, id) => {
+                const talent = talents.find(t => t.id === id);
+                return sum + (talent ? talent.price : 0);
+            }, 0);
+            document.getElementById('project-total-cost').value = totalCost;
+        }
+
+        function saveProject(event) {
+            event.preventDefault();
+
+            if (selectedTalentsForProject.length === 0) {
+                alert('يجب اختيار موديل واحد على الأقل');
+                return;
+            }
+
+            const data = {
+                name: document.getElementById('project-name').value,
+                description: document.getElementById('project-description').value,
+                startDate: document.getElementById('project-start-date').value,
+                endDate: document.getElementById('project-end-date').value,
+                talentIds: selectedTalentsForProject
+            };
+
+            if (editingId) {
+                const project = projects.find(p => p.id === editingId);
+                Object.assign(project, data);
+            } else {
+                projects.push({
+                    id: Math.max(...projects.map(p => p.id), 0) + 1,
+                    ...data
+                });
+            }
+
+            localStorage.setItem('projects', JSON.stringify(projects));
+            closeProjectModal();
+            renderProjects();
+            renderStats();
+        }
+
+        function deleteProject(id) {
+            if (confirm('هل أنت متأكد من حذف هذا المشروع؟')) {
+                projects = projects.filter(p => p.id !== id);
+                localStorage.setItem('projects', JSON.stringify(projects));
+                renderProjects();
+                renderStats();
+            }
+        }
+
+        function closeProjectModal() {
+            document.getElementById('project-modal').classList.remove('active');
+        }
+
+        // Stats
+        function renderStats() {
+            const grid = document.getElementById('stats-grid');
+            const totalTalents = talents.length;
+            const totalProjects = projects.length;
+            const totalCost = talents.reduce((sum, t) => sum + t.price, 0);
+            const avgPrice = totalTalents > 0 ? (totalCost / totalTalents).toFixed(2) : 0;
+
+            grid.innerHTML = `
+                <div class="stat-card">
+                    <div class="stat-card-value">${totalTalents}</div>
+                    <div class="stat-card-label">إجمالي الموديلز</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-card-value">${totalProjects}</div>
+                    <div class="stat-card-label">إجمالي المشاريع</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-card-value">KD ${totalCost}</div>
+                    <div class="stat-card-label">إجمالي الأسعار</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-card-value">KD ${avgPrice}</div>
+                    <div class="stat-card-label">متوسط السعر</div>
+                </div>
+            `;
+        }
+
+        // Settings
+        function saveSettings() {
+            const profitMargin = document.getElementById('profit-margin').value;
+            localStorage.setItem('profitMargin', profitMargin);
+            alert('تم حفظ الإعدادات');
+        }
+
+        function loadSettings() {
+            const profitMargin = localStorage.getItem('profitMargin') || '20';
+            document.getElementById('profit-margin').value = profitMargin;
+        }
+    </script>
 </body>
 </html>
