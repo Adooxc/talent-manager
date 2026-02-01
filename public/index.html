@@ -2201,10 +2201,7 @@
                             <div class="talent-meta">
                                 <span>${talent.gender} • ${talent.age} years</span>
                             </div>
-                            <div class="talent-actions" onclick="event.stopPropagation()">
-                                <button class="btn btn-primary btn-small" onclick="editTalent(event, ${actualIndex})">Edit</button>
-                                <button class="btn btn-danger btn-small" onclick="deleteTalent(event, ${actualIndex})">Delete</button>
-                            </div>
+
                         </div>
                     </div>
                 `;
@@ -3115,10 +3112,6 @@
                             <div class="settings-card-title">${project.name}</div>
                             <div style="color: var(--text-light); font-size: 14px; margin-bottom: 8px;">Models: ${project.talents.length} talents</div>
                             <div style="font-size: 18px; font-weight: 700; color: var(--primary);">KD ${project.total}</div>
-                        </div>
-                        <div style="display: flex; gap: 8px;" onclick="event.stopPropagation();">
-                            <button class="btn btn-primary btn-small" onclick="editProject(${actualIndex})">Edit</button>
-                            <button class="btn btn-danger btn-small" onclick="deleteProject(${actualIndex})">Delete</button>
                         </div>
                     </div>
                 </div>
