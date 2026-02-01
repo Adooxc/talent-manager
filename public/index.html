@@ -1189,10 +1189,10 @@
             event.target.classList.add('active');
 
             const defaultTitles = {
-                'talents-tab': 'الموديلز والفنانين',
-                'projects-tab': 'المشاريع',
-                'stats-tab': 'لوحة التحكم',
-                'settings-tab': 'الإعدادات'
+                'talents-tab': 'Talents',
+                'projects-tab': 'Projects',
+                'stats-tab': 'Dashboard',
+                'settings-tab': 'Settings'
             };
             
             const customTitles = JSON.parse(localStorage.getItem('customMenuTitles') || '{}');
@@ -2104,19 +2104,20 @@
         }
         
         function saveMenuNames() {
-            const menuNames = {
+            const customMenuTitles = {
                 talents: document.getElementById('talents-menu-name').value,
                 projects: document.getElementById('projects-menu-name').value,
-                dashboard: document.getElementById('dashboard-menu-name').value
+                stats: document.getElementById('dashboard-menu-name').value
             };
-            localStorage.setItem('menuNames', JSON.stringify(menuNames));
+            localStorage.setItem('customMenuTitles', JSON.stringify(customMenuTitles));
+            showNotification('Menu names saved successfully', 'success');
         }
         
         function loadMenuNames() {
-            const menuNames = JSON.parse(localStorage.getItem('menuNames') || '{}');
-            if (menuNames.talents) document.getElementById('talents-menu-name').value = menuNames.talents;
-            if (menuNames.projects) document.getElementById('projects-menu-name').value = menuNames.projects;
-            if (menuNames.dashboard) document.getElementById('dashboard-menu-name').value = menuNames.dashboard;
+            const customMenuTitles = JSON.parse(localStorage.getItem('customMenuTitles') || '{}');
+            if (customMenuTitles.talents) document.getElementById('talents-menu-name').value = customMenuTitles.talents;
+            if (customMenuTitles.projects) document.getElementById('projects-menu-name').value = customMenuTitles.projects;
+            if (customMenuTitles.stats) document.getElementById('dashboard-menu-name').value = customMenuTitles.stats;
         }
 
         // Load last update date
