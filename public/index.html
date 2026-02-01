@@ -3414,32 +3414,57 @@
             for (let day = 1; day <= daysInMonth; day++) {
                 const dateObj = new Date(currentYear, currentMonth, day);
                 const dateStr = dateObj.toLocaleDateString('en-US');
-                const projectsOnDay = projects.filter(p => p.startDate && new Date(p.startDate).toLocaleDateString('en-US') === dateStr);
-                const hasProject = projectsOnDay.length > 0;
+                
+                let projectsInRange = [];
+                let fittingProjects = [];
+                let castingProjects = [];
+                
+                projects.forEach(p => {
+                    if (p.startDate && p.endDate) {
+                        const startDate = new Date(p.startDate);
+                        const endDate = new Date(p.endDate);
+                        if (dateObj >= startDate && dateObj <= endDate) {
+                            projectsInRange.push(p);
+                        }
+                    }
+                    if (p.fittingDate && new Date(p.fittingDate).toLocaleDateString('en-US') === dateStr) {
+                        fittingProjects.push(p);
+                    }
+                    if (p.castingDate && new Date(p.castingDate).toLocaleDateString('en-US') === dateStr) {
+                        castingProjects.push(p);
+                    }
+                });
                 
                 const isToday = new Date().toLocaleDateString('en-US') === dateStr;
                 let bgColor = 'transparent';
                 let textColor = 'var(--text)';
+                let label = '';
+                let labelColor = 'white';
                 
-                if (isToday) {
+                if (isToday && projectsInRange.length === 0 && fittingProjects.length === 0 && castingProjects.length === 0) {
                     bgColor = 'var(--primary)';
                     textColor = 'white';
-                } else if (hasProject) {
-                    // Use the color of the first project on this day
-                    bgColor = projectsOnDay[0].color || 'var(--primary)';
+                } else if (projectsInRange.length > 0) {
+                    bgColor = projectsInRange[0].color || 'var(--primary)';
                     textColor = 'white';
+                } else if (fittingProjects.length > 0) {
+                    bgColor = fittingProjects[0].color || 'var(--primary)';
+                    textColor = 'white';
+                    label = 'Fitting';
+                    labelColor = fittingProjects[0].color || 'var(--primary)';
+                } else if (castingProjects.length > 0) {
+                    bgColor = castingProjects[0].color || 'var(--primary)';
+                    textColor = 'white';
+                    label = 'Casting';
+                    labelColor = castingProjects[0].color || 'var(--primary)';
                 }
                 
                 let projectsHTML = '';
-                if (hasProject) {
-                    projectsHTML = '<div style="font-size: 9px; margin-top: 2px; max-width: 100%; overflow: hidden; text-overflow: ellipsis;">';
-                    projectsOnDay.forEach(p => {
-                        projectsHTML += `<div style="background: rgba(255,255,255,0.3); padding: 2px 4px; border-radius: 3px; margin: 1px 0; font-size: 8px;">${p.name}</div>`;
-                    });
-                    projectsHTML += '</div>';
+                if (label) {
+                    projectsHTML = `<div style="font-size: 10px; font-weight: 600; margin-top: 2px; color: white;">${label}</div>`;
                 }
                 
-                html += `<div style="padding: 12px 4px; border-radius: 8px; text-align: center; background: ${bgColor}; color: ${textColor}; cursor: pointer; font-weight: 500; min-height: 50px; display: flex; flex-direction: column; justify-content: center; border: 2px solid ${hasProject ? bgColor : 'var(--border)'};">${day}${projectsHTML}</div>`;
+                html += `<div style="padding: 12px 4px; border-radius: 8px; text-align: center; background: ${bgColor}; color: ${textColor}; cursor: pointer; font-weight: 500; min-height: 50px; display: flex; flex-direction: column; justify-content: center; border: 2px solid ${(projectsInRange.length > 0 || fittingProjects.length > 0 || castingProjects.length > 0) ? bgColor : 'var(--border)'};">${day}${projectsHTML}</div>`;
             }
             
             document.getElementById('calendar-grid').innerHTML = html;
