@@ -625,7 +625,10 @@
             <div id="talent-detail" class="detail-page">
                 <div class="detail-header">
                     <h1 id="detail-name"></h1>
-                    <button onclick="backToTalents()">← العودة</button>
+                    <div style="display: flex; gap: 10px;">
+                        <button class="btn btn-secondary" onclick="editTalentFromDetail()">✏️ تعديل</button>
+                        <button class="btn btn-secondary" onclick="backToTalents()">← العودة</button>
+                    </div>
                 </div>
 
                 <div class="detail-content">
@@ -715,6 +718,21 @@
                     <div class="form-group">
                         <label>💵 العملة</label>
                         <input type="text" value="KD" disabled style="background: var(--bg);">
+                    </div>
+
+                    <div class="form-group">
+                        <label>📱 رقم الهاتف الافتراضي</label>
+                        <input type="tel" id="default-phone" onchange="saveSettings()" placeholder="أدخل رقم الهاتف">
+                    </div>
+
+                    <div class="form-group">
+                        <label>🏢 اسم الشركة</label>
+                        <input type="text" id="company-name" onchange="saveSettings()" placeholder="اسم شركتك">
+                    </div>
+
+                    <div class="form-group">
+                        <label>📧 البريد الإلكتروني</label>
+                        <input type="email" id="company-email" onchange="saveSettings()" placeholder="بريدك الإلكتروني">
                     </div>
                 </div>
 
@@ -826,6 +844,7 @@
         let projects = JSON.parse(localStorage.getItem('projects')) || [];
         let selectedTalentsForProject = [];
         let editingTalentId = null;
+        let currentDetailTalentIndex = null;
 
         function initApp() {
             loadSettings();
@@ -837,6 +856,7 @@
         function showTab(tabName) {
             document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
             document.getElementById(tabName + '-tab').classList.add('active');
+            document.getElementById('talent-detail').classList.remove('active');
             
             document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
             event.target.classList.add('active');
@@ -864,6 +884,7 @@
         }
 
         function showTalentDetail(index) {
+            currentDetailTalentIndex = index;
             const talent = talents[index];
             document.getElementById('talents-tab').classList.remove('active');
             document.getElementById('talent-detail').classList.add('active');
@@ -888,6 +909,13 @@
         function backToTalents() {
             document.getElementById('talent-detail').classList.remove('active');
             document.getElementById('talents-tab').classList.add('active');
+            currentDetailTalentIndex = null;
+        }
+
+        function editTalentFromDetail() {
+            if (currentDetailTalentIndex !== null) {
+                editTalent(null, currentDetailTalentIndex);
+            }
         }
 
         function filterTalents() {
