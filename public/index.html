@@ -630,6 +630,11 @@
                             <option value="عارضين">عارضين</option>
                             <option value="كومبارس">كومبارس</option>
                         </select>
+                        <div style="display: flex; align-items: center; gap: 12px; margin-top: 12px;">
+                            <label style="font-weight: 600; color: var(--text-light);">حجم البطاقات:</label>
+                            <input type="range" id="card-size" min="250" max="400" value="320" style="flex: 1; cursor: pointer;" onchange="updateCardSize()">
+                            <span id="card-size-label" style="min-width: 40px; text-align: center; color: var(--primary); font-weight: 600;">320px</span>
+                        </div>
                     </div>
                     <div class="talents-grid" id="talents-list"></div>
                 </div>
@@ -895,6 +900,13 @@
             document.getElementById('talents-list').innerHTML = html || '<div class="empty-state"><div class="empty-state-icon">📭</div><div class="empty-state-title">لا توجد موديلز</div></div>';
         }
 
+        function updateCardSize() {
+            const size = document.getElementById('card-size').value;
+            document.getElementById('card-size-label').textContent = size + 'px';
+            const grid = document.getElementById('talents-list').parentElement;
+            grid.style.gridTemplateColumns = `repeat(auto-fill, minmax(${size}px, 1fr))`;
+        }
+
         function openAddTalentModal() {
             editingTalentIndex = null;
             document.getElementById('modal-title').textContent = 'إضافة موديل جديد';
@@ -906,8 +918,6 @@
             document.getElementById('talent-phone').value = '';
             document.getElementById('talent-instagram').value = '';
             document.getElementById('talent-tiktok').value = '';
-            document.getElementById('talent-twitter').value = '';
-            document.getElementById('talent-facebook').value = '';
             document.getElementById('talent-modal').classList.add('active');
         }
 
@@ -924,8 +934,6 @@
             document.getElementById('talent-phone').value = talent.phone;
             document.getElementById('talent-instagram').value = talent.instagram || '';
             document.getElementById('talent-tiktok').value = talent.tiktok || '';
-            document.getElementById('talent-twitter').value = talent.twitter || '';
-            document.getElementById('talent-facebook').value = talent.facebook || '';
             document.getElementById('talent-modal').classList.add('active');
         }
 
@@ -942,8 +950,6 @@
             const phone = document.getElementById('talent-phone').value;
             const instagram = document.getElementById('talent-instagram').value;
             const tiktok = document.getElementById('talent-tiktok').value;
-            const twitter = document.getElementById('talent-twitter').value;
-            const facebook = document.getElementById('talent-facebook').value;
 
             if (!name || !category || !price) {
                 alert('يرجى ملء جميع الحقول المطلوبة');
@@ -951,12 +957,12 @@
             }
 
             if (editingTalentIndex !== null) {
-                talents[editingTalentIndex] = { ...talents[editingTalentIndex], name, category, price, gender, age, phone, instagram, tiktok, twitter, facebook };
+                talents[editingTalentIndex] = { ...talents[editingTalentIndex], name, category, price, gender, age, phone, instagram, tiktok };
                 if (currentDetailTalentIndex === editingTalentIndex) {
                     showTalentDetail(editingTalentIndex);
                 }
             } else {
-                talents.push({ id: Date.now(), name, category, price, gender, age, phone, instagram, tiktok, twitter, facebook });
+                talents.push({ id: Date.now(), name, category, price, gender, age, phone, instagram, tiktok });
             }
 
             closeTalentModal();
