@@ -2189,7 +2189,7 @@
             const list = document.getElementById('categories-list');
             if (!list) return;
             list.innerHTML = categories.map((cat, idx) => `
-                <div style="background: var(--primary); color: white; padding: 8px 12px; border-radius: 6px; display: flex; align-items: center; gap: 8px; font-size: 14px;">
+                <div style="background: var(--secondary); color: white; padding: 8px 12px; border-radius: 6px; display: flex; align-items: center; gap: 8px; font-size: 14px;">
                     ${cat}
                     <button onclick="deleteCategory(${idx})" style="background: none; border: none; color: white; cursor: pointer; font-weight: bold; padding: 0; margin-left: 4px;">×</button>
                 </div>
