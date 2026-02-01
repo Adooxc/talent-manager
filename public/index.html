@@ -2657,7 +2657,7 @@
             let talentSelectorHTML = talents.map((talent, index) => {
                 const primaryImage = talentMediaItems[talent.id] && talentMediaItems[talent.id][talent.primaryMediaIndex] ? talentMediaItems[talent.id][talent.primaryMediaIndex] : '';
                 const isSelected = selectedProjectTalents.includes(index);
-                return `<div onclick="toggleProjectTalent(${index})" style="cursor: pointer; padding: 12px; border-radius: 8px; background: ${isSelected ? 'var(--primary)' : 'var(--background)'}; border: 2px solid ${isSelected ? 'var(--primary)' : 'var(--border)'}; display: flex; align-items: center; gap: 12px; transition: all 0.2s;">
+                return `<div data-talent-index="${index}" style="cursor: pointer; padding: 12px; border-radius: 8px; background: ${isSelected ? 'var(--primary)' : 'var(--background)'}; border: 2px solid ${isSelected ? 'var(--primary)' : 'var(--border)'}; display: flex; align-items: center; gap: 12px; transition: all 0.2s;">
                     <div style="width: 60px; height: 60px; border-radius: 8px; background: linear-gradient(135deg, ${talent.primaryColor || '#0a7ea4'} 0%, ${talent.secondaryColor || '#0a7ea4'} 100%); flex-shrink: 0; display: flex; align-items: center; justify-content: center; color: white; font-size: 14px; font-weight: 600; overflow: hidden;">
                         ${primaryImage ? `<img src="${primaryImage}" style="width: 100%; height: 100%; object-fit: cover;">` : `<span>${talent.name.substring(0, 1)}</span>`}
                     </div>
@@ -2736,7 +2736,10 @@
             const talentsList = document.getElementById('detail-talents-list');
             talentsList.innerHTML = '';
             
-            project.talentIndices.forEach(talentIndex => {
+            // Use talentIndices if available, otherwise try to match talent names
+            const talentIndicesToDisplay = project.talentIndices || (project.talents ? project.talents.map(name => talents.findIndex(t => t.name === name)) : []);
+            
+            talentIndicesToDisplay.forEach(talentIndex => {
                 const talent = talents[talentIndex];
                 if (talent) {
                     totalCost += talent.price;
@@ -2809,15 +2812,16 @@
 
         function updateProjectTotal() {
             let total = 0;
-            selectedProjectTalents = [];
-            talents.forEach((talent, index) => {
-                const checkbox = document.getElementById(`talent-check-${index}`);
-                if (checkbox && checkbox.checked) {
-                    total += talent.price;
-                    selectedProjectTalents.push(index);
+            // Calculate total from selectedProjectTalents (not from checkboxes)
+            selectedProjectTalents.forEach(index => {
+                if (talents[index]) {
+                    total += talents[index].price;
                 }
             });
-            document.getElementById('project-total').textContent = `KD ${total}`;
+            const totalElement = document.getElementById('project-total');
+            if (totalElement) {
+                totalElement.textContent = `KD ${total}`;
+            }
             // Update selected talents preview
             updateSelectedTalentsPreview();
         }
@@ -2840,7 +2844,7 @@
             let talentSelectorHTML = talents.map((talent, index) => {
                 const primaryImage = talentMediaItems[talent.id] && talentMediaItems[talent.id][talent.primaryMediaIndex] ? talentMediaItems[talent.id][talent.primaryMediaIndex] : '';
                 const isSelected = selectedProjectTalents.includes(index);
-                return `<div onclick="toggleProjectTalent(${index})" style="cursor: pointer; padding: 12px; border-radius: 8px; background: ${isSelected ? 'var(--primary)' : 'var(--background)'}; border: 2px solid ${isSelected ? 'var(--primary)' : 'var(--border)'}; display: flex; align-items: center; gap: 12px; transition: all 0.2s;">
+                return `<div data-talent-index="${index}" style="cursor: pointer; padding: 12px; border-radius: 8px; background: ${isSelected ? 'var(--primary)' : 'var(--background)'}; border: 2px solid ${isSelected ? 'var(--primary)' : 'var(--border)'}; display: flex; align-items: center; gap: 12px; transition: all 0.2s;">
                     <div style="width: 60px; height: 60px; border-radius: 8px; background: linear-gradient(135deg, ${talent.primaryColor || '#0a7ea4'} 0%, ${talent.secondaryColor || '#0a7ea4'} 100%); flex-shrink: 0; display: flex; align-items: center; justify-content: center; color: white; font-size: 14px; font-weight: 600; overflow: hidden;">
                         ${primaryImage ? `<img src="${primaryImage}" style="width: 100%; height: 100%; object-fit: cover;">` : `<span>${talent.name.substring(0, 1)}</span>`}
                     </div>
@@ -2855,6 +2859,15 @@
             }).join('');
             
             talentSelectorContainer.innerHTML = talentSelectorHTML;
+            
+            // Add click handlers using addEventListener
+            talentSelectorContainer.querySelectorAll('[data-talent-index]').forEach(card => {
+                card.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const index = parseInt(card.getAttribute('data-talent-index'));
+                    toggleProjectTalent(index);
+                });
+            });
         }
 
         function updateSelectedTalentsPreview() {
@@ -2926,6 +2939,7 @@
                 color,
                 budget,
                 status,
+                talentIndices: selectedProjectTalents,
                 talents: selectedProjectTalents.map(i => talents[i].name),
                 total
             };
