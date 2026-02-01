@@ -1093,8 +1093,7 @@
                 const photoDisplay = photos.length > 0 ? `<img src="${photos[0]}" alt="صورة" style="width: 100%; height: 100%; object-fit: cover;">` : '';
 
                 return `
-                    <div class="talent-card" onclick="showTalentDetail(${actualIndex})" style="position: relative;">
-                        <input type="checkbox" class="talent-checkbox" data-index="${actualIndex}" onclick="event.stopPropagation(); toggleTalentSelection(${actualIndex})" style="position: absolute; top: 8px; right: 8px; width: 18px; height: 18px; cursor: pointer; z-index: 10;">
+                    <div class="talent-card" onclick="selectionMode ? toggleTalentSelection(${actualIndex}) : showTalentDetail(${actualIndex})" style="position: relative; cursor: ${selectionMode ? 'pointer' : 'pointer'}; ${selectedTalents.includes(actualIndex) ? 'border: 3px solid var(--primary); box-shadow: 0 0 0 3px rgba(var(--primary-rgb), 0.2);' : ''}">
                         <div class="talent-card-image">${photoDisplay}</div>
                         <div class="talent-card-body">
                             <div class="talent-name">${talent.name}</div>
@@ -1350,16 +1349,32 @@
         }
 
         let selectedTalents = [];
+        let selectionMode = false;
+
+        function toggleSelectionMode() {
+            selectionMode = !selectionMode;
+            const btn = document.getElementById('selection-mode-btn');
+            if (selectionMode) {
+                btn.style.background = 'var(--primary)';
+                btn.style.color = 'white';
+                selectedTalents = [];
+            } else {
+                btn.style.background = 'var(--surface-alt)';
+                btn.style.color = 'var(--text)';
+                clearSelection();
+            }
+            renderTalents();
+        }
 
         function toggleTalentSelection(index) {
-            const checkbox = document.querySelector(`input[data-index="${index}"]`);
-            if (checkbox.checked) {
-                if (!selectedTalents.includes(index)) {
-                    selectedTalents.push(index);
-                }
-            } else {
+            if (!selectionMode) return;
+            
+            if (selectedTalents.includes(index)) {
                 selectedTalents = selectedTalents.filter(i => i !== index);
+            } else {
+                selectedTalents.push(index);
             }
+            renderTalents();
             updateBulkActionButtons();
         }
 
@@ -1556,8 +1571,13 @@
         function renderStats() {
             const totalTalents = talents.length;
             const totalProjects = projects.length;
-            const totalPrice = talents.reduce((sum, t) => sum + t.price, 0);
-            const avgPrice = totalTalents > 0 ? Math.round(totalPrice / totalTalents) : 0;
+            const totalFavorites = talents.filter(t => t.favorite).length;
+            const avgRating = totalTalents > 0 ? (talents.reduce((sum, t) => sum + (t.rating || 0), 0) / totalTalents).toFixed(1) : 0;
+
+            document.getElementById('total-talents').textContent = totalTalents;
+            document.getElementById('total-projects').textContent = totalProjects;
+            document.getElementById('total-favorites').textContent = totalFavorites;
+            document.getElementById('avg-rating').textContent = avgRating;
 
             document.getElementById('stats-grid').innerHTML = `
                 <div class="stat-card">
@@ -1569,14 +1589,39 @@
                     <div class="stat-value">${totalProjects}</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-label">إجمالي الأسعار</div>
-                    <div class="stat-value">KD ${totalPrice}</div>
+                    <div class="stat-label">المفضلة</div>
+                    <div class="stat-value">${totalFavorites}</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-label">متوسط السعر</div>
-                    <div class="stat-value">KD ${avgPrice}</div>
+                    <div class="stat-label">متوسط التقييم</div>
+                    <div class="stat-value">${avgRating}</div>
                 </div>
             `;
+            
+            renderCalendar();
+        }
+        
+        function renderCalendar() {
+            const calendarView = document.getElementById('calendar-view');
+            if (!calendarView) return;
+            
+            const projectsByDate = {};
+            projects.forEach(project => {
+                if (project.startDate) {
+                    const date = new Date(project.startDate).toLocaleDateString('ar-SA');
+                    if (!projectsByDate[date]) projectsByDate[date] = [];
+                    projectsByDate[date].push(project);
+                }
+            });
+            
+            const html = Object.entries(projectsByDate).map(([date, prjs]) => `
+                <div style="background: var(--surface-alt); padding: 12px; border-radius: 8px; border: 1px solid var(--border);">
+                    <div style="font-weight: 600; color: var(--primary); margin-bottom: 8px;">${date}</div>
+                    <div style="font-size: 12px; color: var(--muted);">${prjs.length} مشروع</div>
+                </div>
+            `).join('');
+            
+            calendarView.innerHTML = html || '<div style="grid-column: 1/-1; text-align: center; color: var(--muted); padding: 20px;">لا توجد مشاريع مجدولة</div>';
         }
 
         function toggleDarkMode() {
