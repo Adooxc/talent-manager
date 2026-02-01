@@ -818,8 +818,8 @@
                             <div class="settings-card-title" style="font-size: 18px; margin-bottom: 20px;">العلامة التجارية</div>
                             
                             <div class="form-group">
-                                <label class="form-label">عنوان الموقع</label>
-                                <input type="text" id="web-title" class="form-input" value="Talent Manager" onchange="saveWebTitle()">
+                                <label class="form-label">اسم التطبيق (Sidebar)</label>
+                                <input type="text" id="app-name" class="form-input" value="Talent Manager" onchange="saveAppBranding()">
                             </div>
                             
                             <div class="form-group">
@@ -1157,11 +1157,19 @@
             document.getElementById(tabId).classList.add('active');
             event.target.classList.add('active');
 
-            const titles = {
+            const defaultTitles = {
                 'talents-tab': 'الموديلز والفنانين',
                 'projects-tab': 'المشاريع',
-                'stats-tab': 'الإحصائيات',
+                'stats-tab': 'لوحة التحكم',
                 'settings-tab': 'الإعدادات'
+            };
+            
+            const customTitles = JSON.parse(localStorage.getItem('customMenuTitles') || '{}');
+            const titles = {
+                'talents-tab': customTitles.talents || defaultTitles['talents-tab'],
+                'projects-tab': customTitles.projects || defaultTitles['projects-tab'],
+                'stats-tab': customTitles.stats || defaultTitles['stats-tab'],
+                'settings-tab': customTitles.settings || defaultTitles['settings-tab']
             };
             document.getElementById('page-title').textContent = titles[tabId];
             
@@ -1877,6 +1885,13 @@
             updateSiteTitle();
         }
 
+        function saveAppBranding() {
+            const appName = document.getElementById('app-name').value || 'Talent Manager';
+            localStorage.setItem('appName', appName);
+            document.querySelector('.sidebar-title span').textContent = appName;
+            showNotification('تم حفظ الإعدادات', 'success');
+        }
+        
         function saveWebTitle() {
             const title = document.getElementById('web-title').value || 'Talent Manager';
             localStorage.setItem('webTitle', title);
@@ -1925,6 +1940,20 @@
 
         // Initialize
         loadSettings();
+        
+        // Load saved app name
+        const savedAppName = localStorage.getItem('appName') || 'Talent Manager';
+        const sidebarTitle = document.querySelector('.sidebar-title span');
+        if (sidebarTitle) sidebarTitle.textContent = savedAppName;
+        const appNameInput = document.getElementById('app-name');
+        if (appNameInput) appNameInput.value = savedAppName;
+        
+        // Load saved logo
+        const savedLogo = localStorage.getItem('appLogo');
+        if (savedLogo) {
+            const logoContent = document.getElementById('logo-preview-content');
+            if (logoContent) logoContent.innerHTML = '<img src="' + savedLogo + '" style="width: 100%; height: 100%; object-fit: cover;">';
+        }
         
         // Apply theme on page load
         const savedTheme = localStorage.getItem('theme') || 'light';
