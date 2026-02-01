@@ -1384,6 +1384,74 @@
         </div>
     </div>
 </div>
+                <!-- Project Detail Page -->
+                <div id="project-detail" class="detail-page">
+                    <div class="detail-header">
+                        <div>
+                            <h1 class="detail-title" id="project-detail-name"></h1>
+                            <div class="talent-category" id="project-detail-status"></div>
+                        </div>
+                        <div style="display: flex; gap: 12px;">
+                            <button class="btn btn-primary" onclick="editProjectFromDetail()">Edit</button>
+                            <button class="btn btn-secondary" onclick="backToProjects()">Back</button>
+                        </div>
+                    </div>
+                    <div style="display: flex; gap: 32px; margin-bottom: 32px;">
+                        <div style="flex: 1;">
+                            <div class="detail-info">
+                                <div class="detail-info-item">
+                                    <div class="detail-info-label">Executing Company</div>
+                                    <div class="detail-info-value" id="project-detail-executing-company">-</div>
+                                </div>
+                                <div class="detail-info-item">
+                                    <div class="detail-info-label">Producing Company</div>
+                                    <div class="detail-info-value" id="project-detail-producing-company">-</div>
+                                </div>
+                                <div class="detail-info-item">
+                                    <div class="detail-info-label">Director</div>
+                                    <div class="detail-info-value" id="project-detail-director">-</div>
+                                </div>
+                                <div class="detail-info-item">
+                                    <div class="detail-info-label">Total Budget</div>
+                                    <div class="detail-info-value" id="project-detail-budget">-</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div style="flex: 1;">
+                            <div class="detail-info">
+                                <div class="detail-info-item">
+                                    <div class="detail-info-label">Start Date</div>
+                                    <div class="detail-info-value" id="project-detail-start-date">-</div>
+                                </div>
+                                <div class="detail-info-item">
+                                    <div class="detail-info-label">End Date</div>
+                                    <div class="detail-info-value" id="project-detail-end-date">-</div>
+                                </div>
+                                <div class="detail-info-item">
+                                    <div class="detail-info-label">Fitting Date</div>
+                                    <div class="detail-info-value" id="project-detail-fitting-date">-</div>
+                                </div>
+                                <div class="detail-info-item">
+                                    <div class="detail-info-label">Casting Date</div>
+                                    <div class="detail-info-value" id="project-detail-casting-date">-</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="background: var(--surface); border-radius: 12px; padding: 20px; border: 1px solid var(--border); margin-bottom: 24px;">
+                        <h2 style="margin-bottom: 16px; color: var(--text);">Notes</h2>
+                        <p id="project-detail-notes" style="color: var(--text); line-height: 1.6; margin: 0;">-</p>
+                    </div>
+                    <div style="background: var(--surface); border-radius: 12px; padding: 20px; border: 1px solid var(--border);">
+                        <h2 style="margin-bottom: 16px; color: var(--text);">Assigned Talents</h2>
+                        <div id="project-detail-talents" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 16px;"></div>
+                        <div id="project-no-talents" style="text-align: center; color: var(--muted); padding: 20px;">No talents assigned</div>
+                    </div>
+                    <div style="margin-top: 24px; display: flex; gap: 12px;">
+                        <button class="btn btn-primary" onclick="editProjectFromDetail()">Edit Project</button>
+                        <button class="btn btn-danger" onclick="deleteProjectFromDetail()">Delete Project</button>
+                    </div>
+                </div>
                 <div id="talent-detail" class="detail-page">
                     <div class="detail-header">
                         <div>
@@ -2711,47 +2779,42 @@
             // Hide projects list and form
             document.getElementById('projects-list').style.display = 'none';
             document.getElementById('project-form-container').style.display = 'none';
+            document.getElementById('projects-tab').classList.remove('active');
             
-            // Show details page
-            document.getElementById('project-details-page').style.display = 'block';
+            // Show new project detail page
+            document.getElementById('project-detail').classList.add('active');
             
-            // Populate project info
-            document.getElementById('detail-project-name').textContent = project.name;
-            document.getElementById('detail-project-status').textContent = project.status;
-            document.getElementById('detail-project-color').style.backgroundColor = project.color;
+            // Populate project info on new detail page
+            document.getElementById('project-detail-name').textContent = project.name;
+            document.getElementById('project-detail-status').textContent = project.status;
             
-            document.getElementById('detail-executing-company').textContent = project.executingCompany || '-';
-            document.getElementById('detail-producing-company').textContent = project.producingCompany || '-';
-            document.getElementById('detail-director').textContent = project.director || '-';
+            document.getElementById('project-detail-executing-company').textContent = project.executingCompany || '-';
+            document.getElementById('project-detail-producing-company').textContent = project.producingCompany || '-';
+            document.getElementById('project-detail-director').textContent = project.director || '-';
+            document.getElementById('project-detail-budget').textContent = 'KD ' + (project.budget || 0);
             
             // Format dates
-            document.getElementById('detail-start-date').textContent = project.startDate ? new Date(project.startDate).toLocaleDateString() : '-';
-            document.getElementById('detail-end-date').textContent = project.endDate ? new Date(project.endDate).toLocaleDateString() : '-';
-            document.getElementById('detail-fitting-date').textContent = project.fittingDate ? new Date(project.fittingDate).toLocaleDateString() : '-';
-            document.getElementById('detail-casting-date').textContent = project.castingDate ? new Date(project.castingDate).toLocaleDateString() : '-';
+            document.getElementById('project-detail-start-date').textContent = project.startDate ? new Date(project.startDate).toLocaleDateString() : '-';
+            document.getElementById('project-detail-end-date').textContent = project.endDate ? new Date(project.endDate).toLocaleDateString() : '-';
+            document.getElementById('project-detail-fitting-date').textContent = project.fittingDate ? new Date(project.fittingDate).toLocaleDateString() : '-';
+            document.getElementById('project-detail-casting-date').textContent = project.castingDate ? new Date(project.castingDate).toLocaleDateString() : '-';
             
-            document.getElementById('detail-notes').textContent = project.notes || '-';
-            document.getElementById('detail-budget').textContent = 'KD ' + (project.budget || 0);
-            
-            // WhatsApp link
-            const whatsappLink = document.getElementById('detail-whatsapp-link');
-            if (project.whatsappGroup) {
-                whatsappLink.href = project.whatsappGroup;
-                whatsappLink.target = '_blank';
-                whatsappLink.textContent = 'Join Group';
-            } else {
-                whatsappLink.textContent = 'No Group';
-                whatsappLink.style.pointerEvents = 'none';
-                whatsappLink.style.opacity = '0.5';
-            }
+            document.getElementById('project-detail-notes').textContent = project.notes || '-';
             
             // Calculate total talent cost
             let totalCost = 0;
-            const talentsList = document.getElementById('detail-talents-list');
+            const talentsList = document.getElementById('project-detail-talents');
+            const noTalentsMsg = document.getElementById('project-no-talents');
             talentsList.innerHTML = '';
             
             // Use talentIndices if available, otherwise try to match talent names
             const talentIndicesToDisplay = project.talentIndices || (project.talents ? project.talents.map(name => talents.findIndex(t => t.name === name)) : []);
+            
+            if (talentIndicesToDisplay.length === 0) {
+                noTalentsMsg.style.display = 'block';
+            } else {
+                noTalentsMsg.style.display = 'none';
+            }
             
             talentIndicesToDisplay.forEach(talentIndex => {
                 const talent = talents[talentIndex];
@@ -2769,7 +2832,30 @@
                 }
             });
             
-            document.getElementById('detail-total-cost').textContent = 'KD ' + totalCost;
+            // Update total cost display
+            const totalCostElement = document.querySelector('#project-detail .detail-info-item:has(#project-detail-budget) .detail-info-value');
+            if (totalCostElement) {
+                totalCostElement.textContent = 'KD ' + totalCost;
+            }
+        }
+        
+        function backToProjects() {
+            document.getElementById('project-detail').classList.remove('active');
+            document.getElementById('projects-tab').classList.add('active');
+            currentDetailProjectIndex = null;
+        }
+        
+        function editProjectFromDetail() {
+            if (currentDetailProjectIndex !== null) {
+                editProject(currentDetailProjectIndex);
+            }
+        }
+        
+        function deleteProjectFromDetail() {
+            if (currentDetailProjectIndex !== null) {
+                deleteProject(currentDetailProjectIndex);
+                backToProjects();
+            }
         }
         
         function closeProjectDetails() {
