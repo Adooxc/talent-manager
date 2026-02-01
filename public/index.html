@@ -601,13 +601,13 @@
     <div class="container">
         <div class="sidebar">
             <div class="sidebar-header">
-                <span style="font-size: 24px;">⭐</span>
+
                 <div class="sidebar-title">Talent Manager</div>
             </div>
-            <div class="nav-item active" onclick="showTab('talents-tab')">👥 الموديلز</div>
-            <div class="nav-item" onclick="showTab('projects-tab')">📋 المشاريع</div>
-            <div class="nav-item" onclick="showTab('stats-tab')">📊 الإحصائيات</div>
-            <div class="nav-item" onclick="showTab('settings-tab')">⚙️ الإعدادات</div>
+            <div class="nav-item active" onclick="showTab('talents-tab')">الموديلز</div>
+            <div class="nav-item" onclick="showTab('projects-tab')">المشاريع</div>
+            <div class="nav-item" onclick="showTab('stats-tab')">الإحصائيات</div>
+            <div class="nav-item" onclick="showTab('settings-tab')">الإعدادات</div>
         </div>
 
         <div class="main-content">
@@ -630,7 +630,7 @@
                             <option value="عارضين">عارضين</option>
                             <option value="كومبارس">كومبارس</option>
                         </select>
-                        <button class="btn btn-primary" onclick="toggleAdvancedSearch()" style="margin-top: 12px; width: 100%;">🔍 بحث متقدم</button>
+                        <button class="btn btn-primary" onclick="toggleAdvancedSearch()" style="margin-top: 12px; width: 100%;">بحث متقدم</button>
                     </div>
                     
                     <!-- Advanced Search Filters -->
@@ -669,8 +669,8 @@
                             </div>
                         </div>
                         <div style="display: flex; gap: 12px; margin-top: 16px;">
-                            <button class="btn btn-primary" onclick="renderTalents()" style="flex: 1;">🔍 بحث</button>
-                            <button class="btn btn-secondary" onclick="clearAdvancedFilters()" style="flex: 1;">🔄 إعادة تعيين</button>
+                            <button class="btn btn-primary" onclick="renderTalents()" style="flex: 1;">بحث</button>
+                            <button class="btn btn-secondary" onclick="clearAdvancedFilters()" style="flex: 1;">إعادة تعيين</button>
                         </div>
                     </div>
                     
@@ -693,7 +693,7 @@
                 <!-- Settings Tab -->
                 <div id="settings-tab" class="tab-content">
                     <div class="settings-card">
-                        <div class="settings-card-title">🎨 المظهر</div>
+                        <div class="settings-card-title">المظهر</div>
                         <div class="form-group">
                             <label class="form-label">
                                 <input type="checkbox" id="dark-mode" onchange="toggleDarkMode()"> المظهر الداكن
@@ -710,7 +710,7 @@
                     </div>
 
                     <div class="settings-card">
-                        <div class="settings-card-title">📱 معلومات الشركة</div>
+                        <div class="settings-card-title">معلومات الشركة</div>
                         <div class="form-group">
                             <label class="form-label">اسم الشركة</label>
                             <input type="text" id="company-name" class="form-input" onchange="saveSettings()">
@@ -726,7 +726,7 @@
                     </div>
 
                     <div class="settings-card">
-                        <div class="settings-card-title">⚙️ إدارة البيانات</div>
+                        <div class="settings-card-title">إدارة البيانات</div>
                         <button class="btn btn-danger" onclick="clearAllData()">حذف جميع البيانات</button>
                     </div>
                 </div>
@@ -739,14 +739,14 @@
                             <div class="talent-category" id="detail-category"></div>
                         </div>
                         <div style="display: flex; gap: 12px;">
-                            <button class="btn btn-primary" onclick="editTalentFromDetail()">✏️ تعديل</button>
+                            <button class="btn btn-primary" onclick="editTalentFromDetail()">تعديل</button>
                             <button class="btn btn-secondary" onclick="backToTalents()">← العودة</button>
                         </div>
                     </div>
 
                     <div style="display: flex; gap: 32px; margin-bottom: 32px;">
                         <div>
-                            <div class="detail-image" id="detail-emoji">😊</div>
+                            <div class="detail-image" id="detail-emoji"></div>
                         </div>
                         <div style="flex: 1;">
                             <div class="detail-info">
@@ -773,9 +773,9 @@
                             </div>
 
                             <div style="margin-top: 20px; display: flex; gap: 12px; flex-wrap: wrap;">
-                                <button class="btn btn-primary" id="detail-whatsapp" onclick="openWhatsAppFromDetail()">💬 WhatsApp</button>
-                                <button class="btn btn-secondary" id="detail-instagram" onclick="openSocialFromDetail('instagram')">📷 Instagram</button>
-                                <button class="btn btn-secondary" id="detail-tiktok" onclick="openSocialFromDetail('tiktok')">🎵 TikTok</button>
+                                <button class="btn btn-primary" id="detail-whatsapp" onclick="openWhatsAppFromDetail()">WhatsApp</button>
+                                <button class="btn btn-secondary" id="detail-instagram" onclick="openSocialFromDetail('instagram')">Instagram</button>
+                                <button class="btn btn-secondary" id="detail-tiktok" onclick="openSocialFromDetail('tiktok')">TikTok</button>
                             </div>
                         </div>
                     </div>
@@ -833,7 +833,7 @@
                 <input type="text" id="talent-tiktok" class="form-input" placeholder="اسم المستخدم">
             </div>
             <div class="form-group">
-                <label class="form-label">📸 الصورة</label>
+                <label class="form-label">الصورة</label>
                 <input type="file" id="talent-photo" class="form-input" accept="image/*" onchange="handleTalentPhotoUpload()">
                 <small style="color: var(--text-light); margin-top: 4px; display: block;">اختر صورة للموديل</small>
                 <div id="talent-photo-preview" style="margin-top: 8px;"></div>
@@ -921,7 +921,7 @@
                 const actualIndex = talents.indexOf(talent);
                 const talentId = talent.id || actualIndex;
                 const photos = currentTalentPhotos[talentId] || [];
-                const photoDisplay = photos.length > 0 ? `<img src="${photos[0]}" alt="صورة" style="width: 100%; height: 100%; object-fit: cover;">` : '😊';
+                const photoDisplay = photos.length > 0 ? `<img src="${photos[0]}" alt="صورة" style="width: 100%; height: 100%; object-fit: cover;">` : '';
 
                 return `
                     <div class="talent-card" onclick="showTalentDetail(${actualIndex})">
@@ -932,12 +932,12 @@
                             <div class="talent-price">${talent.price} KD</div>
                             <div class="talent-meta">
                                 <span>${talent.gender} • ${talent.age} سنة</span>
-                                ${photos.length > 0 ? `<span>📸 ${photos.length}</span>` : ''}
+                                ${photos.length > 0 ? `<span>${photos.length}</span>` : ''}
                             </div>
                             <div class="talent-actions" onclick="event.stopPropagation()">
-                                <button class="btn btn-primary btn-small" onclick="editTalent(event, ${actualIndex})">✏️ تعديل</button>
-                                <button class="btn btn-danger btn-small" onclick="deleteTalent(event, ${actualIndex})">🗑️ حذف</button>
-                                <button class="btn btn-primary btn-small" onclick="openWhatsApp(event, '${talent.phone}')">💬 واتس</button>
+                                <button class="btn btn-primary btn-small" onclick="editTalent(event, ${actualIndex})">تعديل</button>
+                                <button class="btn btn-danger btn-small" onclick="deleteTalent(event, ${actualIndex})">حذف</button>
+                                <button class="btn btn-primary btn-small" onclick="openWhatsApp(event, '${talent.phone}')">واتس</button>
                             </div>
                         </div>
                     </div>
@@ -1052,8 +1052,12 @@
             }
 
             localStorage.setItem('talents', JSON.stringify(talents));
+            localStorage.setItem('talentPhotos', JSON.stringify(currentTalentPhotos));
             closeTalentModal();
             renderTalents();
+            if (currentDetailTalentIndex !== null) {
+                showTalentDetail(currentDetailTalentIndex);
+            }
         }
 
         function deleteTalent(event, index) {
@@ -1086,7 +1090,7 @@
             if (photos.length > 0) {
                 detailImage.innerHTML = `<img src="${photos[0]}" alt="صورة">`;
             } else {
-                detailImage.textContent = '😊';
+                detailImage.textContent = '';
             }
 
             document.getElementById('talent-detail').classList.add('active');
@@ -1108,6 +1112,7 @@
             const talentId = talents[currentDetailTalentIndex].id || currentDetailTalentIndex;
             const photos = currentTalentPhotos[talentId] || [];
             const grid = document.getElementById('photos-grid');
+            if (!grid) return;
 
             grid.innerHTML = photos.map((photo, index) => `
                 <div class="photo-item">
@@ -1261,7 +1266,7 @@
                             <div style="color: var(--text-light); font-size: 14px; margin-bottom: 8px;">الموديلز: ${project.talents.join(', ')}</div>
                             <div style="font-size: 18px; font-weight: 700; color: var(--primary);">KD ${project.total}</div>
                         </div>
-                        <button class="btn btn-danger btn-small" onclick="deleteProject(${index})">🗑️ حذف</button>
+                        <button class="btn btn-danger btn-small" onclick="deleteProject(${index})">حذف</button>
                     </div>
                 </div>
             `).join('');
@@ -1282,19 +1287,19 @@
 
             document.getElementById('stats-grid').innerHTML = `
                 <div class="stat-card">
-                    <div class="stat-label">👥 إجمالي الموديلز</div>
+                    <div class="stat-label">إجمالي الموديلز</div>
                     <div class="stat-value">${totalTalents}</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-label">📋 إجمالي المشاريع</div>
+                    <div class="stat-label">إجمالي المشاريع</div>
                     <div class="stat-value">${totalProjects}</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-label">💰 إجمالي الأسعار</div>
+                    <div class="stat-label">إجمالي الأسعار</div>
                     <div class="stat-value">KD ${totalPrice}</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-label">📊 متوسط السعر</div>
+                    <div class="stat-label">متوسط السعر</div>
                     <div class="stat-value">KD ${avgPrice}</div>
                 </div>
             `;
