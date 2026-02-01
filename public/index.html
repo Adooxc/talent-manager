@@ -33,11 +33,24 @@
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', sans-serif;
-            background: var(--bg);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: var(--text);
             line-height: 1.6;
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
+            min-height: 100vh;
+        }
+        
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 600"><defs><filter id="noise"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="4" result="noise" /></filter></defs><rect width="1200" height="600" fill="%23667eea" filter="url(%23noise)" opacity="0.1"/></svg>');
+            pointer-events: none;
+            z-index: -1;
         }
 
         body.dark-mode {
@@ -56,11 +69,14 @@
 
         .sidebar {
             width: 280px;
-            background: var(--surface);
-            border-right: 1px solid var(--border);
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-right: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
             padding: 24px;
             overflow-y: auto;
-            box-shadow: var(--shadow-sm);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+            margin: 20px;
         }
 
         .sidebar-header {
@@ -242,13 +258,14 @@
         }
 
         .talent-card {
-            background: var(--surface);
-            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
             overflow: hidden;
-            box-shadow: var(--shadow-md);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
             transition: all 0.3s ease;
             cursor: pointer;
-            border: 1px solid var(--border);
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
 
         .talent-card:hover {
@@ -343,21 +360,19 @@
         .modal.active {
             display: flex;
         }
-
         .modal-content {
-            background: var(--surface);
-            border-radius: 12px;
-            padding: 32px;
-            max-width: 500px;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+            max-width: 600px;
             width: 90%;
             max-height: 90vh;
             overflow-y: auto;
-            box-shadow: var(--shadow-xl);
-        }
-
-        .modal-header {
-            font-size: 20px;
-            font-weight: 700;
+            position: relative;
+            z-index: 1001;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }ht: 700;
             margin-bottom: 24px;
             color: var(--text);
         }
@@ -525,12 +540,13 @@
         }
 
         .settings-card {
-            background: var(--surface);
-            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
             padding: 24px;
-            margin-bottom: 20px;
-            box-shadow: var(--shadow-md);
-            border: 1px solid var(--border);
+            margin-bottom: 24px;
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
         }
 
         .settings-card-title {
@@ -753,6 +769,14 @@
                                 <input type="checkbox" id="dark-mode" onchange="toggleDarkMode()"> المظهر الداكن
                             </label>
                         </div>
+                        <div class="form-group">
+                            <label class="form-label">لون الخلفية الرئيسية</label>
+                            <input type="color" id="primary-color" class="form-input" value="#667eea" onchange="changePrimaryColor()" style="height: 40px; cursor: pointer;">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">لون الخلفية الثانوية</label>
+                            <input type="color" id="secondary-color" class="form-input" value="#764ba2" onchange="changeSecondaryColor()" style="height: 40px; cursor: pointer;">
+                        </div>
                     </div>
 
                     <div class="settings-card">
@@ -790,8 +814,8 @@
                             <input type="text" id="projects-menu-name" class="form-input" value="المشاريع" onchange="saveMenuNames()">
                         </div>
                         <div class="form-group">
-                            <label class="form-label">اسم قائمة الإحصائيات</label>
-                            <input type="text" id="dashboard-menu-name" class="form-input" value="الإحصائيات" onchange="saveMenuNames()">
+                            <label class="form-label">اسم لوحة التحكم</label>
+                            <input type="text" id="dashboard-menu-name" class="form-input" value="لوحة التحكم" onchange="saveMenuNames()">
                         </div>
                     </div>
 
@@ -1582,26 +1606,82 @@
             document.getElementById('total-favorites').textContent = totalFavorites;
             document.getElementById('avg-rating').textContent = avgRating;
 
-            document.getElementById('stats-grid').innerHTML = `
-                <div class="stat-card">
-                    <div class="stat-label">إجمالي الموديلز</div>
-                    <div class="stat-value">${totalTalents}</div>
+            renderCharts();
+            renderCalendar();
+        }
+        
+        function renderCharts() {
+            const statsGrid = document.getElementById('stats-grid');
+            if (!statsGrid) return;
+            
+            const categoryCount = {};
+            talents.forEach(t => {
+                categoryCount[t.category] = (categoryCount[t.category] || 0) + 1;
+            });
+            
+            const genderCount = {};
+            talents.forEach(t => {
+                genderCount[t.gender] = (genderCount[t.gender] || 0) + 1;
+            });
+            
+            const ratingCount = {};
+            talents.forEach(t => {
+                const rating = t.rating || 0;
+                ratingCount[rating] = (ratingCount[rating] || 0) + 1;
+            });
+            
+            const colors = ['#667eea', '#764ba2', '#f093fb', '#f5576c', '#4facfe', '#00f2fe', '#43e97b', '#38f9d7'];
+            
+            statsGrid.innerHTML = `
+                <div style="background: var(--surface); border-radius: 12px; padding: 20px; border: 1px solid var(--border);">
+                    <h3 style="margin-bottom: 16px; color: var(--text);">توزيع الموديلز حسب الفئة</h3>
+                    <canvas id="category-chart" width="300" height="300"></canvas>
                 </div>
-                <div class="stat-card">
-                    <div class="stat-label">إجمالي المشاريع</div>
-                    <div class="stat-value">${totalProjects}</div>
+                <div style="background: var(--surface); border-radius: 12px; padding: 20px; border: 1px solid var(--border);">
+                    <h3 style="margin-bottom: 16px; color: var(--text);">توزيع الموديلز حسب الجنس</h3>
+                    <canvas id="gender-chart" width="300" height="300"></canvas>
                 </div>
-                <div class="stat-card">
-                    <div class="stat-label">المفضلة</div>
-                    <div class="stat-value">${totalFavorites}</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-label">متوسط التقييم</div>
-                    <div class="stat-value">${avgRating}</div>
+                <div style="background: var(--surface); border-radius: 12px; padding: 20px; border: 1px solid var(--border);">
+                    <h3 style="margin-bottom: 16px; color: var(--text);">توزيع التقييمات</h3>
+                    <canvas id="rating-chart" width="300" height="300"></canvas>
                 </div>
             `;
             
-            renderCalendar();
+            setTimeout(() => {
+                drawPieChart('category-chart', Object.entries(categoryCount), colors);
+                drawPieChart('gender-chart', Object.entries(genderCount), colors);
+                drawPieChart('rating-chart', Object.entries(ratingCount), colors);
+            }, 100);
+        }
+        
+        function drawPieChart(canvasId, data, colors) {
+            const canvas = document.getElementById(canvasId);
+            if (!canvas) return;
+            
+            const ctx = canvas.getContext('2d');
+            const centerX = canvas.width / 2;
+            const centerY = canvas.height / 2;
+            const radius = Math.min(centerX, centerY) - 10;
+            
+            const total = data.reduce((sum, [, count]) => sum + count, 0);
+            let currentAngle = 0;
+            
+            data.forEach(([label, count], index) => {
+                const sliceAngle = (count / total) * 2 * Math.PI;
+                
+                ctx.fillStyle = colors[index % colors.length];
+                ctx.beginPath();
+                ctx.moveTo(centerX, centerY);
+                ctx.arc(centerX, centerY, radius, currentAngle, currentAngle + sliceAngle);
+                ctx.closePath();
+                ctx.fill();
+                
+                ctx.strokeStyle = 'var(--background)';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+                
+                currentAngle += sliceAngle;
+            });
         }
         
         function renderCalendar() {
@@ -1630,6 +1710,20 @@
         function toggleDarkMode() {
             document.body.classList.toggle('dark-mode');
             localStorage.setItem('darkMode', document.body.classList.contains('dark-mode'));
+        }
+        
+        function changePrimaryColor() {
+            const color = document.getElementById('primary-color').value;
+            document.documentElement.style.setProperty('--primary', color);
+            localStorage.setItem('primaryColor', color);
+            document.body.style.background = `linear-gradient(135deg, ${color} 0%, ${document.getElementById('secondary-color').value} 100%)`;
+        }
+        
+        function changeSecondaryColor() {
+            const color = document.getElementById('secondary-color').value;
+            document.documentElement.style.setProperty('--primary-dark', color);
+            localStorage.setItem('secondaryColor', color);
+            document.body.style.background = `linear-gradient(135deg, ${document.getElementById('primary-color').value} 0%, ${color} 100%)`;
         }
 
         function saveSettings() {
