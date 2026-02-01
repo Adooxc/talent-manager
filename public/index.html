@@ -607,6 +607,9 @@
                 <div class="sidebar-title">Talent Manager</div>
             </div>
             <div class="nav-item active" onclick="showTab('talents-tab')">الموديلز</div>
+            <div class="nav-item" onclick="showTab('projects-tab')">المشاريع</div>
+            <div class="nav-item" onclick="showTab('stats-tab')">لوحة التحكم</div>
+            <div class="nav-item" onclick="showTab('settings-tab')">الإعدادات</div>
         </div>
 
         <div class="main-content">
@@ -692,6 +695,10 @@
                 </div>
 
                 <!-- Projects Tab -->
+                <div id="projects-tab" class="tab-content">
+                    <div style="margin-bottom: 24px;">
+                        <button class="btn btn-primary" onclick="openCreateProjectModal()">+ إنشاء مشروع</button>
+                    </div>
                     
                     <!-- Calendar View -->
                     <div style="background: var(--surface); border-radius: 12px; padding: 20px; margin-bottom: 24px; border: 1px solid var(--border);">
@@ -708,6 +715,12 @@
                 </div>
 
                 <!-- Stats Tab -->
+                <div id="stats-tab" class="tab-content">
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 30px;">
+                        <div class="stats-card" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 24px; border-radius: 12px; box-shadow: var(--shadow-lg);">
+                            <div style="font-size: 14px; opacity: 0.9; margin-bottom: 8px;">إجمالي الموديلز</div>
+                            <div style="font-size: 32px; font-weight: bold;" id="total-talents">0</div>
+                        </div>
                         <div class="stats-card" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; padding: 24px; border-radius: 12px; box-shadow: var(--shadow-lg);">
                             <div style="font-size: 14px; opacity: 0.9; margin-bottom: 8px;">إجمالي المشاريع</div>
                             <div style="font-size: 32px; font-weight: bold;" id="total-projects">0</div>
@@ -751,6 +764,22 @@
                 </div>
 
                 <!-- Settings Tab -->
+                <div id="settings-tab" class="tab-content">
+                    <div style="max-width: 800px;">
+                        <!-- Appearance Section -->
+                        <div class="settings-card" style="background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1)); border-left: 4px solid var(--primary);">
+                            <div class="settings-card-title" style="font-size: 18px; margin-bottom: 20px;">المظهر والألوان</div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">المظهر</label>
+                                <div style="display: flex; gap: 12px; margin-top: 8px;">
+                                    <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                                        <input type="radio" name="theme" value="light" checked onchange="setTheme('light')"> فاتح
+                                    </label>
+                                    <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                                        <input type="radio" name="theme" value="dark" onchange="setTheme('dark')"> داكن
+                                    </label>
+                                </div>
                             </div>
                             
                             <div class="form-group">
@@ -1008,3 +1037,1067 @@
     </div>
 
     <!-- Project Modal -->
+    <div id="project-modal" class="modal">
+        <div class="modal-content" style="max-height: 90vh; overflow-y: auto;">
+            <div class="modal-header" id="project-modal-title">إنشاء مشروع جديد</div>
+            <input type="hidden" id="editing-project-index" value="">
+            <div class="form-group">
+                <label class="form-label">اسم المشروع</label>
+                <input type="text" id="project-name" class="form-input">
+            </div>
+            <div class="form-group">
+                <label class="form-label">الشركة المنفذة</label>
+                <input type="text" id="project-executing-company" class="form-input" placeholder="اسم الشركة المنفذة">
+            </div>
+            <div class="form-group">
+                <label class="form-label">الشركة المنتجة</label>
+                <input type="text" id="project-producing-company" class="form-input" placeholder="اسم الشركة المنتجة">
+            </div>
+            <div class="form-group">
+                <label class="form-label">اسم المخرج</label>
+                <input type="text" id="project-director" class="form-input" placeholder="اسم المخرج">
+            </div>
+            <div class="form-group">
+                <label class="form-label">تاريخ البداية</label>
+                <input type="date" id="project-start-date" class="form-input">
+            </div>
+            <div class="form-group">
+                <label class="form-label">تاريخ النهاية</label>
+                <input type="date" id="project-end-date" class="form-input">
+            </div>
+            <div class="form-group">
+                <label class="form-label">تاريخ الفيتنق (Fitting)</label>
+                <input type="date" id="project-fitting-date" class="form-input">
+            </div>
+            <div class="form-group">
+                <label class="form-label">تاريخ الكاستنق (Casting)</label>
+                <input type="date" id="project-casting-date" class="form-input">
+            </div>
+            <div class="form-group">
+                <label class="form-label">ملاحظات</label>
+                <textarea id="project-notes" class="form-input" placeholder="ملاحظات إضافية عن المشروع" style="min-height: 60px; resize: vertical;"></textarea>
+            </div>
+            <div class="form-group">
+                <label class="form-label">رابط قروب واتساب</label>
+                <input type="text" id="project-whatsapp-group" class="form-input" placeholder="https://chat.whatsapp.com/...">
+                <small style="color: var(--text-light); margin-top: 4px; display: block;">رابط قروب الواتساب الخاص بالمشروع</small>
+            </div>
+            <div class="form-group">
+                <label class="form-label">اختر الموديلز</label>
+                <div id="talent-selector" style="max-height: 300px; overflow-y: auto; border: 1px solid var(--border); border-radius: 8px; padding: 12px;"></div>
+            </div>
+            <div style="background: var(--surface-alt); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+                <div style="font-size: 14px; color: var(--text-light);">التكلفة الإجمالية</div>
+                <div style="font-size: 24px; font-weight: 700; color: var(--primary);" id="project-total">KD 0</div>
+            </div>
+            <div class="form-actions">
+                <button class="btn btn-primary" id="save-project-btn" onclick="saveProject()">إنشاء</button>
+                <button class="btn btn-secondary" onclick="closeProjectModal()">إلغاء</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let talents = [
+            { id: 1, name: 'أحمد علي', category: 'ممثلين', price: 7000, gender: 'ذكر', age: 25, phone: '501234567', instagram: 'ahmed_ali', tiktok: 'ahmed_ali', height: '180', weight: '75', chest: '95', waist: '82', hips: '92', shoe: '42', hair: 'بني', eyes: 'بني', skills: 'تمثيل، رقص', rating: 4.5, isFavorite: false, projects: [] },
+            { id: 2, name: 'فاطمة محمد', category: 'عارضين', price: 8000, gender: 'أنثى', age: 22, phone: '502345678', instagram: 'fatima_m', tiktok: 'fatima_m', height: '175', weight: '62', chest: '88', waist: '65', hips: '90', shoe: '38', hair: 'أسود', eyes: 'أسود', skills: 'عرض أزياء، تصوير', rating: 5, isFavorite: true, projects: [] },
+            { id: 3, name: 'محمود حسن', category: 'كومبارس', price: 3000, gender: 'ذكر', age: 30, phone: '503456789', instagram: 'mahmoud_h', tiktok: 'mahmoud_h', height: '178', weight: '80', chest: '100', waist: '85', hips: '95', shoe: '43', hair: 'أسود', eyes: 'بني', skills: 'تمثيل، كومبارس', rating: 3.5, isFavorite: false, projects: [] }
+        ];
+
+        let projects = [];
+        
+        // Load talents and projects from localStorage
+        const savedTalents = localStorage.getItem('talents');
+        if (savedTalents) {
+            try {
+                talents = JSON.parse(savedTalents);
+            } catch (e) {
+                console.error('Error loading talents:', e);
+            }
+        }
+        
+        const savedProjects = localStorage.getItem('projects');
+        if (savedProjects) {
+            try {
+                projects = JSON.parse(savedProjects);
+            } catch (e) {
+                console.error('Error loading projects:', e);
+            }
+        }
+        let currentTalentPhotos = {};
+        let currentDetailTalentIndex = null;
+        let editingTalentIndex = null;
+        let selectedProjectTalents = [];
+        let draggedPhotoIndex = null;
+
+        function showTab(tabId) {
+            // Close talent detail view if open
+            const detailView = document.getElementById('talent-detail');
+            if (detailView && detailView.classList.contains('active')) {
+                detailView.classList.remove('active');
+                currentDetailTalentIndex = null;
+            }
+            
+            // Close edit modal if open
+            const editModal = document.getElementById('talent-modal');
+            if (editModal && editModal.classList.contains('active')) {
+                editModal.classList.remove('active');
+                editingTalentIndex = null;
+            }
+            
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            event.target.classList.add('active');
+
+            const titles = {
+                'talents-tab': 'الموديلز والفنانين',
+                'projects-tab': 'المشاريع',
+                'stats-tab': 'الإحصائيات',
+                'settings-tab': 'الإعدادات'
+            };
+            document.getElementById('page-title').textContent = titles[tabId];
+            
+            // Show add button only on talents tab
+            const addBtn = document.getElementById('add-btn');
+            if (tabId === 'talents-tab') {
+                addBtn.style.display = 'block';
+            } else {
+                addBtn.style.display = 'none';
+            }
+
+            if (tabId === 'stats-tab') renderStats();
+        }
+
+        function renderTalents() {
+            const search = document.getElementById('search').value.toLowerCase();
+            const category = document.getElementById('category').value;
+            const priceMin = document.getElementById('price-min').value ? parseInt(document.getElementById('price-min').value) : null;
+            const priceMax = document.getElementById('price-max').value ? parseInt(document.getElementById('price-max').value) : null;
+            const ageMin = document.getElementById('age-min').value ? parseInt(document.getElementById('age-min').value) : null;
+            const ageMax = document.getElementById('age-max').value ? parseInt(document.getElementById('age-max').value) : null;
+            const genderFilter = document.getElementById('gender-filter').value;
+            const favoriteFilter = document.getElementById('favorite-filter').value;
+
+            let filtered = talents.filter(t => {
+                const matchSearch = t.name.toLowerCase().includes(search);
+                const matchCategory = !category || t.category === category;
+                const matchPrice = (priceMin === null || t.price >= priceMin) && (priceMax === null || t.price <= priceMax);
+                const matchAge = (ageMin === null || t.age >= ageMin) && (ageMax === null || t.age <= ageMax);
+                const matchGender = !genderFilter || t.gender === genderFilter;
+                const matchFavorite = !favoriteFilter || (favoriteFilter === 'true' ? t.isFavorite : !t.isFavorite);
+                return matchSearch && matchCategory && matchPrice && matchAge && matchGender && matchFavorite;
+            });
+
+            const html = filtered.map((talent, index) => {
+                const actualIndex = talents.indexOf(talent);
+                const talentId = talent.id || actualIndex;
+                const photos = currentTalentPhotos[talentId] || [];
+                const photoDisplay = photos.length > 0 ? `<img src="${photos[0]}" alt="صورة" style="width: 100%; height: 100%; object-fit: cover;">` : '';
+
+                const isFavorite = talent.isFavorite || false;
+                return `
+                    <div class="talent-card" onclick="selectionMode ? toggleTalentSelection(${actualIndex}) : showTalentDetail(${actualIndex})" style="position: relative; cursor: pointer; ${selectedTalents.includes(actualIndex) ? 'border: 3px solid var(--primary); box-shadow: 0 0 0 3px rgba(var(--primary-rgb), 0.2);' : ''}">
+                        <div style="position: absolute; top: 10px; right: 10px; z-index: 10; cursor: pointer;" onclick="event.stopPropagation(); toggleFavoriteFromCard(${actualIndex})">
+                            <span style="font-size: 24px; text-shadow: 0 2px 4px rgba(0,0,0,0.3);">${isFavorite ? '❤️' : '🤍'}</span>
+                        </div>
+                        <div class="talent-card-image">${photoDisplay}</div>
+                        <div class="talent-card-body">
+                            <div class="talent-name">${talent.name}</div>
+                            <div class="talent-category">${talent.category}</div>
+                            <div class="talent-price">${talent.price} KD</div>
+                            <div class="talent-meta">
+                                <span>${talent.gender} • ${talent.age} سنة</span>
+                            </div>
+                            <div class="talent-actions" onclick="event.stopPropagation()">
+                                <button class="btn btn-primary btn-small" onclick="editTalent(event, ${actualIndex})">تعديل</button>
+                                <button class="btn btn-danger btn-small" onclick="deleteTalent(event, ${actualIndex})">حذف</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            document.getElementById('talents-list').innerHTML = html || '<div class="empty-state"><div class="empty-state-icon">📭</div><div class="empty-state-title">لا توجد موديلز</div></div>';
+        }
+
+        function updateCardSize() {
+            const percentage = document.getElementById('card-size').value;
+            const pixelSize = Math.round((percentage / 100) * 250);
+            document.getElementById('card-size-label').textContent = percentage + '%';
+            document.documentElement.style.setProperty('--grid-columns', `repeat(auto-fill, minmax(${pixelSize}px, 1fr))`);
+            localStorage.setItem('cardSize', percentage);
+        }
+
+        function toggleAdvancedSearch() {
+            const advancedSearch = document.getElementById('advanced-search');
+            advancedSearch.style.display = advancedSearch.style.display === 'none' ? 'block' : 'none';
+        }
+
+        function clearAdvancedFilters() {
+            document.getElementById('price-min').value = '';
+            document.getElementById('price-max').value = '';
+            document.getElementById('age-min').value = '';
+            document.getElementById('age-max').value = '';
+            document.getElementById('gender-filter').value = '';
+            document.getElementById('search').value = '';
+            document.getElementById('category').value = '';
+            renderTalents();
+        }
+
+        function openAddTalentModal() {
+            editingTalentIndex = null;
+            document.getElementById('modal-title').textContent = 'إضافة موديل جديد';
+            document.getElementById('talent-name').value = '';
+            document.getElementById('talent-category').value = '';
+            document.getElementById('talent-price').value = '';
+            document.getElementById('talent-gender').value = '';
+            document.getElementById('talent-age').value = '';
+            document.getElementById('talent-phone').value = '';
+            document.getElementById('talent-instagram').value = '';
+            document.getElementById('talent-tiktok').value = '';
+            document.getElementById('talent-modal').classList.add('active');
+        }
+
+        function editTalent(event, index) {
+            event.stopPropagation();
+            editingTalentIndex = index;
+            const talent = talents[index];
+            document.getElementById('modal-title').textContent = 'تعديل الموديل';
+            document.getElementById('talent-name').value = talent.name;
+            document.getElementById('talent-category').value = talent.category;
+            document.getElementById('talent-price').value = talent.price;
+            document.getElementById('talent-gender').value = talent.gender;
+            document.getElementById('talent-age').value = talent.age;
+            document.getElementById('talent-phone').value = talent.phone;
+            document.getElementById('talent-instagram').value = talent.instagram || '';
+            document.getElementById('talent-tiktok').value = talent.tiktok || '';
+            document.getElementById('talent-modal').classList.add('active');
+        }
+
+        function editTalentFromDetail() {
+            editTalent({ stopPropagation: () => {} }, currentDetailTalentIndex);
+        }
+
+        function handleTalentPhotoUpload() {
+            const fileInput = document.getElementById('talent-photo');
+            const file = fileInput.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const photoData = e.target.result;
+                if (editingTalentIndex !== null) {
+                    const talentId = talents[editingTalentIndex].id || editingTalentIndex;
+                    if (!currentTalentPhotos[talentId]) {
+                        currentTalentPhotos[talentId] = [];
+                    }
+                    currentTalentPhotos[talentId] = [photoData];
+                    localStorage.setItem('talentPhotos', JSON.stringify(currentTalentPhotos));
+                }
+                const preview = document.getElementById('talent-photo-preview');
+                preview.innerHTML = '<img src="' + photoData + '" style="max-width: 100px; max-height: 100px; border-radius: 8px; margin-top: 8px;">';
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function saveTalent() {
+            const name = document.getElementById('talent-name').value;
+            const category = document.getElementById('talent-category').value;
+            const price = parseInt(document.getElementById('talent-price').value);
+            const gender = document.getElementById('talent-gender').value;
+            const age = parseInt(document.getElementById('talent-age').value);
+            const phone = document.getElementById('talent-phone').value;
+            const instagram = document.getElementById('talent-instagram').value;
+            const tiktok = document.getElementById('talent-tiktok').value;
+            const height = document.getElementById('talent-height').value;
+            const weight = document.getElementById('talent-weight').value;
+            const chest = document.getElementById('talent-chest').value;
+            const waist = document.getElementById('talent-waist').value;
+            const hips = document.getElementById('talent-hips').value;
+            const shoe = document.getElementById('talent-shoe').value;
+            const hair = document.getElementById('talent-hair').value;
+            const eyes = document.getElementById('talent-eyes').value;
+            const skills = document.getElementById('talent-skills').value;
+
+            if (!name || !category || !price) {
+                alert('يرجى ملء جميع الحقول المطلوبة');
+                return;
+            }
+
+            if (editingTalentIndex !== null) {
+                talents[editingTalentIndex] = { ...talents[editingTalentIndex], name, category, price, gender, age, phone, instagram, tiktok, height, weight, chest, waist, hips, shoe, hair, eyes, skills };
+                if (currentDetailTalentIndex === editingTalentIndex) {
+                    showTalentDetail(editingTalentIndex);
+                }
+            } else {
+                talents.push({ id: Date.now(), name, category, price, gender, age, phone, instagram, tiktok, height, weight, chest, waist, hips, shoe, hair, eyes, skills });
+            }
+
+            localStorage.setItem('talents', JSON.stringify(talents));
+            localStorage.setItem('talentPhotos', JSON.stringify(currentTalentPhotos));
+            closeTalentModal();
+            renderTalents();
+            if (currentDetailTalentIndex !== null) {
+                showTalentDetail(currentDetailTalentIndex);
+            }
+        }
+
+        function deleteTalent(event, index) {
+            event.stopPropagation();
+            if (confirm('هل تريد حذف هذا الموديل؟')) {
+                talents.splice(index, 1);
+                renderTalents();
+            }
+        }
+
+        function closeTalentModal() {
+            document.getElementById('talent-modal').classList.remove('active');
+            editingTalentIndex = null;
+        }
+
+        function showTalentDetail(index) {
+            currentDetailTalentIndex = index;
+            const talent = talents[index];
+            const talentId = talent.id || index;
+
+            document.getElementById('detail-name').textContent = talent.name;
+            document.getElementById('detail-category').textContent = talent.category;
+            document.getElementById('detail-category-value').textContent = talent.category;
+            document.getElementById('detail-price').textContent = `${talent.price} KD`;
+            document.getElementById('detail-gender').textContent = talent.gender;
+            document.getElementById('detail-age').textContent = talent.age;
+            document.getElementById('detail-phone').textContent = talent.phone;
+
+            const photos = currentTalentPhotos[talentId] || [];
+            const detailImage = document.getElementById('detail-emoji');
+            if (photos.length > 0) {
+                detailImage.innerHTML = `<img src="${photos[0]}" alt="صورة">`;
+            } else {
+                detailImage.textContent = '';
+            }
+
+            document.getElementById('talent-detail').classList.add('active');
+            document.getElementById('talents-tab').classList.remove('active');
+
+            updateFavoriteButton();
+            renderPhotos();
+            setupPhotoUpload();
+        }
+
+        function toggleFavoriteFromCard(index) {
+            event.stopPropagation();
+            talents[index].isFavorite = !talents[index].isFavorite;
+            localStorage.setItem('talents', JSON.stringify(talents));
+            renderTalents();
+            renderStats();
+        }
+
+        function toggleFavorite() {
+            if (currentDetailTalentIndex !== null) {
+                talents[currentDetailTalentIndex].isFavorite = !talents[currentDetailTalentIndex].isFavorite;
+                localStorage.setItem('talents', JSON.stringify(talents));
+                updateFavoriteButton();
+                renderTalents();
+                renderStats();
+            }
+        }
+
+        function updateFavoriteButton() {
+            const btn = document.getElementById('favorite-btn');
+            if (talents[currentDetailTalentIndex].isFavorite) {
+                btn.textContent = 'إزالة من المفضلة';
+                btn.style.background = 'linear-gradient(135deg, #f093fb, #f5576c)';
+            } else {
+                btn.textContent = 'إضافة للمفضلة';
+                btn.style.background = 'linear-gradient(135deg, #667eea, #764ba2)';
+            }
+        }
+
+
+
+        function backToTalents() {
+            document.getElementById('talent-detail').classList.remove('active');
+            document.getElementById('talents-tab').classList.add('active');
+            currentDetailTalentIndex = null;
+        }
+
+        function renderPhotos() {
+            if (currentDetailTalentIndex === null) return;
+
+            const talentId = talents[currentDetailTalentIndex].id || currentDetailTalentIndex;
+            const photos = currentTalentPhotos[talentId] || [];
+            const grid = document.getElementById('photos-grid');
+            if (!grid) return;
+
+            grid.innerHTML = photos.map((photo, index) => `
+                <div class="photo-item">
+                    <img src="${photo}" alt="صورة">
+                    <button type="button" class="photo-delete-btn" onclick="deletePhoto(${index})">×</button>
+                </div>
+            `).join('');
+        }
+
+        function setupPhotoUpload() {
+            const uploadArea = document.getElementById('photo-upload-area');
+            if (uploadArea) {
+                uploadArea.onclick = () => document.getElementById('photo-input').click();
+            }
+        }
+
+        function handlePhotoDrop(event) {
+            event.preventDefault();
+            const files = event.dataTransfer.files;
+            handlePhotoFiles(files);
+        }
+
+        function handlePhotoSelect() {
+            const files = document.getElementById('photo-input').files;
+            handlePhotoFiles(files);
+        }
+
+        function handlePhotoFiles(files) {
+            if (currentDetailTalentIndex === null) return;
+
+            const talentId = talents[currentDetailTalentIndex].id || currentDetailTalentIndex;
+            if (!currentTalentPhotos[talentId]) {
+                currentTalentPhotos[talentId] = [];
+            }
+
+            Array.from(files).forEach(file => {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    currentTalentPhotos[talentId].push(e.target.result);
+                    localStorage.setItem('talentPhotos', JSON.stringify(currentTalentPhotos));
+                    renderPhotos();
+                    renderTalents();
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+
+        function deletePhoto(index) {
+            if (currentDetailTalentIndex === null) return;
+
+            const talentId = talents[currentDetailTalentIndex].id || currentDetailTalentIndex;
+            currentTalentPhotos[talentId].splice(index, 1);
+            localStorage.setItem('talentPhotos', JSON.stringify(currentTalentPhotos));
+            renderPhotos();
+            renderTalents();
+        }
+
+        let selectedTalents = [];
+        let selectionMode = false;
+
+        function toggleSelectionMode() {
+            selectionMode = !selectionMode;
+            const btn = document.getElementById('selection-mode-btn');
+            if (selectionMode) {
+                btn.style.background = 'var(--primary)';
+                btn.style.color = 'white';
+                selectedTalents = [];
+            } else {
+                btn.style.background = 'var(--surface-alt)';
+                btn.style.color = 'var(--text)';
+                clearSelection();
+            }
+            renderTalents();
+        }
+
+        function toggleTalentSelection(index) {
+            if (!selectionMode) return;
+            
+            if (selectedTalents.includes(index)) {
+                selectedTalents = selectedTalents.filter(i => i !== index);
+            } else {
+                selectedTalents.push(index);
+            }
+            renderTalents();
+            updateBulkActionButtons();
+        }
+
+        function updateBulkActionButtons() {
+            const bulkActions = document.getElementById('bulk-actions');
+            if (selectedTalents.length > 0) {
+                if (!bulkActions) {
+                    const container = document.getElementById('talents-list').parentElement;
+                    const actions = document.createElement('div');
+                    actions.id = 'bulk-actions';
+                    actions.style.cssText = 'display: flex; gap: 12px; margin-top: 16px; padding: 16px; background: var(--surface); border-radius: 8px;';
+                    actions.innerHTML = `
+                        <button class="btn btn-primary" onclick="bulkAddToNewProject()" style="flex: 1;">إضافة لمشروع جديد</button>
+                        <button class="btn btn-secondary" onclick="bulkAddToExistingProject()" style="flex: 1;">إضافة لمشروع حالي</button>
+                        <button class="btn btn-secondary" onclick="clearSelection()" style="flex: 1;">إلغاء التحديد</button>
+                    `;
+                    container.appendChild(actions);
+                }
+            } else if (bulkActions) {
+                bulkActions.remove();
+            }
+        }
+
+        function clearSelection() {
+            selectedTalents = [];
+            document.querySelectorAll('.talent-checkbox').forEach(cb => cb.checked = false);
+            updateBulkActionButtons();
+        }
+
+        function bulkAddToNewProject() {
+            selectedProjectTalents = selectedTalents;
+            openCreateProjectModal();
+        }
+
+        function bulkAddToExistingProject() {
+            if (projects.length === 0) {
+                alert('لا توجد مشاريع حالية. يرجى إنشاء مشروع أولاً');
+                return;
+            }
+            const projectIndex = prompt('اختر رقم المشروع (0-' + (projects.length - 1) + ')');
+            if (projectIndex !== null && projectIndex >= 0 && projectIndex < projects.length) {
+                selectedTalents.forEach(talentIndex => {
+                    const talentName = talents[talentIndex].name;
+                    if (!projects[projectIndex].talents.includes(talentName)) {
+                        projects[projectIndex].talents.push(talentName);
+                        projects[projectIndex].total += talents[talentIndex].price;
+                    }
+                });
+                localStorage.setItem('projects', JSON.stringify(projects));
+                clearSelection();
+                renderProjects();
+                alert('تم إضافة الموديلز للمشروع بنجاح');
+            }
+        }
+
+        function openWhatsApp(event, phone) {
+            event.stopPropagation();
+            const url = `https://wa.me/${phone}`;
+            window.open(url, '_blank');
+        }
+
+        function openWhatsAppFromPhone() {
+            const talent = talents[currentDetailTalentIndex];
+            if (talent && talent.phone) {
+                const url = `https://wa.me/${talent.phone}`;
+                window.open(url, '_blank');
+            }
+        }
+
+        function openWhatsAppFromDetail() {
+            openWhatsAppFromPhone();
+        }
+
+        function openSocialFromDetail(platform) {
+            const talent = talents[currentDetailTalentIndex];
+            const username = talent[platform];
+            if (!username) return;
+
+            const urls = {
+                instagram: `https://instagram.com/${username}`,
+                tiktok: `https://tiktok.com/@${username}`,
+                twitter: `https://twitter.com/${username}`,
+                facebook: `https://facebook.com/${username}`
+            };
+
+            window.open(urls[platform], '_blank');
+        }
+
+        function openCreateProjectModal() {
+            selectedProjectTalents = [];
+            document.getElementById('project-name').value = '';
+            document.getElementById('project-executing-company').value = '';
+            document.getElementById('project-producing-company').value = '';
+            document.getElementById('project-director').value = '';
+            document.getElementById('project-start-date').value = '';
+            document.getElementById('project-end-date').value = '';
+            document.getElementById('project-fitting-date').value = '';
+            document.getElementById('project-casting-date').value = '';
+            document.getElementById('project-notes').value = '';
+            document.getElementById('project-whatsapp-group').value = '';
+            document.getElementById('project-modal-title').textContent = 'إنشاء مشروع جديد';
+            document.getElementById('save-project-btn').textContent = 'إنشاء';
+            document.getElementById('save-project-btn').onclick = () => saveProject();
+            document.getElementById('editing-project-index').value = '';
+            renderTalentSelector();
+            document.getElementById('project-modal').classList.add('active');
+        }
+
+        function renderTalentSelector() {
+            const selector = document.getElementById('talent-selector');
+            selector.innerHTML = talents.map((talent, index) => `
+                <div style="padding: 8px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 12px;">
+                    <input type="checkbox" id="talent-check-${index}" onchange="updateProjectTotal()">
+                    <label for="talent-check-${index}" style="flex: 1; cursor: pointer;">${talent.name} - ${talent.price} KD</label>
+                </div>
+            `).join('');
+        }
+
+        function updateProjectTotal() {
+            let total = 0;
+            selectedProjectTalents = [];
+            talents.forEach((talent, index) => {
+                const checkbox = document.getElementById(`talent-check-${index}`);
+                if (checkbox && checkbox.checked) {
+                    total += talent.price;
+                    selectedProjectTalents.push(index);
+                }
+            });
+            document.getElementById('project-total').textContent = `KD ${total}`;
+        }
+
+        function saveProject(editIndex = null) {
+            const name = document.getElementById('project-name').value;
+            const executingCompany = document.getElementById('project-executing-company').value;
+            const producingCompany = document.getElementById('project-producing-company').value;
+            const director = document.getElementById('project-director').value;
+            const startDate = document.getElementById('project-start-date').value;
+            const endDate = document.getElementById('project-end-date').value;
+            const fittingDate = document.getElementById('project-fitting-date').value;
+            const castingDate = document.getElementById('project-casting-date').value;
+            const notes = document.getElementById('project-notes').value;
+            const whatsappGroup = document.getElementById('project-whatsapp-group').value;
+            
+            if (!name || selectedProjectTalents.length === 0) {
+                alert('يرجى إدخال اسم المشروع واختيار موديلز');
+                return;
+            }
+
+            let total = 0;
+            selectedProjectTalents.forEach(index => {
+                total += talents[index].price;
+            });
+
+            const projectData = {
+                id: editIndex !== null ? projects[editIndex].id : Date.now(),
+                name,
+                executingCompany,
+                producingCompany,
+                director,
+                startDate,
+                endDate,
+                fittingDate,
+                castingDate,
+                notes,
+                whatsappGroup,
+                talents: selectedProjectTalents.map(i => talents[i].name),
+                total
+            };
+
+            if (editIndex !== null) {
+                projects[editIndex] = projectData;
+            } else {
+                projects.push(projectData);
+            }
+            
+            localStorage.setItem('projects', JSON.stringify(projects));
+            closeProjectModal();
+            renderProjects();
+            renderStats();
+        }
+
+        function closeProjectModal() {
+            document.getElementById('project-modal').classList.remove('active');
+            // Reset modal to create mode
+            document.getElementById('project-modal-title').textContent = 'إنشاء مشروع جديد';
+            document.getElementById('save-project-btn').textContent = 'إنشاء';
+            document.getElementById('save-project-btn').onclick = () => saveProject();
+            document.getElementById('editing-project-index').value = '';
+            selectedProjectTalents = [];
+        }
+
+        function renderProjects() {
+            const list = document.getElementById('projects-list');
+            if (projects.length === 0) {
+                list.innerHTML = '<div class="empty-state"><div class="empty-state-icon">📭</div><div class="empty-state-title">لا توجد مشاريع</div></div>';
+                return;
+            }
+
+            list.innerHTML = projects.map((project, index) => `
+                <div class="settings-card">
+                    <div style="display: flex; justify-content: space-between; align-items: start;">
+                        <div>
+                            <div class="settings-card-title">${project.name}</div>
+                            <div style="color: var(--text-light); font-size: 14px; margin-bottom: 8px;">الموديلز: ${project.talents.join(', ')}</div>
+                            <div style="font-size: 18px; font-weight: 700; color: var(--primary);">KD ${project.total}</div>
+                        </div>
+                        <div style="display: flex; gap: 8px;">
+                            <button class="btn btn-primary btn-small" onclick="editProject(${index})">تعديل</button>
+                            <button class="btn btn-danger btn-small" onclick="deleteProject(${index})">حذف</button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function deleteProject(index) {
+            if (confirm('هل تريد حذف هذا المشروع؟')) {
+                projects.splice(index, 1);
+                localStorage.setItem('projects', JSON.stringify(projects));
+                renderProjects();
+                renderStats();
+            }
+        }
+        
+        function editProject(index) {
+            const project = projects[index];
+            selectedProjectTalents = [];
+            
+            // Find indices of talents in this project
+            project.talents.forEach(talentName => {
+                const talentIndex = talents.findIndex(t => t.name === talentName);
+                if (talentIndex !== -1) {
+                    selectedProjectTalents.push(talentIndex);
+                }
+            });
+            
+            document.getElementById('project-name').value = project.name;
+            document.getElementById('project-executing-company').value = project.executingCompany || '';
+            document.getElementById('project-producing-company').value = project.producingCompany || '';
+            document.getElementById('project-director').value = project.director || '';
+            document.getElementById('project-start-date').value = project.startDate || '';
+            document.getElementById('project-end-date').value = project.endDate || '';
+            document.getElementById('project-fitting-date').value = project.fittingDate || '';
+            document.getElementById('project-casting-date').value = project.castingDate || '';
+            document.getElementById('project-notes').value = project.notes || '';
+            document.getElementById('project-whatsapp-group').value = project.whatsappGroup || '';
+            
+            renderTalentSelector();
+            
+            // Check the selected talents
+            selectedProjectTalents.forEach(index => {
+                const checkbox = document.getElementById(`talent-check-${index}`);
+                if (checkbox) checkbox.checked = true;
+            });
+            
+            updateProjectTotal();
+            
+            // Update modal title and button
+            document.getElementById('project-modal-title').textContent = 'تعديل المشروع';
+            document.getElementById('save-project-btn').textContent = 'حفظ التعديلات';
+            document.getElementById('save-project-btn').onclick = () => saveProject(index);
+            
+            document.getElementById('project-modal').classList.add('active');
+            document.getElementById('editing-project-index').value = index;
+        }
+
+        function renderStats() {
+            const totalTalents = talents.length;
+            const totalProjects = projects.length;
+            const totalFavorites = talents.filter(t => t.isFavorite).length;
+            const activeTalents = talents.filter(t => projects.some(p => p.talents && p.talents.includes(t.id || talents.indexOf(t)))).length;
+            const avgPrice = totalTalents > 0 ? Math.round(talents.reduce((sum, t) => sum + (t.price || 0), 0) / totalTalents) : 0;
+            const categories = new Set(talents.map(t => t.category)).size;
+            const completedProjects = projects.filter(p => p.endDate && new Date(p.endDate) < new Date()).length;
+            const ongoingProjects = projects.filter(p => !p.endDate || new Date(p.endDate) >= new Date()).length;
+
+            document.getElementById('total-talents').textContent = totalTalents;
+            document.getElementById('total-projects').textContent = totalProjects;
+            document.getElementById('total-favorites').textContent = totalFavorites;
+            document.getElementById('active-talents').textContent = activeTalents;
+            document.getElementById('avg-price').textContent = avgPrice + ' KD';
+            document.getElementById('total-categories').textContent = categories;
+            document.getElementById('completed-projects').textContent = completedProjects;
+            document.getElementById('ongoing-projects').textContent = ongoingProjects;
+
+            document.getElementById('stats-grid').innerHTML = `
+                <div class="stat-card" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 24px; border-radius: 12px; box-shadow: var(--shadow-lg);">
+                    <div style="font-size: 14px; opacity: 0.9; margin-bottom: 8px;">إجمالي الموديلز</div>
+                    <div style="font-size: 32px; font-weight: bold;">${totalTalents}</div>
+                </div>
+                <div class="stat-card" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; padding: 24px; border-radius: 12px; box-shadow: var(--shadow-lg);">
+                    <div style="font-size: 14px; opacity: 0.9; margin-bottom: 8px;">إجمالي المشاريع</div>
+                    <div style="font-size: 32px; font-weight: bold;">${totalProjects}</div>
+                </div>
+                <div class="stat-card" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white; padding: 24px; border-radius: 12px; box-shadow: var(--shadow-lg);">
+                    <div style="font-size: 14px; opacity: 0.9; margin-bottom: 8px;">الموديلز المفضلة</div>
+                    <div style="font-size: 32px; font-weight: bold;">${totalFavorites}</div>
+                </div>
+
+            `;
+            
+            renderCalendar();
+        }
+        
+        function renderCalendar() {
+            const calendarView = document.getElementById('calendar-view');
+            if (!calendarView) return;
+            
+            const projectsByDate = {};
+            projects.forEach(project => {
+                if (project.startDate) {
+                    const date = new Date(project.startDate).toLocaleDateString('en-US');
+                    if (!projectsByDate[date]) projectsByDate[date] = [];
+                    projectsByDate[date].push(project);
+                }
+            });
+            
+            const html = Object.entries(projectsByDate).map(([date, prjs]) => `
+                <div style="background: var(--surface-alt); padding: 12px; border-radius: 8px; border: 1px solid var(--border);">
+                    <div style="font-weight: 600; color: var(--primary); margin-bottom: 8px;">${date}</div>
+                    <div style="font-size: 12px; color: var(--muted);">${prjs.length} project</div>
+                </div>
+            `).join('');
+            
+            calendarView.innerHTML = html || '<div style="grid-column: 1/-1; text-align: center; color: var(--muted); padding: 20px;">No scheduled projects</div>';
+        }
+
+        function toggleDarkMode() {
+            document.body.classList.toggle('dark-mode');
+            localStorage.setItem('darkMode', document.body.classList.contains('dark-mode'));
+        }
+
+        function saveSettings() {
+            const settings = {
+                profitMargin: document.getElementById('profit-margin').value
+            };
+            localStorage.setItem('settings', JSON.stringify(settings));
+        }
+
+        function loadSettings() {
+            const settings = JSON.parse(localStorage.getItem('settings') || '{}');
+            const profitMarginEl = document.getElementById('profit-margin');
+            if (profitMarginEl) profitMarginEl.value = settings.profitMargin || 20;
+            
+            const savedTitle = localStorage.getItem('webTitle') || 'Talent Manager';
+            const webTitleEl = document.getElementById('web-title');
+            if (webTitleEl) webTitleEl.value = savedTitle;
+            document.title = savedTitle;
+            
+            const savedLogo = localStorage.getItem('appLogo');
+            if (savedLogo) {
+                const logoContent = document.getElementById('logo-preview-content');
+                logoContent.innerHTML = '<img src="' + savedLogo + '" style="width: 100%; height: 100%; object-fit: cover;">';
+                updateFavicon(savedLogo);
+            }
+            
+            updateSiteTitle();
+        }
+
+        function saveWebTitle() {
+            const title = document.getElementById('web-title').value || 'Talent Manager';
+            localStorage.setItem('webTitle', title);
+            document.title = title;
+            updateSiteTitle();
+        }
+        
+        function updateSiteTitle() {
+            const title = localStorage.getItem('webTitle') || 'Talent Manager';
+            const siteTitle = document.querySelector('h1');
+            if (siteTitle) siteTitle.textContent = title;
+        }
+        
+        function handleLogoUpload() {
+            const file = document.getElementById('logo-upload').files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const logoData = e.target.result;
+                    localStorage.setItem('appLogo', logoData);
+                    const logoContent = document.getElementById('logo-preview-content');
+                    logoContent.innerHTML = '<img src="' + logoData + '" style="width: 100%; height: 100%; object-fit: cover;">';
+                    updateFavicon(logoData);
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+        
+        function updateFavicon(logoData) {
+            const favicon = document.getElementById('favicon');
+            const appleIcon = document.getElementById('apple-icon');
+            if (favicon) favicon.href = logoData;
+            if (appleIcon) appleIcon.href = logoData;
+        }
+
+        function clearAllData() {
+            if (confirm('هل تريد حذف جميع البيانات؟ هذا الإجراء غير قابل للتراجع!')) {
+                talents = [];
+                projects = [];
+                currentTalentPhotos = {};
+                renderTalents();
+                renderProjects();
+                localStorage.clear();
+            }
+        }
+
+        // Initialize
+        loadSettings();
+        
+        // Apply theme on page load
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        setTheme(savedTheme);
+        // Set the correct radio button
+        const themeRadios = document.querySelectorAll('input[name="theme"]');
+        themeRadios.forEach(radio => {
+            radio.checked = radio.value === savedTheme;
+        });
+        
+        const savedColor = localStorage.getItem('primaryColor') || '#667eea';
+        document.documentElement.style.setProperty('--primary', savedColor);
+        const colorInput = document.getElementById('primary-color');
+        if (colorInput) colorInput.value = savedColor;
+        document.getElementById('color-value').textContent = savedColor;
+        
+        const savedCardSize = localStorage.getItem('cardSize') || '100';
+        document.getElementById('card-size').value = savedCardSize;
+        updateCardSize();
+        
+        const savedPhotos = localStorage.getItem('talentPhotos');
+        if (savedPhotos) {
+            try {
+                currentTalentPhotos = JSON.parse(savedPhotos);
+            } catch (e) {
+                currentTalentPhotos = {};
+            }
+        }
+        
+        renderTalents();
+        renderStats();
+        loadMenuNames();
+        setLastUpdateDate();
+    
+        function setTheme(theme) {
+            localStorage.setItem('theme', theme);
+            if (theme === 'dark') {
+                document.body.classList.add('dark-mode');
+            } else {
+                document.body.classList.remove('dark-mode');
+            }
+        }
+
+        function changePrimaryColor() {
+            const color = document.getElementById('primary-color').value;
+            document.documentElement.style.setProperty('--primary', color);
+            document.getElementById('color-value').textContent = color;
+            localStorage.setItem('primaryColor', color);
+        }
+
+        function exportData() {
+            const profitMarginEl = document.getElementById('profit-margin');
+            const data = {
+                talents: talents,
+                projects: projects,
+                settings: {
+                    profitMargin: profitMarginEl ? profitMarginEl.value : '20'
+                }
+            };
+            const json = JSON.stringify(data, null, 2);
+            const blob = new Blob([json], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'talent-manager-backup.json';
+            a.click();
+            alert('تم تصدير البيانات بنجاح');
+        }
+
+        function importData() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.json';
+            input.onchange = (e) => {
+                const file = e.target.files[0];
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    try {
+                        const data = JSON.parse(event.target.result);
+                        talents = data.talents || [];
+                        projects = data.projects || [];
+                        localStorage.setItem('talents', JSON.stringify(talents));
+                        localStorage.setItem('projects', JSON.stringify(projects));
+                        alert('تم استيراد البيانات بنجاح');
+                        renderTalents();
+                        renderStats();
+                    } catch (err) {
+                        alert('خطأ في قراءة الملف');
+                    }
+                };
+                reader.readAsText(file);
+            };
+            input.click();
+        }
+
+        function backupData() {
+            exportData();
+        }
+        
+        function saveMenuNames() {
+            const menuNames = {
+                talents: document.getElementById('talents-menu-name').value,
+                projects: document.getElementById('projects-menu-name').value,
+                dashboard: document.getElementById('dashboard-menu-name').value
+            };
+            localStorage.setItem('menuNames', JSON.stringify(menuNames));
+        }
+        
+        function loadMenuNames() {
+            const menuNames = JSON.parse(localStorage.getItem('menuNames') || '{}');
+            if (menuNames.talents) document.getElementById('talents-menu-name').value = menuNames.talents;
+            if (menuNames.projects) document.getElementById('projects-menu-name').value = menuNames.projects;
+            if (menuNames.dashboard) document.getElementById('dashboard-menu-name').value = menuNames.dashboard;
+        }
+
+        // Load last update date
+        function setLastUpdateDate() {
+            const today = new Date().toLocaleDateString('ar-SA');
+            const lastUpdateEl = document.getElementById('last-update');
+            if (lastUpdateEl) lastUpdateEl.textContent = today;
+        }
+
+        loadSettings();
+        
+        let currentMonth = new Date().getMonth();
+        let currentYear = new Date().getFullYear();
+        
+        function renderCalendarGrid() {
+            const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+            const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+            
+            document.getElementById('calendar-header').innerHTML = dayNames.map(d => `<div style="text-align: center; padding: 8px; font-weight: bold; color: var(--primary);">${d}</div>`).join('');
+            
+            const firstDay = new Date(currentYear, currentMonth, 1).getDay();
+            const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+            
+            let html = '';
+            for (let i = 0; i < firstDay; i++) {
+                html += '<div></div>';
+            }
+            
+            for (let day = 1; day <= daysInMonth; day++) {
+                const dateObj = new Date(currentYear, currentMonth, day);
+                const dateStr = dateObj.toLocaleDateString('en-US');
+                const projectsOnDay = projects.filter(p => p.startDate && new Date(p.startDate).toLocaleDateString('en-US') === dateStr);
+                const hasProject = projectsOnDay.length > 0;
+                
+                const isToday = new Date().toLocaleDateString('en-US') === dateStr;
+                const bgColor = (isToday || hasProject) ? 'var(--primary)' : 'transparent';
+                const textColor = (isToday || hasProject) ? 'white' : 'var(--text)';
+                html += `<div style="padding: 12px 4px; border-radius: 8px; text-align: center; background: ${bgColor}; color: ${textColor}; cursor: pointer; font-weight: 500; min-height: 50px; display: flex; flex-direction: column; justify-content: center;">${day}${hasProject ? '<div style="font-size: 9px; margin-top: 2px;">' + projectsOnDay.length + ' event</div>' : ''}</div>`;
+            }
+            
+            document.getElementById('calendar-grid').innerHTML = html;
+            
+            const monthYear = document.getElementById('calendar-title');
+            if (monthYear) {
+                monthYear.textContent = monthNames[currentMonth] + ' ' + currentYear;
+            }
+        }
+        
+        function previousMonth() {
+            currentMonth--;
+            if (currentMonth < 0) {
+                currentMonth = 11;
+                currentYear--;
+            }
+            renderCalendarGrid();
+        }
+        
+        function nextMonth() {
+            currentMonth++;
+            if (currentMonth > 11) {
+                currentMonth = 0;
+                currentYear++;
+            }
+            renderCalendarGrid();
+        }
+</script>
+</body>
+</html>
