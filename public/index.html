@@ -246,12 +246,25 @@
       justify-content: center;
       font-size: 80px;
       overflow: hidden;
+      position: relative;
     }
     
     .card-image img {
       width: 100%;
       height: 100%;
       object-fit: cover;
+    }
+    
+    .card-image-count {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      background: rgba(0,0,0,0.6);
+      color: white;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
     }
     
     .card-body {
@@ -335,7 +348,13 @@
       background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
     }
     
-    .detail-image {
+    .detail-image-section {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+    
+    .detail-main-image {
       width: 100%;
       height: 400px;
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -345,12 +364,70 @@
       justify-content: center;
       font-size: 120px;
       overflow: hidden;
+      position: relative;
     }
     
-    .detail-image img {
+    .detail-main-image img {
       width: 100%;
       height: 100%;
       object-fit: cover;
+    }
+    
+    .gallery-thumbnails {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+    }
+    
+    .gallery-thumb {
+      width: 100%;
+      height: 80px;
+      background: var(--bg);
+      border-radius: 8px;
+      cursor: pointer;
+      border: 2px solid transparent;
+      transition: all 0.2s;
+      overflow: hidden;
+      position: relative;
+    }
+    
+    .gallery-thumb:hover {
+      border-color: var(--primary);
+      transform: scale(1.05);
+    }
+    
+    .gallery-thumb.active {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(10, 126, 164, 0.2);
+    }
+    
+    .gallery-thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    
+    .gallery-thumb-delete {
+      position: absolute;
+      top: 2px;
+      right: 2px;
+      background: rgba(239, 68, 68, 0.9);
+      color: white;
+      border: none;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+    
+    .gallery-thumb:hover .gallery-thumb-delete {
+      opacity: 1;
     }
     
     .detail-info h1 {
@@ -463,10 +540,127 @@
       display: flex;
       align-items: center;
       gap: 8px;
+      transition: all 0.2s;
     }
     
     .back-btn:hover {
       gap: 12px;
+    }
+    
+    /* Photo Gallery Section */
+    .photo-gallery-section {
+      margin-top: 40px;
+    }
+    
+    .photo-upload-area {
+      border: 2px dashed var(--border);
+      border-radius: 12px;
+      padding: 30px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      background: var(--bg);
+    }
+    
+    .photo-upload-area:hover {
+      border-color: var(--primary);
+      background: rgba(10, 126, 164, 0.05);
+    }
+    
+    .photo-upload-area.dragover {
+      border-color: var(--primary);
+      background: rgba(10, 126, 164, 0.1);
+    }
+    
+    .upload-icon {
+      font-size: 48px;
+      margin-bottom: 12px;
+    }
+    
+    .upload-text {
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+    
+    .upload-subtext {
+      color: var(--text-light);
+      font-size: 13px;
+    }
+    
+    .photo-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 15px;
+      margin-top: 20px;
+    }
+    
+    .photo-item {
+      position: relative;
+      border-radius: 8px;
+      overflow: hidden;
+      background: var(--bg);
+      aspect-ratio: 1;
+      cursor: grab;
+      transition: all 0.2s;
+      border: 2px solid transparent;
+    }
+    
+    .photo-item:hover {
+      border-color: var(--primary);
+      transform: scale(1.02);
+    }
+    
+    .photo-item.dragging {
+      opacity: 0.5;
+      cursor: grabbing;
+    }
+    
+    .photo-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    
+    .photo-item-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+    
+    .photo-item:hover .photo-item-overlay {
+      opacity: 1;
+    }
+    
+    .photo-item-btn {
+      background: white;
+      border: none;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      transition: all 0.2s;
+    }
+    
+    .photo-item-btn:hover {
+      transform: scale(1.1);
+    }
+    
+    .photo-item-delete {
+      background: var(--danger);
+      color: white;
     }
     
     /* Modal */
@@ -550,6 +744,10 @@
     
     .form-actions .btn {
       flex: 1;
+    }
+    
+    .file-input {
+      display: none;
     }
     
     /* Dashboard */
@@ -753,9 +951,32 @@
     </div>
   </div>
 
+  <!-- Photo Upload Modal -->
+  <div class="modal" id="photo-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>إضافة صور</h2>
+        <button class="modal-close" onclick="closePhotoModal()">×</button>
+      </div>
+      <div class="photo-upload-area" id="upload-area" ondrop="handleDrop(event)" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" onclick="document.getElementById('photo-input').click()">
+        <div class="upload-icon">📸</div>
+        <div class="upload-text">اسحب الصور هنا أو انقر للاختيار</div>
+        <div class="upload-subtext">PNG, JPG, GIF (الحد الأقصى 5 ميجابايت)</div>
+      </div>
+      <input type="file" id="photo-input" class="file-input" multiple accept="image/*" onchange="handlePhotoSelect(event)">
+      <div class="photo-grid" id="photo-grid"></div>
+      <div style="margin-top: 20px; display: flex; gap: 10px;">
+        <button class="btn btn-primary" onclick="uploadPhotos()" style="flex: 1;">✓ تم</button>
+        <button class="btn btn-secondary" onclick="closePhotoModal()" style="flex: 1;">إلغاء</button>
+      </div>
+    </div>
+  </div>
+
   <script>
     let talents = JSON.parse(localStorage.getItem('talents')) || [];
     let editingId = null;
+    let currentTalentPhotos = [];
+    let draggedPhotoIndex = null;
 
     // Sample data
     if (talents.length === 0) {
@@ -778,7 +999,8 @@
           twitter: '@mahmoud',
           facebook: 'mahmoud',
           notes: 'موديل محترف',
-          emoji: '👨'
+          emoji: '👨',
+          photos: []
         },
         {
           id: 2,
@@ -798,7 +1020,8 @@
           twitter: '@fatima',
           facebook: 'fatima',
           notes: 'عارضة محترفة',
-          emoji: '👩'
+          emoji: '👩',
+          photos: []
         },
         {
           id: 3,
@@ -818,7 +1041,8 @@
           twitter: '@ahmed',
           facebook: 'ahmed',
           notes: 'مؤثر شهير',
-          emoji: '👨'
+          emoji: '👨',
+          photos: []
         }
       ];
       saveTalents();
@@ -845,7 +1069,12 @@
       
       grid.innerHTML = filtered.map(t => `
         <div class="card" onclick="showDetail(${t.id})">
-          <div class="card-image">${t.emoji}</div>
+          <div class="card-image">
+            ${t.photos && t.photos.length > 0 ? `
+              <img src="${t.photos[0]}" alt="${t.name}">
+              <div class="card-image-count">📸 ${t.photos.length}</div>
+            ` : t.emoji}
+          </div>
           <div class="card-body">
             <div class="card-category">${t.category}</div>
             <div class="card-title">${t.name}</div>
@@ -874,12 +1103,25 @@
       if (!talent) return;
 
       const stars = Array(5).fill().map((_, i) => i < talent.rating ? '★' : '☆').join('');
+      const mainPhoto = talent.photos && talent.photos.length > 0 ? talent.photos[0] : null;
       
       const detail = document.getElementById('detail-content');
       detail.innerHTML = `
         <div class="detail-page">
           <div class="detail-header">
-            <div class="detail-image">${talent.emoji}</div>
+            <div class="detail-image-section">
+              <div class="detail-main-image" id="main-image">
+                ${mainPhoto ? `<img src="${mainPhoto}" alt="${talent.name}">` : talent.emoji}
+              </div>
+              <div class="gallery-thumbnails" id="gallery-thumbs">
+                ${talent.photos && talent.photos.length > 0 ? talent.photos.map((photo, idx) => `
+                  <div class="gallery-thumb ${idx === 0 ? 'active' : ''}" onclick="switchMainImage('${photo}', this)">
+                    <img src="${photo}" alt="صورة ${idx + 1}">
+                    <button class="gallery-thumb-delete" onclick="event.stopPropagation(); deletePhoto(${id}, ${idx})">×</button>
+                  </div>
+                `).join('') : '<p style="color: var(--text-light); font-size: 13px;">لا توجد صور</p>'}
+              </div>
+            </div>
             <div class="detail-info">
               <h1>${talent.name}</h1>
               <div class="detail-category">${talent.category}</div>
@@ -918,6 +1160,11 @@
           </div>
           
           <div class="detail-content">
+            <div class="section photo-gallery-section">
+              <h3 class="section-title">معرض الصور</h3>
+              <button class="btn btn-primary" onclick="openPhotoModal(${id})" style="margin-bottom: 20px;">📸 إضافة صور</button>
+            </div>
+
             <div class="section">
               <h3 class="section-title">معلومات التواصل</h3>
               <div class="info-grid">
@@ -957,6 +1204,111 @@
 
       document.getElementById('talents-page').classList.remove('active');
       document.getElementById('detail-page').classList.add('active');
+    }
+
+    function switchMainImage(photo, element) {
+      document.getElementById('main-image').innerHTML = `<img src="${photo}" alt="صورة">`;
+      document.querySelectorAll('.gallery-thumb').forEach(t => t.classList.remove('active'));
+      element.classList.add('active');
+    }
+
+    function openPhotoModal(talentId) {
+      const talent = talents.find(t => t.id === talentId);
+      if (!talent) return;
+      
+      editingId = talentId;
+      currentTalentPhotos = [...(talent.photos || [])];
+      renderPhotoGrid();
+      document.getElementById('photo-modal').classList.add('active');
+    }
+
+    function closePhotoModal() {
+      document.getElementById('photo-modal').classList.remove('active');
+      document.getElementById('photo-input').value = '';
+      currentTalentPhotos = [];
+    }
+
+    function handleDragOver(e) {
+      e.preventDefault();
+      document.getElementById('upload-area').classList.add('dragover');
+    }
+
+    function handleDragLeave(e) {
+      e.preventDefault();
+      document.getElementById('upload-area').classList.remove('dragover');
+    }
+
+    function handleDrop(e) {
+      e.preventDefault();
+      document.getElementById('upload-area').classList.remove('dragover');
+      const files = e.dataTransfer.files;
+      handlePhotoSelect({ target: { files } });
+    }
+
+    function handlePhotoSelect(e) {
+      const files = Array.from(e.target.files);
+      files.forEach(file => {
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          currentTalentPhotos.push(event.target.result);
+          renderPhotoGrid();
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+
+    function renderPhotoGrid() {
+      const grid = document.getElementById('photo-grid');
+      grid.innerHTML = currentTalentPhotos.map((photo, idx) => `
+        <div class="photo-item" draggable="true" ondragstart="startDrag(${idx})" ondragover="allowDrop(event)" ondrop="dropPhoto(${idx}, event)">
+          <img src="${photo}" alt="صورة ${idx + 1}">
+          <div class="photo-item-overlay">
+            <button class="photo-item-btn photo-item-delete" onclick="deletePhotoFromList(${idx})">🗑️</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function startDrag(idx) {
+      draggedPhotoIndex = idx;
+    }
+
+    function allowDrop(e) {
+      e.preventDefault();
+    }
+
+    function dropPhoto(idx, e) {
+      e.preventDefault();
+      if (draggedPhotoIndex !== null && draggedPhotoIndex !== idx) {
+        const temp = currentTalentPhotos[draggedPhotoIndex];
+        currentTalentPhotos[draggedPhotoIndex] = currentTalentPhotos[idx];
+        currentTalentPhotos[idx] = temp;
+        renderPhotoGrid();
+      }
+    }
+
+    function deletePhotoFromList(idx) {
+      currentTalentPhotos.splice(idx, 1);
+      renderPhotoGrid();
+    }
+
+    function deletePhoto(talentId, photoIdx) {
+      const talent = talents.find(t => t.id === talentId);
+      if (talent && talent.photos) {
+        talent.photos.splice(photoIdx, 1);
+        saveTalents();
+        showDetail(talentId);
+      }
+    }
+
+    function uploadPhotos() {
+      const talent = talents.find(t => t.id === editingId);
+      if (talent) {
+        talent.photos = currentTalentPhotos;
+        saveTalents();
+        showDetail(editingId);
+        closePhotoModal();
+      }
     }
 
     function openWhatsApp(phone, name) {
@@ -1074,7 +1426,8 @@
       } else {
         talents.push({
           id: Math.max(...talents.map(t => t.id), 0) + 1,
-          ...data
+          ...data,
+          photos: []
         });
       }
 
@@ -1102,6 +1455,7 @@
     function renderDashboard() {
       const stats = document.getElementById('stats');
       const totalPrice = talents.reduce((sum, t) => sum + t.price, 0);
+      const totalPhotos = talents.reduce((sum, t) => sum + (t.photos ? t.photos.length : 0), 0);
       
       stats.innerHTML = `
         <div class="stat-card">
@@ -1115,6 +1469,10 @@
         <div class="stat-card" style="border-left-color: #ffc107;">
           <div class="stat-label">متوسط السعر</div>
           <div class="stat-value" style="color: #ffc107;">KD ${talents.length ? Math.round(totalPrice / talents.length) : 0}</div>
+        </div>
+        <div class="stat-card" style="border-left-color: #8b5cf6;">
+          <div class="stat-label">إجمالي الصور</div>
+          <div class="stat-value" style="color: #8b5cf6;">${totalPhotos}</div>
         </div>
       `;
     }
