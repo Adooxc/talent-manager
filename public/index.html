@@ -662,7 +662,7 @@
                 <button class="sidebar-toggle" onclick="toggleSidebar()" id="sidebar-toggle-btn" style="position: static; margin-right: 16px;">☰</button>
                 <div class="header-title" id="page-title">Talent Manager</div>
                 <div class="header-actions" id="header-actions">
-                    <button class="btn btn-primary" onclick="openAddTalentModal()" id="add-btn" style="display: none;">+ Add Talent</button>
+                    <button class="btn btn-primary" onclick="openAddTalentModal()" id="add-btn" style="display: none;">+ Add Model</button>
                 </div>
             </div>
 
@@ -674,10 +674,10 @@
                         <input type="text" id="search" placeholder="Search talents..." onkeyup="renderTalents()">
                         <select id="category" onchange="renderTalents()">
                             <option value="">All Categories</option>
-                            <option value="ممثلين">Actors</option>
-                            <option value="مؤثرين">Influencers</option>
-                            <option value="عارضين">Models</option>
-                            <option value="كومبارس">Extras</option>
+                            <option value="Actors">Actors</option>
+                            <option value="Influencers">Influencers</option>
+                            <option value="Models">Models</option>
+                            <option value="Extras">Extras</option>
                         </select>
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 12px;">
                             <button class="btn btn-primary" onclick="toggleAdvancedSearch()" style="width: 100%;">Advanced Search</button>
@@ -708,8 +708,8 @@
                                 <label class="form-label">Gender</label>
                                 <select id="gender-filter" class="form-input" onchange="renderTalents()">
                                     <option value="">All</option>
-                                    <option value="ذكر">Male</option>
-                                    <option value="أنثى">Female</option>
+                                    <option value="Male">Male</option>
+                                    <option value="Female">Female</option>
                                 </select>
                             </div>
 
@@ -1033,8 +1033,8 @@
                             <div class="talent-category" id="detail-category"></div>
                         </div>
                         <div style="display: flex; gap: 12px;">
-                            <button class="btn btn-primary" onclick="editTalentFromDetail()">تعديل</button>
-                            <button class="btn btn-secondary" onclick="backToTalents()">← العودة</button>
+                            <button class="btn btn-primary" onclick="editTalentFromDetail()">Edit</button>
+                            <button class="btn btn-secondary" onclick="backToTalents()">← Back</button>
                         </div>
                     </div>
 
@@ -1045,30 +1045,30 @@
                         <div style="flex: 1;">
                             <div class="detail-info">
                                 <div class="detail-info-item">
-                                    <div class="detail-info-label">الفئة</div>
+                                    <div class="detail-info-label">Category</div>
                                     <div class="detail-info-value" id="detail-category-value">-</div>
                                 </div>
                                 <div class="detail-info-item">
-                                    <div class="detail-info-label">السعر</div>
+                                    <div class="detail-info-label">Price</div>
                                     <div class="detail-info-value" id="detail-price">-</div>
                                 </div>
                                 <div class="detail-info-item">
-                                    <div class="detail-info-label">الجنس</div>
+                                    <div class="detail-info-label">Gender</div>
                                     <div class="detail-info-value" id="detail-gender">-</div>
                                 </div>
                                 <div class="detail-info-item">
-                                    <div class="detail-info-label">العمر</div>
+                                    <div class="detail-info-label">Age</div>
                                     <div class="detail-info-value" id="detail-age">-</div>
                                 </div>
                                 <div class="detail-info-item">
-                                    <div class="detail-info-label">رقم الهاتف</div>
+                                    <div class="detail-info-label">Phone</div>
                                     <div class="detail-info-value" id="detail-phone" style="cursor: pointer; color: var(--primary); text-decoration: underline;" onclick="openWhatsAppFromPhone()">-</div>
                                 </div>
 
                                 <div class="detail-info-item">
-                                    <div class="detail-info-label">المفضلة</div>
+                                    <div class="detail-info-label">Favorite</div>
                                     <div class="detail-info-value" id="detail-favorite">
-                                        <button class="btn" id="favorite-btn" style="background: linear-gradient(135deg, #f093fb, #f5576c); color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer;" onclick="toggleFavorite()">إضافة للمفضلة</button>
+                                        <button class="btn" id="favorite-btn" style="background: linear-gradient(135deg, #f093fb, #f5576c); color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer;" onclick="toggleFavorite()">Add to Favorites</button>
                                     </div>
                                 </div>
                             </div>
@@ -1082,9 +1082,9 @@
                     
                     <!-- Project History -->
                     <div style="background: var(--surface); border-radius: 12px; padding: 20px; border: 1px solid var(--border);">
-                        <h2 style="margin-bottom: 16px; color: var(--text);">المشاريع</h2>
+                        <h2 style="margin-bottom: 16px; color: var(--text);">Projects</h2>
                         <div id="detail-projects-list" style="display: grid; gap: 12px;"></div>
-                        <div id="no-projects" style="text-align: center; color: var(--muted); padding: 20px;">لم يشارك في أي مشاريع حتى الآن</div>
+                        <div id="no-projects" style="text-align: center; color: var(--muted); padding: 20px;">No projects yet</div>
                     </div>
 
                 </div>
@@ -1095,31 +1095,31 @@
     <!-- Add/Edit Talent Modal -->
     <div id="talent-modal" class="modal">
         <div class="modal-content">
-            <div class="modal-header" id="modal-title">إضافة موديل جديد</div>
+            <div class="modal-header" id="modal-title">Add New Model</div>
             <div class="form-group">
-                <label class="form-label">الاسم</label>
+                <label class="form-label">Name</label>
                 <input type="text" id="talent-name" class="form-input">
             </div>
             <div class="form-group">
-                <label class="form-label">الفئة</label>
+                <label class="form-label">Category</label>
                 <select id="talent-category" class="form-select">
-                    <option value="">اختر الفئة</option>
-                    <option value="ممثلين">ممثلين</option>
-                    <option value="مؤثرين">مؤثرين</option>
-                    <option value="عارضين">عارضين</option>
-                    <option value="كومبارس">كومبارس</option>
+                    <option value="">Select Category</option>
+                    <option value="Actors">Actors</option>
+                    <option value="Influencers">Influencers</option>
+                    <option value="Models">Models</option>
+                    <option value="Extras">Extras</option>
                 </select>
             </div>
             <div class="form-group">
-                <label class="form-label">السعر (KD)</label>
+                <label class="form-label">Price (KD)</label>
                 <input type="number" id="talent-price" class="form-input">
             </div>
             <div class="form-group">
-                <label class="form-label">الجنس</label>
+                <label class="form-label">Gender</label>
                 <select id="talent-gender" class="form-select">
-                    <option value="">اختر</option>
-                    <option value="ذكر">ذكر</option>
-                    <option value="أنثى">أنثى</option>
+                    <option value="">Select</option>
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
                 </select>
             </div>
             <div class="form-group">
@@ -1131,65 +1131,65 @@
                 <input type="number" id="talent-age" class="form-input" readonly style="background: var(--surface); cursor: not-allowed;">
             </div>
             <div class="form-group">
-                <label class="form-label">رقم الهاتف</label>
+                <label class="form-label">Phone</label>
                 <input type="tel" id="talent-phone" class="form-input">
             </div>
             <div class="form-group">
                 <label class="form-label">Instagram</label>
-                <input type="text" id="talent-instagram" class="form-input" placeholder="اسم المستخدم">
+                <input type="text" id="talent-instagram" class="form-input" placeholder="Username">
             </div>
             <div class="form-group">
                 <label class="form-label">TikTok</label>
-                <input type="text" id="talent-tiktok" class="form-input" placeholder="اسم المستخدم">
+                <input type="text" id="talent-tiktok" class="form-input" placeholder="Username">
             </div>
             <div style="border-top: 1px solid var(--border); padding-top: 16px; margin-top: 16px;">
-                <h3 style="font-size: 14px; font-weight: 600; margin-bottom: 12px; color: var(--primary);">المقاسات والبيانات الإضافية</h3>
+                <h3 style="font-size: 14px; font-weight: 600; margin-bottom: 12px; color: var(--primary);">Measurements and Additional Data</h3>
             </div>
             <div class="form-group">
-                <label class="form-label">الطول (سم)</label>
-                <input type="number" id="talent-height" class="form-input" placeholder="مثال: 180">
+                <label class="form-label">Height (cm)</label>
+                <input type="number" id="talent-height" class="form-input" placeholder="Example: 180">
             </div>
             <div class="form-group">
-                <label class="form-label">الوزن (كغ)</label>
-                <input type="number" id="talent-weight" class="form-input" placeholder="مثال: 75">
+                <label class="form-label">Weight (kg)</label>
+                <input type="number" id="talent-weight" class="form-input" placeholder="Example: 75">
             </div>
             <div class="form-group">
-                <label class="form-label">الصدر (سم)</label>
-                <input type="number" id="talent-chest" class="form-input" placeholder="مثال: 95">
+                <label class="form-label">Chest (cm)</label>
+                <input type="number" id="talent-chest" class="form-input" placeholder="Example: 95">
             </div>
             <div class="form-group">
-                <label class="form-label">الخصر (سم)</label>
-                <input type="number" id="talent-waist" class="form-input" placeholder="مثال: 82">
+                <label class="form-label">Waist (cm)</label>
+                <input type="number" id="talent-waist" class="form-input" placeholder="Example: 82">
             </div>
             <div class="form-group">
-                <label class="form-label">الأرداف (سم)</label>
-                <input type="number" id="talent-hips" class="form-input" placeholder="مثال: 92">
+                <label class="form-label">Hips (cm)</label>
+                <input type="number" id="talent-hips" class="form-input" placeholder="Example: 92">
             </div>
             <div class="form-group">
-                <label class="form-label">مقاس الحذاء</label>
-                <input type="number" id="talent-shoe" class="form-input" placeholder="مثال: 42">
+                <label class="form-label">Shoe Size</label>
+                <input type="number" id="talent-shoe" class="form-input" placeholder="Example: 42">
             </div>
             <div class="form-group">
-                <label class="form-label">لون الشعر</label>
-                <input type="text" id="talent-hair" class="form-input" placeholder="مثال: أسود، بني">
+                <label class="form-label">Hair Color</label>
+                <input type="text" id="talent-hair" class="form-input" placeholder="Example: Black, Brown">
             </div>
             <div class="form-group">
-                <label class="form-label">لون العيون</label>
-                <input type="text" id="talent-eyes" class="form-input" placeholder="مثال: أسود، أزرق">
+                <label class="form-label">Eye Color</label>
+                <input type="text" id="talent-eyes" class="form-input" placeholder="Example: Black, Blue">
             </div>
             <div class="form-group">
-                <label class="form-label">المهارات والخبرات</label>
-                <textarea id="talent-skills" class="form-input" placeholder="مثال: تمثيل، رقص، عرض أزياء" style="min-height: 60px; resize: vertical;"></textarea>
+                <label class="form-label">Skills and Experience</label>
+                <textarea id="talent-skills" class="form-input" placeholder="Example: Acting, Dancing, Fashion Show" style="min-height: 60px; resize: vertical;"></textarea>
             </div>
             <div class="form-group">
-                <label class="form-label">الصورة</label>
+                <label class="form-label">Photo</label>
                 <input type="file" id="talent-photo" class="form-input" accept="image/*" onchange="handleTalentPhotoUpload()">
-                <small style="color: var(--text-light); margin-top: 4px; display: block;">اختر صورة للموديل</small>
+                <small style="color: var(--text-light); margin-top: 4px; display: block;">Select a photo for the model</small>
                 <div id="talent-photo-preview" style="margin-top: 8px;"></div>
             </div>
             <div class="form-actions">
-                <button class="btn btn-primary" onclick="saveTalent()">حفظ</button>
-                <button class="btn btn-secondary" onclick="closeTalentModal()">إلغاء</button>
+                <button class="btn btn-primary" onclick="saveTalent()">Save</button>
+                <button class="btn btn-secondary" onclick="closeTalentModal()">Cancel</button>
             </div>
         </div>
     </div>
@@ -1197,60 +1197,60 @@
     <!-- Project Modal -->
     <div id="project-modal" class="modal">
         <div class="modal-content" style="max-height: 90vh; overflow-y: auto;">
-            <div class="modal-header" id="project-modal-title">إنشاء مشروع جديد</div>
+            <div class="modal-header" id="project-modal-title">Create New Project</div>
             <input type="hidden" id="editing-project-index" value="">
             <div class="form-group">
-                <label class="form-label">اسم المشروع</label>
+                <label class="form-label">Project Name</label>
                 <input type="text" id="project-name" class="form-input">
             </div>
             <div class="form-group">
-                <label class="form-label">الشركة المنفذة</label>
-                <input type="text" id="project-executing-company" class="form-input" placeholder="اسم الشركة المنفذة">
+                <label class="form-label">Executing Company</label>
+                <input type="text" id="project-executing-company" class="form-input" placeholder="Executing Company name">
             </div>
             <div class="form-group">
-                <label class="form-label">الشركة المنتجة</label>
-                <input type="text" id="project-producing-company" class="form-input" placeholder="اسم الشركة المنتجة">
+                <label class="form-label">Producing Company</label>
+                <input type="text" id="project-producing-company" class="form-input" placeholder="Producing Company name">
             </div>
             <div class="form-group">
-                <label class="form-label">اسم المخرج</label>
-                <input type="text" id="project-director" class="form-input" placeholder="اسم المخرج">
+                <label class="form-label">Director Name</label>
+                <input type="text" id="project-director" class="form-input" placeholder="Director Name">
             </div>
             <div class="form-group">
-                <label class="form-label">تاريخ البداية</label>
+                <label class="form-label">Start Date</label>
                 <input type="date" id="project-start-date" class="form-input">
             </div>
             <div class="form-group">
-                <label class="form-label">تاريخ النهاية</label>
+                <label class="form-label">End Date</label>
                 <input type="date" id="project-end-date" class="form-input">
             </div>
             <div class="form-group">
-                <label class="form-label">تاريخ الفيتنق (Fitting)</label>
+                <label class="form-label">Fitting Date</label>
                 <input type="date" id="project-fitting-date" class="form-input">
             </div>
             <div class="form-group">
-                <label class="form-label">تاريخ الكاستنق (Casting)</label>
+                <label class="form-label">Casting Date</label>
                 <input type="date" id="project-casting-date" class="form-input">
             </div>
             <div class="form-group">
-                <label class="form-label">ملاحظات</label>
-                <textarea id="project-notes" class="form-input" placeholder="ملاحظات إضافية عن المشروع" style="min-height: 60px; resize: vertical;"></textarea>
+                <label class="form-label">Notes</label>
+                <textarea id="project-notes" class="form-input" placeholder="Additional notes about the project" style="min-height: 60px; resize: vertical;"></textarea>
             </div>
             <div class="form-group">
-                <label class="form-label">رابط قروب واتساب</label>
+                <label class="form-label">WhatsApp Group Link</label>
                 <input type="text" id="project-whatsapp-group" class="form-input" placeholder="https://chat.whatsapp.com/...">
-                <small style="color: var(--text-light); margin-top: 4px; display: block;">رابط قروب الواتساب الخاص بالمشروع</small>
+                <small style="color: var(--text-light); margin-top: 4px; display: block;">Project WhatsApp Group Link</small>
             </div>
             <div class="form-group">
-                <label class="form-label">اختر الموديلز</label>
+                <label class="form-label">Select Models</label>
                 <div id="talent-selector" style="max-height: 300px; overflow-y: auto; border: 1px solid var(--border); border-radius: 8px; padding: 12px;"></div>
             </div>
             <div style="background: var(--surface-alt); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
-                <div style="font-size: 14px; color: var(--text-light);">التكلفة الإجمالية</div>
+                <div style="font-size: 14px; color: var(--text-light);">Total Cost</div>
                 <div style="font-size: 24px; font-weight: 700; color: var(--primary);" id="project-total">KD 0</div>
             </div>
             <div class="form-actions">
-                <button class="btn btn-primary" id="save-project-btn" onclick="saveProject()">إنشاء</button>
-                <button class="btn btn-secondary" onclick="closeProjectModal()">إلغاء</button>
+                <button class="btn btn-primary" id="save-project-btn" onclick="saveProject()">Create</button>
+                <button class="btn btn-secondary" onclick="closeProjectModal()">Cancel</button>
             </div>
         </div>
     </div>
@@ -1260,9 +1260,9 @@
         let categories = JSON.parse(localStorage.getItem('categories') || '["Actors", "Influencers", "Models", "Extras"]');
         
         let talents = [
-            { id: 1, name: 'أحمد علي', category: 'ممثلين', price: 7000, gender: 'ذكر', age: 25, phone: '501234567', instagram: 'ahmed_ali', tiktok: 'ahmed_ali', height: '180', weight: '75', chest: '95', waist: '82', hips: '92', shoe: '42', hair: 'بني', eyes: 'بني', skills: 'تمثيل، رقص', rating: 4.5, isFavorite: false, projects: [] },
-            { id: 2, name: 'فاطمة محمد', category: 'عارضين', price: 8000, gender: 'أنثى', age: 22, phone: '502345678', instagram: 'fatima_m', tiktok: 'fatima_m', height: '175', weight: '62', chest: '88', waist: '65', hips: '90', shoe: '38', hair: 'أسود', eyes: 'أسود', skills: 'عرض أزياء، تصوير', rating: 5, isFavorite: true, projects: [] },
-            { id: 3, name: 'محمود حسن', category: 'كومبارس', price: 3000, gender: 'ذكر', age: 30, phone: '503456789', instagram: 'mahmoud_h', tiktok: 'mahmoud_h', height: '178', weight: '80', chest: '100', waist: '85', hips: '95', shoe: '43', hair: 'أسود', eyes: 'بني', skills: 'تمثيل، كومبارس', rating: 3.5, isFavorite: false, projects: [] }
+            { id: 1, name: 'Ahmed Ali', category: 'Actors', price: 7000, gender: 'Male', age: 25, phone: '501234567', instagram: 'ahmed_ali', tiktok: 'ahmed_ali', height: '180', weight: '75', chest: '95', waist: '82', hips: '92', shoe: '42', hair: 'Brown', eyes: 'Brown', skills: 'Acting, Dancing', rating: 4.5, isFavorite: false, projects: [] },
+            { id: 2, name: 'Fatima Mohamed', category: 'Models', price: 8000, gender: 'Female', age: 22, phone: '502345678', instagram: 'fatima_m', tiktok: 'fatima_m', height: '175', weight: '62', chest: '88', waist: '65', hips: '90', shoe: '38', hair: 'Black', eyes: 'Black', skills: 'Fashion Show, Photography', rating: 5, isFavorite: true, projects: [] },
+            { id: 3, name: 'Mahmoud Hassan', category: 'Extras', price: 3000, gender: 'Male', age: 30, phone: '503456789', instagram: 'mahmoud_h', tiktok: 'mahmoud_h', height: '178', weight: '80', chest: '100', waist: '85', hips: '95', shoe: '43', hair: 'Black', eyes: 'Brown', skills: 'Acting, Extras', rating: 3.5, isFavorite: false, projects: [] }
         ];
 
         let projects = [];
@@ -1362,7 +1362,7 @@
                 const actualIndex = talents.indexOf(talent);
                 const talentId = talent.id || actualIndex;
                 const photos = currentTalentPhotos[talentId] || [];
-                const photoDisplay = photos.length > 0 ? `<img src="${photos[0]}" alt="صورة" style="width: 100%; height: 100%; object-fit: cover;">` : '';
+                const photoDisplay = photos.length > 0 ? `<img src="${photos[0]}" alt="Photo" style="width: 100%; height: 100%; object-fit: cover;">` : '';
 
                 const isFavorite = talent.isFavorite || false;
                 return `
@@ -1376,18 +1376,18 @@
                             <div class="talent-category">${talent.category}</div>
                             <div class="talent-price">${talent.price} KD</div>
                             <div class="talent-meta">
-                                <span>${talent.gender} • ${talent.age} سنة</span>
+                                <span>${talent.gender} • ${talent.age} years</span>
                             </div>
                             <div class="talent-actions" onclick="event.stopPropagation()">
-                                <button class="btn btn-primary btn-small" onclick="editTalent(event, ${actualIndex})">تعديل</button>
-                                <button class="btn btn-danger btn-small" onclick="deleteTalent(event, ${actualIndex})">حذف</button>
+                                <button class="btn btn-primary btn-small" onclick="editTalent(event, ${actualIndex})">Edit</button>
+                                <button class="btn btn-danger btn-small" onclick="deleteTalent(event, ${actualIndex})">Delete</button>
                             </div>
                         </div>
                     </div>
                 `;
             }).join('');
 
-            document.getElementById('talents-list').innerHTML = html || '<div class="empty-state"><div class="empty-state-icon">📭</div><div class="empty-state-title">لا توجد موديلز</div></div>';
+            document.getElementById('talents-list').innerHTML = html || '<div class="empty-state"><div class="empty-state-icon">📭</div><div class="empty-state-title">No Models</div></div>';
         }
 
         function updateCardSize() {
@@ -1416,7 +1416,7 @@
 
         function openAddTalentModal() {
             editingTalentIndex = null;
-            document.getElementById('modal-title').textContent = 'إضافة موديل جديد';
+            document.getElementById('modal-title').textContent = 'Add New Model';
             document.getElementById('talent-name').value = '';
             document.getElementById('talent-category').value = '';
             document.getElementById('talent-price').value = '';
@@ -1433,7 +1433,7 @@
             event.stopPropagation();
             editingTalentIndex = index;
             const talent = talents[index];
-            document.getElementById('modal-title').textContent = 'تعديل الموديل';
+            document.getElementById('modal-title').textContent = 'Edit الموديل';
             document.getElementById('talent-name').value = talent.name;
             document.getElementById('talent-category').value = talent.category;
             document.getElementById('talent-price').value = talent.price;
@@ -1509,7 +1509,7 @@
             const skills = document.getElementById('talent-skills').value;
 
             if (!name || !category || !price) {
-                alert('يرجى ملء جميع الحقول المطلوبة');
+                alert('Please fill in all required fields');
                 return;
             }
 
@@ -1533,7 +1533,7 @@
 
         function deleteTalent(event, index) {
             event.stopPropagation();
-            if (confirm('هل تريد حذف هذا الموديل؟')) {
+            if (confirm('Are you sure you want to delete this model?')) {
                 talents.splice(index, 1);
                 renderTalents();
             }
@@ -1560,7 +1560,7 @@
             const photos = currentTalentPhotos[talentId] || [];
             const detailImage = document.getElementById('detail-emoji');
             if (photos.length > 0) {
-                detailImage.innerHTML = `<img src="${photos[0]}" alt="صورة">`;
+                detailImage.innerHTML = `<img src="${photos[0]}" alt="Photo">`;
             } else {
                 detailImage.textContent = '';
             }
@@ -1594,10 +1594,10 @@
         function updateFavoriteButton() {
             const btn = document.getElementById('favorite-btn');
             if (talents[currentDetailTalentIndex].isFavorite) {
-                btn.textContent = 'إزالة من المفضلة';
+                btn.textContent = 'إزالة من Favorite';
                 btn.style.background = 'linear-gradient(135deg, #f093fb, #f5576c)';
             } else {
-                btn.textContent = 'إضافة للمفضلة';
+                btn.textContent = 'Add to Favorites';
                 btn.style.background = 'linear-gradient(135deg, #667eea, #764ba2)';
             }
         }
@@ -1620,7 +1620,7 @@
 
             grid.innerHTML = photos.map((photo, index) => `
                 <div class="photo-item">
-                    <img src="${photo}" alt="صورة">
+                    <img src="${photo}" alt="Photo">
                     <button type="button" class="photo-delete-btn" onclick="deletePhoto(${index})">×</button>
                 </div>
             `).join('');
@@ -1713,9 +1713,9 @@
                     actions.id = 'bulk-actions';
                     actions.style.cssText = 'display: flex; gap: 12px; margin-top: 16px; padding: 16px; background: var(--surface); border-radius: 8px;';
                     actions.innerHTML = `
-                        <button class="btn btn-primary" onclick="bulkAddToNewProject()" style="flex: 1;">إضافة لمشروع جديد</button>
-                        <button class="btn btn-secondary" onclick="bulkAddToExistingProject()" style="flex: 1;">إضافة لمشروع حالي</button>
-                        <button class="btn btn-secondary" onclick="clearSelection()" style="flex: 1;">إلغاء التحديد</button>
+                        <button class="btn btn-primary" onclick="bulkAddToNewProject()" style="flex: 1;">Add to New Project</button>
+                        <button class="btn btn-secondary" onclick="bulkAddToExistingProject()" style="flex: 1;">Add to Existing Project</button>
+                        <button class="btn btn-secondary" onclick="clearSelection()" style="flex: 1;">Cancel التحديد</button>
                     `;
                     container.appendChild(actions);
                 }
@@ -1737,10 +1737,10 @@
 
         function bulkAddToExistingProject() {
             if (projects.length === 0) {
-                alert('لا توجد مشاريع حالية. يرجى إنشاء مشروع أولاً');
+                alert('No Projects حالية. يرجى Create مشروع أولاً');
                 return;
             }
-            const projectIndex = prompt('اختر رقم المشروع (0-' + (projects.length - 1) + ')');
+            const projectIndex = prompt('Select رقم المشروع (0-' + (projects.length - 1) + ')');
             if (projectIndex !== null && projectIndex >= 0 && projectIndex < projects.length) {
                 selectedTalents.forEach(talentIndex => {
                     const talentName = talents[talentIndex].name;
@@ -1752,7 +1752,7 @@
                 localStorage.setItem('projects', JSON.stringify(projects));
                 clearSelection();
                 renderProjects();
-                alert('تم إضافة الموديلز للمشروع بنجاح');
+                alert('Models added to project successfully');
             }
         }
 
@@ -1801,8 +1801,8 @@
             document.getElementById('project-casting-date').value = '';
             document.getElementById('project-notes').value = '';
             document.getElementById('project-whatsapp-group').value = '';
-            document.getElementById('project-modal-title').textContent = 'إنشاء مشروع جديد';
-            document.getElementById('save-project-btn').textContent = 'إنشاء';
+            document.getElementById('project-modal-title').textContent = 'Create New Project';
+            document.getElementById('save-project-btn').textContent = 'Create';
             document.getElementById('save-project-btn').onclick = () => saveProject();
             document.getElementById('editing-project-index').value = '';
             renderTalentSelector();
@@ -1845,7 +1845,7 @@
             const whatsappGroup = document.getElementById('project-whatsapp-group').value;
             
             if (!name || selectedProjectTalents.length === 0) {
-                alert('يرجى إدخال اسم المشروع واختيار موديلز');
+                alert('يرجى إدخال Project Name واختيار موديلز');
                 return;
             }
 
@@ -1885,8 +1885,8 @@
         function closeProjectModal() {
             document.getElementById('project-modal').classList.remove('active');
             // Reset modal to create mode
-            document.getElementById('project-modal-title').textContent = 'إنشاء مشروع جديد';
-            document.getElementById('save-project-btn').textContent = 'إنشاء';
+            document.getElementById('project-modal-title').textContent = 'Create New Project';
+            document.getElementById('save-project-btn').textContent = 'Create';
             document.getElementById('save-project-btn').onclick = () => saveProject();
             document.getElementById('editing-project-index').value = '';
             selectedProjectTalents = [];
@@ -1895,29 +1895,152 @@
         function renderProjects() {
             const list = document.getElementById('projects-list');
             if (projects.length === 0) {
-                list.innerHTML = '<div class="empty-state"><div class="empty-state-icon">📭</div><div class="empty-state-title">لا توجد مشاريع</div></div>';
+                list.innerHTML = '<div class="empty-state"><div class="empty-state-icon">📭</div><div class="empty-state-title">No Projects</div></div>';
                 return;
             }
 
             list.innerHTML = projects.map((project, index) => `
-                <div class="settings-card">
+                <div class="settings-card" style="cursor: pointer; transition: all 0.3s ease;" onclick="viewProjectDetails(${index})" onmouseover="this.style.boxShadow='var(--shadow-lg)'" onmouseout="this.style.boxShadow='var(--shadow-sm)'">
                     <div style="display: flex; justify-content: space-between; align-items: start;">
-                        <div>
+                        <div style="flex: 1;">
                             <div class="settings-card-title">${project.name}</div>
-                            <div style="color: var(--text-light); font-size: 14px; margin-bottom: 8px;">الموديلز: ${project.talents.join(', ')}</div>
+                            <div style="color: var(--text-light); font-size: 14px; margin-bottom: 8px;">Models: ${project.talents.length} talents</div>
                             <div style="font-size: 18px; font-weight: 700; color: var(--primary);">KD ${project.total}</div>
                         </div>
-                        <div style="display: flex; gap: 8px;">
-                            <button class="btn btn-primary btn-small" onclick="editProject(${index})">تعديل</button>
-                            <button class="btn btn-danger btn-small" onclick="deleteProject(${index})">حذف</button>
+                        <div style="display: flex; gap: 8px;" onclick="event.stopPropagation();">
+                            <button class="btn btn-primary btn-small" onclick="editProject(${index})">Edit</button>
+                            <button class="btn btn-danger btn-small" onclick="deleteProject(${index})">Delete</button>
                         </div>
                     </div>
                 </div>
             `).join('');
         }
 
+        function viewProjectDetails(index) {
+            const project = projects[index];
+            if (!project) return;
+            
+            let modelsHTML = '';
+            project.talents.forEach(talentName => {
+                const talent = talents.find(t => t.name === talentName);
+                if (talent) {
+                    modelsHTML += `
+                        <div style="background: var(--surface-alt); padding: 12px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <div style="font-weight: 600;">${talent.name}</div>
+                                <div style="font-size: 12px; color: var(--text-light);">${talent.category} • ${talent.phone}</div>
+                            </div>
+                            <div style="font-weight: 600; color: var(--primary);">KD ${talent.price}</div>
+                        </div>
+                    `;
+                }
+            });
+            
+            const notesSection = project.notes ? `
+                <div style="border-top: 1px solid var(--border); padding-top: 16px; margin-bottom: 24px;">
+                    <h3 style="margin-bottom: 12px; color: var(--text);">Notes</h3>
+                    <div style="background: var(--surface-alt); padding: 12px; border-radius: 8px; white-space: pre-wrap;">${project.notes}</div>
+                </div>
+            ` : '';
+            
+            const detailHTML = `
+                <div id="project-detail-modal" class="modal" style="display: flex;">
+                    <div class="modal-content" style="max-width: 800px; max-height: 90vh; overflow-y: auto;">
+                        <div class="modal-header" style="display: flex; justify-content: space-between; align-items: center;">
+                            <div>${project.name}</div>
+                            <button onclick="closeProjectDetail()" style="background: none; border: none; font-size: 24px; cursor: pointer; color: var(--text);">×</button>
+                        </div>
+                        <div style="padding: 20px;">
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px;">
+                                <div>
+                                    <div style="font-size: 12px; color: var(--text-light); text-transform: uppercase; margin-bottom: 4px;">Executing Company</div>
+                                    <div style="font-size: 16px; font-weight: 600;">${project.executingCompany || 'N/A'}</div>
+                                </div>
+                                <div>
+                                    <div style="font-size: 12px; color: var(--text-light); text-transform: uppercase; margin-bottom: 4px;">Producing Company</div>
+                                    <div style="font-size: 16px; font-weight: 600;">${project.producingCompany || 'N/A'}</div>
+                                </div>
+                                <div>
+                                    <div style="font-size: 12px; color: var(--text-light); text-transform: uppercase; margin-bottom: 4px;">Director</div>
+                                    <div style="font-size: 16px; font-weight: 600;">${project.director || 'N/A'}</div>
+                                </div>
+                                <div>
+                                    <div style="font-size: 12px; color: var(--text-light); text-transform: uppercase; margin-bottom: 4px;">Total Cost</div>
+                                    <div style="font-size: 16px; font-weight: 600; color: var(--primary);">KD ${project.total}</div>
+                                </div>
+                            </div>
+                            
+                            <div style="border-top: 1px solid var(--border); padding-top: 16px; margin-bottom: 24px;">
+                                <h3 style="margin-bottom: 12px; color: var(--text);">Dates</h3>
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                                    <div>
+                                        <div style="font-size: 12px; color: var(--text-light);">Start Date</div>
+                                        <div>${project.startDate || 'N/A'}</div>
+                                    </div>
+                                    <div>
+                                        <div style="font-size: 12px; color: var(--text-light);">End Date</div>
+                                        <div>${project.endDate || 'N/A'}</div>
+                                    </div>
+                                    <div>
+                                        <div style="font-size: 12px; color: var(--text-light);">Fitting Date</div>
+                                        <div>${project.fittingDate || 'N/A'}</div>
+                                    </div>
+                                    <div>
+                                        <div style="font-size: 12px; color: var(--text-light);">Casting Date</div>
+                                        <div>${project.castingDate || 'N/A'}</div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div style="border-top: 1px solid var(--border); padding-top: 16px; margin-bottom: 24px;">
+                                <h3 style="margin-bottom: 12px; color: var(--text);">Models in Project</h3>
+                                <div style="display: grid; gap: 12px;">
+                                    ${modelsHTML}
+                                </div>
+                            </div>
+                            
+                            ${notesSection}
+                            
+                            <div style="border-top: 1px solid var(--border); padding-top: 16px; display: flex; gap: 8px;">
+                                <button class="btn btn-primary" onclick="createWhatsAppGroup(${index})" style="flex: 1;">Create WhatsApp Group</button>
+                                <button class="btn btn-secondary" onclick="editProject(${index})" style="flex: 1;">Edit</button>
+                                <button class="btn btn-danger" onclick="deleteProjectDetail(${index})" style="flex: 1;">Delete</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            const existing = document.getElementById('project-detail-modal');
+            if (existing) existing.remove();
+            document.body.insertAdjacentHTML('beforeend', detailHTML);
+        }
+        
+        function closeProjectDetail() {
+            const modal = document.getElementById('project-detail-modal');
+            if (modal) modal.remove();
+        }
+        
+        function deleteProjectDetail(index) {
+            if (confirm('Are you sure you want to delete this project?')) {
+                projects.splice(index, 1);
+                localStorage.setItem('projects', JSON.stringify(projects));
+                closeProjectDetail();
+                renderProjects();
+                renderStats();
+            }
+        }
+        
+        function createWhatsAppGroup(index) {
+            const project = projects[index];
+            const talentsList = project.talents.join(', ');
+            const message = `Project: ${project.name}\nModels: ${talentsList}\nTotal Cost: KD ${project.total}`;
+            const encodedMessage = encodeURIComponent(message);
+            window.open(`https://wa.me/?text=${encodedMessage}`, '_blank');
+        }
+
         function deleteProject(index) {
-            if (confirm('هل تريد حذف هذا المشروع؟')) {
+            if (confirm('Are you sure you want to delete this project?')) {
                 projects.splice(index, 1);
                 localStorage.setItem('projects', JSON.stringify(projects));
                 renderProjects();
@@ -1959,8 +2082,8 @@
             updateProjectTotal();
             
             // Update modal title and button
-            document.getElementById('project-modal-title').textContent = 'تعديل المشروع';
-            document.getElementById('save-project-btn').textContent = 'حفظ التعديلات';
+            document.getElementById('project-modal-title').textContent = 'Edit المشروع';
+            document.getElementById('save-project-btn').textContent = 'Save الEditات';
             document.getElementById('save-project-btn').onclick = () => saveProject(index);
             
             document.getElementById('project-modal').classList.add('active');
@@ -1975,8 +2098,8 @@
             const completedProjects = projects.filter(p => p.endDate && new Date(p.endDate) < new Date()).length;
             const ongoingProjects = projects.filter(p => !p.endDate || new Date(p.endDate) >= new Date()).length;
 
-            const maleCount = talents.filter(t => t.gender === 'ذكر').length;
-            const femaleCount = talents.filter(t => t.gender === 'أنثى').length;
+            const maleCount = talents.filter(t => t.gender === 'Male').length;
+            const femaleCount = talents.filter(t => t.gender === 'Female').length;
             const avgAge = totalTalents > 0 ? Math.round(talents.reduce((sum, t) => sum + (t.age || 0), 0) / totalTalents) : 0;
             const upcomingProjects = projects.filter(p => p.startDate && new Date(p.startDate) > new Date()).length;
 
@@ -2094,7 +2217,7 @@
             const appName = document.getElementById('app-name').value || 'Talent Manager';
             localStorage.setItem('appName', appName);
             document.querySelector('.sidebar-title span').textContent = appName;
-            showNotification('تم حفظ الإعدادات', 'success');
+            showNotification('تم Save الإعدادات', 'success');
         }
         
         function saveWebTitle() {
@@ -2139,7 +2262,7 @@
         }
 
         function clearAllData() {
-            if (confirm('هل تريد حذف جميع البيانات؟ هذا الإجراء غير قابل للتراجع!')) {
+            if (confirm('Are you sure you want to delete all data? This action cannot be undone!')) {
                 talents = [];
                 projects = [];
                 currentTalentPhotos = {};
@@ -2402,7 +2525,7 @@
             a.href = url;
             a.download = 'talent-manager-backup.json';
             a.click();
-            alert('تم تصدير البيانات بنجاح');
+            alert('Data exported successfully');
         }
 
         function importData() {
@@ -2419,11 +2542,11 @@
                         projects = data.projects || [];
                         localStorage.setItem('talents', JSON.stringify(talents));
                         localStorage.setItem('projects', JSON.stringify(projects));
-                        alert('تم استيراد البيانات بنجاح');
+                        alert('Data imported successfully');
                         renderTalents();
                         renderStats();
                     } catch (err) {
-                        alert('خطأ في قراءة الملف');
+                        alert('Error reading file');
                     }
                 };
                 reader.readAsText(file);
