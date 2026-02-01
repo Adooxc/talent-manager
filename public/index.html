@@ -1063,11 +1063,11 @@
                                     <!-- Upload Buttons -->
                                     <div style="display: flex; gap: 12px;">
                                         <label style="flex: 1; cursor: pointer;">
-                                            <input type="file" id="talent-photo" multiple accept="image/*" style="display: none;" onchange="addMedia(event, 'image')">
+                                            <input type="file" id="talent-photo" multiple accept="image/*" style="display: none;">
                                             <div style="background: var(--primary); color: white; padding: 14px 20px; border-radius: 8px; text-align: center; font-weight: 600; cursor: pointer; transition: all 0.3s;">📷 Add Photos</div>
                                         </label>
                                         <label style="flex: 1; cursor: pointer;">
-                                            <input type="file" id="talent-video" multiple accept="video/*" style="display: none;" onchange="addMedia(event, 'video')">
+                                            <input type="file" id="talent-video" multiple accept="video/*" style="display: none;">
                                             <div style="background: var(--primary); color: white; padding: 14px 20px; border-radius: 8px; text-align: center; font-weight: 600; cursor: pointer; transition: all 0.3s;">🎥 Add Videos</div>
                                         </label>
                                     </div>
@@ -1115,7 +1115,6 @@
                                     <!-- Action Buttons -->
                                     <div style="display: flex; gap: 12px; border-top: 1px solid var(--border); padding-top: 32px;">
                                         <button type="submit" class="btn" style="background: var(--primary); color: white; padding: 14px 32px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; flex: 1; font-size: 15px;">✓ Save Talent</button>
-                                        <button type="button" onclick="showTab('talents-tab')" class="btn" style="background: var(--border); color: var(--foreground); padding: 14px 32px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; flex: 1; font-size: 15px;">✕ Cancel</button>
                                     </div>
                                 </form>
                             </div>
@@ -2868,3 +2867,21 @@
                 thumbnailsContainer.appendChild(thumb);
             });
         }
+
+        // Initialize media upload event listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            const photoInput = document.getElementById('talent-photo');
+            const videoInput = document.getElementById('talent-video');
+            
+            if (photoInput) {
+                photoInput.addEventListener('change', function(e) {
+                    addMedia(e, 'image');
+                });
+            }
+            
+            if (videoInput) {
+                videoInput.addEventListener('change', function(e) {
+                    addMedia(e, 'video');
+                });
+            }
+        });
