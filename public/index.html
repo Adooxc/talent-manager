@@ -611,10 +611,13 @@
         </div>
 
         <div class="main-content">
+            <!-- Notifications Container -->
+            <div id="notifications-container" style="position: fixed; top: 20px; right: 20px; z-index: 1000; max-width: 400px;"></div>
+            
             <div class="header">
                 <div class="header-title" id="page-title">الموديلز والفنانين</div>
-                <div class="header-actions">
-                    <button class="btn btn-primary" onclick="openAddTalentModal()" id="add-btn">+ إضافة موديل</button>
+                <div class="header-actions" id="header-actions">
+                    <button class="btn btn-primary" onclick="openAddTalentModal()" id="add-btn" style="display: none;">+ إضافة موديل</button>
                 </div>
             </div>
 
@@ -630,7 +633,10 @@
                             <option value="عارضين">عارضين</option>
                             <option value="كومبارس">كومبارس</option>
                         </select>
-                        <button class="btn btn-primary" onclick="toggleAdvancedSearch()" style="margin-top: 12px; width: 100%;">بحث متقدم</button>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 12px;">
+                            <button class="btn btn-primary" onclick="toggleAdvancedSearch()" style="width: 100%;">بحث متقدم</button>
+                            <button class="btn" id="selection-mode-btn" onclick="toggleSelectionMode()" style="width: 100%; background: var(--surface-alt); color: var(--text); border: 1px solid var(--border);">تحديد</button>
+                        </div>
                     </div>
                     
                     <!-- Advanced Search Filters -->
@@ -661,6 +667,25 @@
                                 </select>
                             </div>
                             <div class="form-group">
+                                <label class="form-label">التقييم الأدنى</label>
+                                <select id="rating-filter" class="form-input" onchange="renderTalents()">
+                                    <option value="">الكل</option>
+                                    <option value="5">5 نجوم</option>
+                                    <option value="4">4 نجوم وأعلى</option>
+                                    <option value="3">3 نجوم وأعلى</option>
+                                    <option value="2">نجمتان وأعلى</option>
+                                    <option value="1">نجمة واحدة وأعلى</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">المفضلة</label>
+                                <select id="favorite-filter" class="form-input" onchange="renderTalents()">
+                                    <option value="">الكل</option>
+                                    <option value="true">المفضلة فقط</option>
+                                    <option value="false">غير المفضلة</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
                                 <label class="form-label">حجم البطاقات</label>
                                 <div style="display: flex; align-items: center; gap: 8px;">
                                     <input type="range" id="card-size" min="50" max="100" value="100" style="flex: 1; cursor: pointer;" oninput="updateCardSize()">
@@ -682,11 +707,36 @@
                     <div style="margin-bottom: 24px;">
                         <button class="btn btn-primary" onclick="openCreateProjectModal()">+ إنشاء مشروع</button>
                     </div>
+                    
+                    <!-- Calendar View -->
+                    <div style="background: var(--surface); border-radius: 12px; padding: 20px; margin-bottom: 24px; border: 1px solid var(--border);">
+                        <h3 style="margin-bottom: 16px; color: var(--text);">التقويم</h3>
+                        <div id="calendar-view" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px;"></div>
+                    </div>
+                    
                     <div id="projects-list"></div>
                 </div>
 
                 <!-- Stats Tab -->
                 <div id="stats-tab" class="tab-content">
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 30px;">
+                        <div class="stats-card" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 24px; border-radius: 12px; box-shadow: var(--shadow-lg);">
+                            <div style="font-size: 14px; opacity: 0.9; margin-bottom: 8px;">إجمالي الموديلز</div>
+                            <div style="font-size: 32px; font-weight: bold;" id="total-talents">0</div>
+                        </div>
+                        <div class="stats-card" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; padding: 24px; border-radius: 12px; box-shadow: var(--shadow-lg);">
+                            <div style="font-size: 14px; opacity: 0.9; margin-bottom: 8px;">إجمالي المشاريع</div>
+                            <div style="font-size: 32px; font-weight: bold;" id="total-projects">0</div>
+                        </div>
+                        <div class="stats-card" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white; padding: 24px; border-radius: 12px; box-shadow: var(--shadow-lg);">
+                            <div style="font-size: 14px; opacity: 0.9; margin-bottom: 8px;">المفضلة</div>
+                            <div style="font-size: 32px; font-weight: bold;" id="total-favorites">0</div>
+                        </div>
+                        <div class="stats-card" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); color: white; padding: 24px; border-radius: 12px; box-shadow: var(--shadow-lg);">
+                            <div style="font-size: 14px; opacity: 0.9; margin-bottom: 8px;">متوسط التقييم</div>
+                            <div style="font-size: 32px; font-weight: bold;" id="avg-rating">0</div>
+                        </div>
+                    </div>
                     <div class="stats-grid" id="stats-grid"></div>
                 </div>
 
@@ -722,6 +772,22 @@
                         <div class="form-group">
                             <label class="form-label">البريد الإلكتروني</label>
                             <input type="email" id="company-email" class="form-input" onchange="saveSettings()">
+                        </div>
+                    </div>
+
+                    <div class="settings-card">
+                        <div class="settings-card-title">تخصيص القوائم</div>
+                        <div class="form-group">
+                            <label class="form-label">اسم قائمة الموديلز</label>
+                            <input type="text" id="talents-menu-name" class="form-input" value="الموديلز" onchange="saveMenuNames()">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">اسم قائمة المشاريع</label>
+                            <input type="text" id="projects-menu-name" class="form-input" value="المشاريع" onchange="saveMenuNames()">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">اسم قائمة الإحصائيات</label>
+                            <input type="text" id="dashboard-menu-name" class="form-input" value="الإحصائيات" onchange="saveMenuNames()">
                         </div>
                     </div>
 
@@ -778,7 +844,13 @@
                             </div>
                         </div>
                     </div>
-
+                    
+                    <!-- Project History -->
+                    <div style="background: var(--surface); border-radius: 12px; padding: 20px; border: 1px solid var(--border);">
+                        <h2 style="margin-bottom: 16px; color: var(--text);">المشاريع</h2>
+                        <div id="detail-projects-list" style="display: grid; gap: 12px;"></div>
+                        <div id="no-projects" style="text-align: center; color: var(--muted); padding: 20px;">لم يشارك في أي مشاريع حتى الآن</div>
+                    </div>
 
                 </div>
             </div>
@@ -945,9 +1017,9 @@
 
     <script>
         let talents = [
-            { id: 1, name: 'أحمد علي', category: 'ممثلين', price: 7000, gender: 'ذكر', age: 25, phone: '501234567', instagram: 'ahmed_ali', tiktok: 'ahmed_ali', height: '180', weight: '75', chest: '95', waist: '82', hips: '92', shoe: '42', hair: 'بني', eyes: 'بني', skills: 'تمثيل، رقص' },
-            { id: 2, name: 'فاطمة محمد', category: 'عارضين', price: 8000, gender: 'أنثى', age: 22, phone: '502345678', instagram: 'fatima_m', tiktok: 'fatima_m', height: '175', weight: '62', chest: '88', waist: '65', hips: '90', shoe: '38', hair: 'أسود', eyes: 'أسود', skills: 'عرض أزياء، تصوير' },
-            { id: 3, name: 'محمود حسن', category: 'كومبارس', price: 3000, gender: 'ذكر', age: 30, phone: '503456789', instagram: 'mahmoud_h', tiktok: 'mahmoud_h', height: '178', weight: '80', chest: '100', waist: '85', hips: '95', shoe: '43', hair: 'أسود', eyes: 'بني', skills: 'تمثيل، كومبارس' }
+            { id: 1, name: 'أحمد علي', category: 'ممثلين', price: 7000, gender: 'ذكر', age: 25, phone: '501234567', instagram: 'ahmed_ali', tiktok: 'ahmed_ali', height: '180', weight: '75', chest: '95', waist: '82', hips: '92', shoe: '42', hair: 'بني', eyes: 'بني', skills: 'تمثيل، رقص', rating: 4.5, favorite: false, projects: [] },
+            { id: 2, name: 'فاطمة محمد', category: 'عارضين', price: 8000, gender: 'أنثى', age: 22, phone: '502345678', instagram: 'fatima_m', tiktok: 'fatima_m', height: '175', weight: '62', chest: '88', waist: '65', hips: '90', shoe: '38', hair: 'أسود', eyes: 'أسود', skills: 'عرض أزياء، تصوير', rating: 5, favorite: true, projects: [] },
+            { id: 3, name: 'محمود حسن', category: 'كومبارس', price: 3000, gender: 'ذكر', age: 30, phone: '503456789', instagram: 'mahmoud_h', tiktok: 'mahmoud_h', height: '178', weight: '80', chest: '100', waist: '85', hips: '95', shoe: '43', hair: 'أسود', eyes: 'بني', skills: 'تمثيل، كومبارس', rating: 3.5, favorite: false, projects: [] }
         ];
 
         let projects = [];
@@ -984,6 +1056,14 @@
                 'settings-tab': 'الإعدادات'
             };
             document.getElementById('page-title').textContent = titles[tabId];
+            
+            // Show add button only on talents tab
+            const addBtn = document.getElementById('add-btn');
+            if (tabId === 'talents-tab') {
+                addBtn.style.display = 'block';
+            } else {
+                addBtn.style.display = 'none';
+            }
 
             if (tabId === 'stats-tab') renderStats();
         }
