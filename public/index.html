@@ -803,62 +803,55 @@
 
                 <!-- Settings Tab -->
                 <div id="settings-tab" class="tab-content">
-                    <div style="max-width: 800px;">
-                        <!-- Appearance Section -->
-                        <div class="settings-card" style="background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1)); border-left: 4px solid var(--primary);">
-                            <div class="settings-card-title" style="font-size: 18px; margin-bottom: 20px;">المظهر والألوان</div>
+                    <div style="max-width: 900px; padding: 20px;">
+                        <!-- Appearance Settings -->
+                        <div class="settings-card" style="background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin-bottom: 20px;">
+                            <div class="settings-card-title" style="font-size: 18px; margin-bottom: 20px; color: var(--primary); font-weight: 600;">Appearance</div>
                             
                             <div class="form-group">
-                                <label class="form-label">المظهر</label>
+                                <label class="form-label">Theme</label>
                                 <div style="display: flex; gap: 12px; margin-top: 8px;">
                                     <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
-                                        <input type="radio" name="theme" value="light" checked onchange="setTheme('light')"> فاتح
+                                        <input type="radio" name="theme" value="light" checked onchange="setTheme('light')"> Light
                                     </label>
                                     <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
-                                        <input type="radio" name="theme" value="dark" onchange="setTheme('dark')"> داكن
+                                        <input type="radio" name="theme" value="dark" onchange="setTheme('dark')"> Dark
                                     </label>
                                 </div>
                             </div>
                             
                             <div class="form-group">
-                                <label class="form-label">اللون الأساسي</label>
-                                <div style="display: flex; gap: 12px; margin-top: 8px; flex-wrap: wrap;">
-                                    <input type="color" id="primary-color" class="form-input" value="#667eea" onchange="changePrimaryColor()" style="width: 60px; height: 40px; cursor: pointer; border-radius: 8px;">
-                                    <div style="display: flex; align-items: center; color: var(--text-light);">
-                                        <span id="color-value">#667eea</span>
-                                    </div>
+                                <label class="form-label">Primary Color</label>
+                                <div style="display: flex; gap: 12px; margin-top: 8px; align-items: center;">
+                                    <input type="color" id="primary-color" class="form-input" value="#667eea" onchange="changePrimaryColor()" style="width: 60px; height: 40px; cursor: pointer; border-radius: 8px; border: 1px solid var(--border);">
+                                    <span id="color-value" style="color: var(--text-light); font-size: 14px;">#667eea</span>
                                 </div>
                             </div>
-                        </div>
-
-
-
-                        <!-- Financial Settings -->
-                        <div class="settings-card" style="background: linear-gradient(135deg, rgba(79, 172, 254, 0.1), rgba(0, 242, 254, 0.1)); border-left: 4px solid #4facfe;">
-                            <div class="settings-card-title" style="font-size: 18px; margin-bottom: 20px;">الإعدادات المالية</div>
                             
                             <div class="form-group">
-                                <label class="form-label">هامش الربح (%)</label>
-                                <input type="number" id="profit-margin" class="form-input" value="20" min="0" max="100" onchange="saveSettings()">
+                                <label class="form-label">Secondary Color</label>
+                                <div style="display: flex; gap: 12px; margin-top: 8px; align-items: center;">
+                                    <input type="color" id="secondary-color" class="form-input" value="#ec4899" onchange="changeSecondaryColor()" style="width: 60px; height: 40px; cursor: pointer; border-radius: 8px; border: 1px solid var(--border);">
+                                    <span id="secondary-color-value" style="color: var(--text-light); font-size: 14px;">#ec4899</span>
+                                </div>
                             </div>
-
                         </div>
 
                         <!-- Branding Settings -->
-                        <div class="settings-card" style="background: linear-gradient(135deg, rgba(240, 147, 251, 0.1), rgba(245, 87, 108, 0.1)); border-left: 4px solid #f093fb;">
-                            <div class="settings-card-title" style="font-size: 18px; margin-bottom: 20px;">العلامة التجارية</div>
+                        <div class="settings-card" style="background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin-bottom: 20px;">
+                            <div class="settings-card-title" style="font-size: 18px; margin-bottom: 20px; color: var(--primary); font-weight: 600;">Branding</div>
                             
                             <div class="form-group">
-                                <label class="form-label">اسم التطبيق (Sidebar)</label>
-                                <input type="text" id="app-name" class="form-input" value="Talent Manager" onchange="saveAppBranding()">
+                                <label class="form-label">App Name (Sidebar)</label>
+                                <input type="text" id="app-name" class="form-input" value="Talent Manager" onchange="saveAppBranding()" style="background: var(--background); border: 1px solid var(--border); color: var(--text); padding: 10px 12px; border-radius: 8px;">
                             </div>
                             
                             <div class="form-group">
-                                <label class="form-label">تحميل الشعار</label>
+                                <label class="form-label">App Logo</label>
                                 <div style="display: flex; gap: 12px; align-items: center; margin-top: 8px;">
                                     <input type="file" id="logo-upload" accept="image/*" style="display: none;" onchange="handleLogoUpload()">
-                                    <button class="btn" style="background: linear-gradient(135deg, #f093fb, #f5576c);" onclick="document.getElementById('logo-upload').click()">اختر الشعار</button>
-                                    <div id="logo-preview" style="width: 60px; height: 60px; border-radius: 8px; background: var(--surface-alt); display: flex; align-items: center; justify-content: center; overflow: hidden;">
+                                    <button class="btn" style="background: var(--primary); color: white; padding: 10px 16px; border: none; border-radius: 8px; cursor: pointer; font-weight: 500;" onclick="document.getElementById('logo-upload').click()">Choose Logo</button>
+                                    <div id="logo-preview" style="width: 60px; height: 60px; border-radius: 8px; background: var(--background); display: flex; align-items: center; justify-content: center; overflow: hidden; border: 1px solid var(--border);">
                                         <span id="logo-preview-content" style="font-size: 32px;">📷</span>
                                     </div>
                                 </div>
@@ -866,44 +859,75 @@
                         </div>
 
                         <!-- Menu Customization -->
-                        <div class="settings-card" style="background: linear-gradient(135deg, rgba(67, 233, 123, 0.1), rgba(56, 249, 215, 0.1)); border-left: 4px solid #43e97b;">
-                            <div class="settings-card-title" style="font-size: 18px; margin-bottom: 20px;">تخصيص القوائم</div>
+                        <div class="settings-card" style="background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin-bottom: 20px;">
+                            <div class="settings-card-title" style="font-size: 18px; margin-bottom: 20px; color: var(--primary); font-weight: 600;">Menu Names</div>
                             
                             <div class="form-group">
-                                <label class="form-label">اسم قائمة الموديلز</label>
-                                <input type="text" id="talents-menu-name" class="form-input" value="الموديلز" onchange="saveMenuNames()">
+                                <label class="form-label">Talents Menu Name</label>
+                                <input type="text" id="talents-menu-name" class="form-input" value="Talents" onchange="saveMenuNames()" style="background: var(--background); border: 1px solid var(--border); color: var(--text); padding: 10px 12px; border-radius: 8px;">
                             </div>
                             
                             <div class="form-group">
-                                <label class="form-label">اسم قائمة المشاريع</label>
-                                <input type="text" id="projects-menu-name" class="form-input" value="المشاريع" onchange="saveMenuNames()">
+                                <label class="form-label">Projects Menu Name</label>
+                                <input type="text" id="projects-menu-name" class="form-input" value="Projects" onchange="saveMenuNames()" style="background: var(--background); border: 1px solid var(--border); color: var(--text); padding: 10px 12px; border-radius: 8px;">
                             </div>
                             
                             <div class="form-group">
-                                <label class="form-label">اسم قائمة لوحة التحكم</label>
-                                <input type="text" id="dashboard-menu-name" class="form-input" value="لوحة التحكم" onchange="saveMenuNames()">
+                                <label class="form-label">Dashboard Menu Name</label>
+                                <input type="text" id="dashboard-menu-name" class="form-input" value="Dashboard" onchange="saveMenuNames()" style="background: var(--background); border: 1px solid var(--border); color: var(--text); padding: 10px 12px; border-radius: 8px;">
+                            </div>
+                        </div>
+
+                        <!-- Categories Management -->
+                        <div class="settings-card" style="background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin-bottom: 20px;">
+                            <div class="settings-card-title" style="font-size: 18px; margin-bottom: 20px; color: var(--primary); font-weight: 600;">Categories</div>
+                            
+                            <div style="margin-bottom: 16px;">
+                                <div style="display: flex; gap: 8px; margin-bottom: 12px;">
+                                    <input type="text" id="new-category" class="form-input" placeholder="Enter new category name" style="flex: 1; background: var(--background); border: 1px solid var(--border); color: var(--text); padding: 10px 12px; border-radius: 8px;">
+                                    <button class="btn" style="background: var(--primary); color: white; padding: 10px 16px; border: none; border-radius: 8px; cursor: pointer; font-weight: 500;" onclick="addCategory()">Add</button>
+                                </div>
+                            </div>
+                            
+                            <div id="categories-list" style="display: flex; flex-wrap: wrap; gap: 8px;">
+                                <!-- Categories will be populated here -->
+                            </div>
+                        </div>
+
+                        <!-- Financial Settings -->
+                        <div class="settings-card" style="background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin-bottom: 20px;">
+                            <div class="settings-card-title" style="font-size: 18px; margin-bottom: 20px; color: var(--primary); font-weight: 600;">Financial Settings</div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">Profit Margin (%)</label>
+                                <input type="number" id="profit-margin" class="form-input" value="20" min="0" max="100" onchange="saveSettings()" style="background: var(--background); border: 1px solid var(--border); color: var(--text); padding: 10px 12px; border-radius: 8px;">
                             </div>
                         </div>
 
                         <!-- Data Management -->
-                        <div class="settings-card" style="background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(249, 115, 115, 0.1)); border-left: 4px solid #ef4444;">
-                            <div class="settings-card-title" style="font-size: 18px; margin-bottom: 20px; color: #ef4444;">إدارة البيانات</div>
+                        <div class="settings-card" style="background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin-bottom: 20px;">
+                            <div class="settings-card-title" style="font-size: 18px; margin-bottom: 20px; color: var(--primary); font-weight: 600;">Data Management</div>
                             
-                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px;">
-                                <button class="btn" style="background: linear-gradient(135deg, #43e97b, #38f9d7);" onclick="exportData()">تصدير البيانات</button>
-                                <button class="btn" style="background: linear-gradient(135deg, #4facfe, #00f2fe);" onclick="importData()">استيراد البيانات</button>
-                                <button class="btn" style="background: linear-gradient(135deg, #f093fb, #f5576c);" onclick="backupData()">عمل نسخة احتياطية</button>
-                                <button class="btn" style="background: linear-gradient(135deg, #ef4444, #f87171);" onclick="clearAllData()">حذف جميع البيانات</button>
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px;">
+                                <button class="btn" style="background: var(--primary); color: white; padding: 10px 16px; border: none; border-radius: 8px; cursor: pointer; font-weight: 500;" onclick="exportData()">Export Data</button>
+                                <button class="btn" style="background: var(--primary); color: white; padding: 10px 16px; border: none; border-radius: 8px; cursor: pointer; font-weight: 500;" onclick="importData()">Import Data</button>
+                                <button class="btn" style="background: var(--primary); color: white; padding: 10px 16px; border: none; border-radius: 8px; cursor: pointer; font-weight: 500;" onclick="backupData()">Backup Data</button>
+                                <button class="btn" style="background: #ef4444; color: white; padding: 10px 16px; border: none; border-radius: 8px; cursor: pointer; font-weight: 500;" onclick="clearAllData()">Clear All Data</button>
                             </div>
+                        </div>
+                        
+                        <!-- Save Settings Button -->
+                        <div style="display: flex; gap: 12px; margin-bottom: 20px;">
+                            <button class="btn" style="background: var(--primary); color: white; padding: 12px 24px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; flex: 1;" onclick="saveAllSettings()">Save Settings</button>
                         </div>
 
                         <!-- About -->
-                        <div class="settings-card" style="background: var(--surface-alt); border-left: 4px solid var(--text-light);">
-                            <div class="settings-card-title" style="font-size: 18px; margin-bottom: 20px;">حول التطبيق</div>
+                        <div class="settings-card" style="background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 24px;">
+                            <div class="settings-card-title" style="font-size: 18px; margin-bottom: 20px; color: var(--primary); font-weight: 600;">About</div>
                             <div style="color: var(--text-light); font-size: 14px;">
-                                <p style="margin-bottom: 8px;"><strong>الإصدار:</strong> 1.0.0</p>
-                                <p style="margin-bottom: 8px;"><strong>آخر تحديث:</strong> <span id="last-update">-</span></p>
-                                <p><strong>تم إنشاؤه بواسطة:</strong> Talent Manager Team</p>
+                                <p style="margin-bottom: 8px;"><strong>Version:</strong> 1.0.0</p>
+                                <p style="margin-bottom: 8px;"><strong>Last Updated:</strong> <span id="last-update">-</span></p>
+                                <p><strong>Created by:</strong> Talent Manager Team</p>
                             </div>
                         </div>
                     </div>
@@ -1136,6 +1160,9 @@
     </div>
 
     <script>
+        // Category Management - Initialize first
+        let categories = JSON.parse(localStorage.getItem('categories') || '["Actors", "Influencers", "Models", "Extras"]');
+        
         let talents = [
             { id: 1, name: 'أحمد علي', category: 'ممثلين', price: 7000, gender: 'ذكر', age: 25, phone: '501234567', instagram: 'ahmed_ali', tiktok: 'ahmed_ali', height: '180', weight: '75', chest: '95', waist: '82', hips: '92', shoe: '42', hair: 'بني', eyes: 'بني', skills: 'تمثيل، رقص', rating: 4.5, isFavorite: false, projects: [] },
             { id: 2, name: 'فاطمة محمد', category: 'عارضين', price: 8000, gender: 'أنثى', age: 22, phone: '502345678', instagram: 'fatima_m', tiktok: 'fatima_m', height: '175', weight: '62', chest: '88', waist: '65', hips: '90', shoe: '38', hair: 'أسود', eyes: 'أسود', skills: 'عرض أزياء، تصوير', rating: 5, isFavorite: true, projects: [] },
@@ -1907,6 +1934,10 @@
             if (savedLogo) {
                 const logoContent = document.getElementById('logo-preview-content');
                 logoContent.innerHTML = '<img src="' + savedLogo + '" style="width: 100%; height: 100%; object-fit: cover;">';
+                const sidebarLogo = document.getElementById('sidebar-logo');
+                if (sidebarLogo) {
+                    sidebarLogo.innerHTML = '<img src="' + savedLogo + '" style="width: 100%; height: 100%; object-fit: cover;">';
+                }
                 updateFavicon(savedLogo);
             }
             
@@ -1944,10 +1975,11 @@
                     logoContent.innerHTML = '<img src="' + logoData + '" style="width: 100%; height: 100%; object-fit: cover;">';
                     updateFavicon(logoData);
                     // Update sidebar logo immediately
-                    const sidebarLogo = document.querySelector('.sidebar-logo');
+                    const sidebarLogo = document.getElementById('sidebar-logo');
                     if (sidebarLogo) {
                         sidebarLogo.innerHTML = '<img src="' + logoData + '" style="width: 100%; height: 100%; object-fit: cover;">';
                     }
+                    showNotification('Logo updated successfully', 'success');
                 };
                 reader.readAsDataURL(file);
             }
@@ -2012,6 +2044,13 @@
         if (colorInput) colorInput.value = savedColor;
         document.getElementById('color-value').textContent = savedColor;
         
+        const savedSecondaryColor = localStorage.getItem('secondaryColor') || '#ec4899';
+        document.documentElement.style.setProperty('--secondary', savedSecondaryColor);
+        const secondaryColorInput = document.getElementById('secondary-color');
+        if (secondaryColorInput) secondaryColorInput.value = savedSecondaryColor;
+        const secondaryColorValue = document.getElementById('secondary-color-value');
+        if (secondaryColorValue) secondaryColorValue.textContent = savedSecondaryColor;
+        
         const savedCardSize = localStorage.getItem('cardSize') || '100';
         document.getElementById('card-size').value = savedCardSize;
         updateCardSize();
@@ -2028,6 +2067,7 @@
         renderTalents();
         renderStats();
         loadMenuNames();
+        renderCategories();
         setLastUpdateDate();
     
         function toggleSidebar() {
@@ -2052,6 +2092,30 @@
             document.documentElement.style.setProperty('--primary', color);
             document.getElementById('color-value').textContent = color;
             localStorage.setItem('primaryColor', color);
+        }
+        
+        function changeSecondaryColor() {
+            const color = document.getElementById('secondary-color').value;
+            document.documentElement.style.setProperty('--secondary', color);
+            document.getElementById('secondary-color-value').textContent = color;
+            localStorage.setItem('secondaryColor', color);
+        }
+        
+        function saveAllSettings() {
+            const appName = document.getElementById('app-name').value || 'Talent Manager';
+            localStorage.setItem('appName', appName);
+            const customMenuTitles = {
+                talents: document.getElementById('talents-menu-name').value || 'Talents',
+                projects: document.getElementById('projects-menu-name').value || 'Projects',
+                stats: document.getElementById('dashboard-menu-name').value || 'Dashboard'
+            };
+            localStorage.setItem('customMenuTitles', JSON.stringify(customMenuTitles));
+            const profitMarginEl = document.getElementById('profit-margin');
+            if (profitMarginEl) {
+                const settings = { profitMargin: profitMarginEl.value };
+                localStorage.setItem('settings', JSON.stringify(settings));
+            }
+            showNotification('Settings saved successfully!', 'success');
         }
 
         function exportData() {
@@ -2120,9 +2184,54 @@
             if (customMenuTitles.stats) document.getElementById('dashboard-menu-name').value = customMenuTitles.stats;
         }
 
+        // Category Management
+        function renderCategories() {
+            const list = document.getElementById('categories-list');
+            if (!list) return;
+            list.innerHTML = categories.map((cat, idx) => `
+                <div style="background: var(--primary); color: white; padding: 8px 12px; border-radius: 6px; display: flex; align-items: center; gap: 8px; font-size: 14px;">
+                    ${cat}
+                    <button onclick="deleteCategory(${idx})" style="background: none; border: none; color: white; cursor: pointer; font-weight: bold; padding: 0; margin-left: 4px;">×</button>
+                </div>
+            `).join('');
+        }
+        
+        function addCategory() {
+            const input = document.getElementById('new-category');
+            if (!input) return;
+            const name = input.value.trim();
+            if (name && !categories.includes(name)) {
+                categories.push(name);
+                localStorage.setItem('categories', JSON.stringify(categories));
+                renderCategories();
+                input.value = '';
+                updateCategorySelects();
+                showNotification('Category added successfully', 'success');
+            }
+        }
+        
+        function deleteCategory(index) {
+            if (confirm('Delete this category?')) {
+                categories.splice(index, 1);
+                localStorage.setItem('categories', JSON.stringify(categories));
+                renderCategories();
+                updateCategorySelects();
+                showNotification('Category deleted', 'success');
+            }
+        }
+        
+        function updateCategorySelects() {
+            const select = document.getElementById('category');
+            if (select) {
+                const current = select.value;
+                select.innerHTML = '<option value="">All Categories</option>' + categories.map(cat => `<option value="${cat}">${cat}</option>`).join('');
+                select.value = current;
+            }
+        }
+
         // Load last update date
         function setLastUpdateDate() {
-            const today = new Date().toLocaleDateString('ar-SA');
+            const today = new Date().toLocaleDateString('en-US');
             const lastUpdateEl = document.getElementById('last-update');
             if (lastUpdateEl) lastUpdateEl.textContent = today;
         }
