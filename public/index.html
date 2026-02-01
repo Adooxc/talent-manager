@@ -18,6 +18,8 @@
             --secondary: #ec4899;
             --gradient-start: #667eea;
             --gradient-end: #ec4899;
+            --active-menu-gradient-start: #22c55e;
+            --active-menu-gradient-end: #16a34a;
             --success: #10b981;
             --warning: #f59e0b;
             --danger: #ef4444;
@@ -130,7 +132,7 @@
         }
 
         .nav-item.active {
-            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            background: linear-gradient(135deg, var(--active-menu-gradient-start), var(--active-menu-gradient-end));
             color: white;
         }
 
@@ -807,7 +809,11 @@
                     <div style="max-width: 900px; padding: 20px;">
                         <!-- Appearance Settings -->
                         <div class="settings-card" style="background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin-bottom: 20px;">
-                            <div class="settings-card-title" style="font-size: 18px; margin-bottom: 20px; color: var(--primary); font-weight: 600;">Appearance</div>
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                                <div class="settings-card-title" style="font-size: 18px; color: var(--primary); font-weight: 600;">Appearance</div>
+                                <button id="appearance-toggle" onclick="toggleAppearance()" style="background: var(--primary); color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: 600;">−</button>
+                            </div>
+                            <div id="appearance-content">
                             
                             <div class="form-group">
                                 <label class="form-label">Theme</label>
@@ -883,6 +889,29 @@
                                     <input type="color" id="surface-color" class="form-input" value="#ffffff" style="width: 60px; height: 40px; cursor: pointer; border-radius: 8px; border: 1px solid var(--border);">
                                     <span id="surface-color-value" style="color: var(--text-light); font-size: 14px;">#ffffff</span>
                                 </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">Surface Color</label>
+                                <div style="display: flex; gap: 12px; margin-top: 8px; align-items: center;">
+                                    <input type="color" id="surface-color" class="form-input" value="#ffffff" style="width: 60px; height: 40px; cursor: pointer; border-radius: 8px; border: 1px solid var(--border);">
+                                    <span id="surface-color-value" style="color: var(--text-light); font-size: 14px;">#ffffff</span>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Active Menu Gradient Start</label>
+                                <div style="display: flex; gap: 12px; margin-top: 8px; align-items: center;">
+                                    <input type="color" id="active-menu-gradient-start" class="form-input" value="#22c55e" style="width: 60px; height: 40px; cursor: pointer; border-radius: 8px; border: 1px solid var(--border);">
+                                    <span id="active-menu-gradient-start-value" style="color: var(--text-light); font-size: 14px;">#22c55e</span>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Active Menu Gradient End</label>
+                                <div style="display: flex; gap: 12px; margin-top: 8px; align-items: center;">
+                                    <input type="color" id="active-menu-gradient-end" class="form-input" value="#16a34a" style="width: 60px; height: 40px; cursor: pointer; border-radius: 8px; border: 1px solid var(--border);">
+                                    <span id="active-menu-gradient-end-value" style="color: var(--text-light); font-size: 14px;">#16a34a</span>
+                                </div>
+                            </div>
                             </div>
                         </div>
 
@@ -2010,6 +2039,16 @@
                 document.documentElement.style.setProperty('--surface', savedSurfaceColor);
                 document.getElementById('surface-color').value = savedSurfaceColor;
             }
+            const savedActiveMenuGradientStart = localStorage.getItem('activeMenuGradientStart');
+            if (savedActiveMenuGradientStart) {
+                document.documentElement.style.setProperty('--active-menu-gradient-start', savedActiveMenuGradientStart);
+                document.getElementById('active-menu-gradient-start').value = savedActiveMenuGradientStart;
+            }
+            const savedActiveMenuGradientEnd = localStorage.getItem('activeMenuGradientEnd');
+            if (savedActiveMenuGradientEnd) {
+                document.documentElement.style.setProperty('--active-menu-gradient-end', savedActiveMenuGradientEnd);
+                document.getElementById('active-menu-gradient-end').value = savedActiveMenuGradientEnd;
+            }
             
             updateSiteTitle();
         }
@@ -2075,6 +2114,7 @@
 
         // Initialize
         loadSettings();
+        restoreAppearanceState();
         
         // Load saved app name
         const savedAppName = localStorage.getItem('appName') || 'Talent Manager';
@@ -2158,6 +2198,29 @@
             }
         }
 
+        function toggleAppearance() {
+            const content = document.getElementById('appearance-content');
+            const button = document.getElementById('appearance-toggle');
+            if (content.style.display === 'none') {
+                content.style.display = 'block';
+                button.textContent = '−';
+                localStorage.setItem('appearanceExpanded', 'true');
+            } else {
+                content.style.display = 'none';
+                button.textContent = '+';
+                localStorage.setItem('appearanceExpanded', 'false');
+            }
+        }
+
+        function restoreAppearanceState() {
+            const isExpanded = localStorage.getItem('appearanceExpanded') !== 'false';
+            const content = document.getElementById('appearance-content');
+            const button = document.getElementById('appearance-toggle');
+            if (!isExpanded) {
+                content.style.display = 'none';
+                button.textContent = '+';
+            }
+        }
 
         
         function saveAllSettings() {
@@ -2198,6 +2261,12 @@
             const surfaceColor = document.getElementById('surface-color').value;
             document.documentElement.style.setProperty('--surface', surfaceColor);
             localStorage.setItem('surfaceColor', surfaceColor);
+            const activeMenuGradientStart = document.getElementById('active-menu-gradient-start').value;
+            const activeMenuGradientEnd = document.getElementById('active-menu-gradient-end').value;
+            document.documentElement.style.setProperty('--active-menu-gradient-start', activeMenuGradientStart);
+            document.documentElement.style.setProperty('--active-menu-gradient-end', activeMenuGradientEnd);
+            localStorage.setItem('activeMenuGradientStart', activeMenuGradientStart);
+            localStorage.setItem('activeMenuGradientEnd', activeMenuGradientEnd);
             renderTalents();
             showNotification('Settings saved successfully!', 'success');
         }
