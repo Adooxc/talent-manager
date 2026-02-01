@@ -201,6 +201,7 @@
             transition: all 0.2s ease;
             display: inline-flex;
             align-items: center;
+            justify-content: center;
             gap: 8px;
             text-decoration: none;
         }
@@ -397,7 +398,9 @@
         }
 
         .form-group {
-            margin-bottom: 20px;
+            margin-bottom: 0;
+            display: flex;
+            flex-direction: column;
         }
 
         .form-label {
@@ -421,6 +424,12 @@
             font-family: inherit;
             transition: all 0.2s ease;
         }
+
+        .form-textarea {
+            min-height: 100px;
+        }
+
+
 
         .form-input:focus,
         .form-select:focus,
@@ -601,27 +610,30 @@
 
         @media (max-width: 768px) {
             .container {
-                flex-direction: column;
+                flex-direction: row;
             }
 
             .sidebar {
-                width: 100%;
-                border-right: none;
-                border-bottom: 1px solid var(--border);
+                width: 200px;
+                border-right: 1px solid var(--border);
+                border-bottom: none;
                 display: flex;
-                gap: 16px;
-                padding: 16px;
-                overflow-x: auto;
+                flex-direction: column;
+                gap: 8px;
+                padding: 12px;
+                overflow-x: visible;
             }
 
             .sidebar-header {
-                margin-bottom: 0;
-                padding-bottom: 0;
-                border-bottom: none;
+                margin-bottom: 8px;
+                padding-bottom: 8px;
+                border-bottom: 1px solid var(--border);
             }
 
             .nav-item {
-                white-space: nowrap;
+                white-space: normal;
+                padding: 8px 12px;
+                border-radius: 6px;
             }
 
             .talents-grid {
@@ -629,11 +641,55 @@
             }
 
             .content {
-                padding: 16px;
+                padding: 8px;
+            }
+            
+            .talent-card {
+                margin-bottom: 8px;
+            }
+            
+            .form-group {
+                margin-bottom: 12px;
+            }
+            
+            .form-input, .form-select, .form-textarea {
+                padding: 8px 12px;
+                font-size: 14px;
             }
 
             .header {
-                padding: 16px;
+                padding: 12px;
+                flex-wrap: wrap;
+            }
+            
+            .header-title {
+                font-size: 18px;
+            }
+            
+            .header-actions {
+                width: 100%;
+            }
+            
+            .btn {
+                padding: 8px 16px;
+                font-size: 12px;
+            }
+            
+            .talent-card {
+                padding: 12px;
+            }
+            
+            .detail-page {
+                padding: 12px;
+            }
+            
+            .detail-header {
+                flex-direction: column;
+                gap: 12px;
+            }
+            
+            .detail-info {
+                grid-template-columns: 1fr;
             }
         }
     </style>
@@ -662,7 +718,7 @@
                 <button class="sidebar-toggle" onclick="toggleSidebar()" id="sidebar-toggle-btn" style="position: static; margin-right: 16px;">☰</button>
                 <div class="header-title" id="page-title">Talent Manager</div>
                 <div class="header-actions" id="header-actions">
-                    <button class="btn btn-primary" onclick="openAddTalentModal()" id="add-btn" style="display: none;">+ Add Model</button>
+                    <button class="btn btn-primary" onclick="openAddTalentModal()" id="add-btn">+ Add Talent</button>
                 </div>
             </div>
 
@@ -674,10 +730,10 @@
                         <input type="text" id="search" placeholder="Search talents..." onkeyup="renderTalents()">
                         <select id="category" onchange="renderTalents()">
                             <option value="">All Categories</option>
-                            <option value="ممثلين">Actors</option>
-                            <option value="مؤثرين">Influencers</option>
-                            <option value="عارضين">Models</option>
-                            <option value="كومبارس">Extras</option>
+                            <option value="Actors">Actors</option>
+                            <option value="Influencers">Influencers</option>
+                            <option value="Models">Models</option>
+                            <option value="Extras">Extras</option>
                         </select>
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 12px;">
                             <button class="btn btn-primary" onclick="toggleAdvancedSearch()" style="width: 100%;">Advanced Search</button>
@@ -708,8 +764,8 @@
                                 <label class="form-label">Gender</label>
                                 <select id="gender-filter" class="form-input" onchange="renderTalents()">
                                     <option value="">All</option>
-                                    <option value="ذكر">Male</option>
-                                    <option value="أنثى">Female</option>
+                                    <option value="Male">Male</option>
+                                    <option value="Female">Female</option>
                                 </select>
                             </div>
 
@@ -770,7 +826,7 @@
                         <h1 style="margin-bottom: 30px; font-size: 28px; color: var(--text);">Dashboard</h1>
                         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 40px;">
                             <div style="background: linear-gradient(135deg, var(--active-menu-gradient-start), var(--active-menu-gradient-end)); color: white; padding: 30px; border-radius: 12px;">
-                                <div style="font-size: 13px; opacity: 0.9; margin-bottom: 10px;">Total Talents</div>
+                                <div style="font-size: 13px; opacity: 0.9; margin-bottom: 10px;">Total</div>
                                 <div style="font-size: 40px; font-weight: bold;" id="dash-total-talents">0</div>
                             </div>
                             <div style="background: linear-gradient(135deg, var(--active-menu-gradient-start), var(--active-menu-gradient-end)); color: white; padding: 30px; border-radius: 12px;">
@@ -1025,7 +1081,164 @@
                     </div>
                 </div>
 
+                <!-- Add Talent Page -->
+                <div id="add-talent-page" class="tab-content">
+                    <div style="background: linear-gradient(180deg, var(--background) 0%, var(--surface) 100%); min-height: 100vh; padding: 40px 20px;">
+                        <div style="max-width: 900px; margin: 0 auto;">
+                            <!-- Header -->
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px;">
+                                <h1 style="color: var(--foreground); font-size: 32px; font-weight: 800; margin: 0;">Add New Talent</h1>
+                                <button onclick="showTab('talents-tab')" style="background: var(--error); color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 14px;">✕ Close</button>
+                            </div>
+
+                            <!-- Main Card Container -->
+                            <div style="background: var(--surface); border-radius: 16px; padding: 32px; border: 1px solid var(--border); box-shadow: 0 4px 20px rgba(0,0,0,0.1);">
+                                
+                                <!-- Media Gallery Section -->
+                                <div style="margin-bottom: 32px;">
+                                    <h2 style="color: var(--foreground); font-size: 16px; font-weight: 700; margin: 0 0 16px 0; text-transform: uppercase; letter-spacing: 0.5px; opacity: 0.8;">Media Gallery</h2>
+                                    
+                                    <!-- Main Display Area -->
+                                    <div id="media-display" style="background: linear-gradient(135deg, var(--primary), #1e3a5f); border-radius: 12px; width: 100%; height: 350px; display: flex; align-items: center; justify-content: center; margin-bottom: 16px; position: relative; overflow: hidden;">
+                                        <div id="main-media" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;">
+                                            <span style="color: white; font-size: 16px; opacity: 0.8;">📸 No media selected</span>
+                                        </div>
+                                    </div>
+
+                                    <!-- Thumbnails Gallery -->
+                                    <div id="media-thumbnails" style="display: flex; gap: 10px; overflow-x: auto; padding: 12px 0; margin-bottom: 16px; min-height: 90px; scroll-behavior: smooth;"></div>
+
+                                    <!-- Upload Buttons -->
+                                    <div style="display: flex; gap: 12px;">
+                                        <label style="flex: 1; cursor: pointer;">
+                                            <input type="file" id="talent-photo" multiple accept="image/*" style="display: none;">
+                                            <div style="background: var(--primary); color: white; padding: 14px 20px; border-radius: 8px; text-align: center; font-weight: 600; cursor: pointer; transition: all 0.3s;">📷 Add Photos</div>
+                                        </label>
+                                        <label style="flex: 1; cursor: pointer;">
+                                            <input type="file" id="talent-video" multiple accept="video/*" style="display: none;">
+                                            <div style="background: var(--primary); color: white; padding: 14px 20px; border-radius: 8px; text-align: center; font-weight: 600; cursor: pointer; transition: all 0.3s;">🎥 Add Videos</div>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div style="border-top: 1px solid var(--border); padding-top: 32px; margin-bottom: 32px;"></div>
+
+                                <!-- Form Section -->
+                                <form onsubmit="saveTalent(event)">
+                                    <!-- Basic Information -->
+                                    <h2 style="color: var(--foreground); font-size: 16px; font-weight: 700; margin: 0 0 20px 0; text-transform: uppercase; letter-spacing: 0.5px; opacity: 0.8;">Basic Information</h2>
+                                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 32px;">
+                                        <div class="form-group"><label class="form-label">Name *</label><input type="text" id="talent-name" class="form-input" required></div>
+                                        <div class="form-group"><label class="form-label">Category *</label><select id="talent-category" class="form-input" required><option value="">Select</option><option value="Actors">Actors</option><option value="Influencers">Influencers</option><option value="Models">Models</option><option value="Extras">Extras</option></select></div>
+                                        <div class="form-group"><label class="form-label">Price (KD) *</label><input type="number" id="talent-price" class="form-input" required></div>
+                                        <div class="form-group"><label class="form-label">Gender</label><select id="talent-gender" class="form-input"><option value="">Select</option><option value="Male">Male</option><option value="Female">Female</option></select></div>
+                                        <div class="form-group"><label class="form-label">Date of Birth</label><input type="date" id="talent-birthdate" class="form-input" onchange="calculateAge()"></div>
+                                    </div>
+
+                                    <!-- Contact Information -->
+                                    <h2 style="color: var(--foreground); font-size: 16px; font-weight: 700; margin: 0 0 20px 0; text-transform: uppercase; letter-spacing: 0.5px; opacity: 0.8;">Contact Information</h2>
+                                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 32px;">
+                                        <div class="form-group"><label class="form-label">Phone</label><input type="tel" id="talent-phone" class="form-input"></div>
+                                        <div class="form-group"><label class="form-label">Instagram</label><input type="text" id="talent-instagram" class="form-input" placeholder="Username"></div>
+                                        <div class="form-group"><label class="form-label">TikTok</label><input type="text" id="talent-tiktok" class="form-input" placeholder="Username"></div>
+                                    </div>
+
+                                    <!-- Measurements -->
+                                    <h2 style="color: var(--foreground); font-size: 16px; font-weight: 700; margin: 0 0 20px 0; text-transform: uppercase; letter-spacing: 0.5px; opacity: 0.8;">Measurements</h2>
+                                    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 32px;">
+                                        <div class="form-group"><label class="form-label">Height (cm)</label><input type="number" id="talent-height" class="form-input"></div>
+                                        <div class="form-group"><label class="form-label">Weight (kg)</label><input type="number" id="talent-weight" class="form-input"></div>
+                                        <div class="form-group"><label class="form-label">Chest (cm)</label><input type="number" id="talent-chest" class="form-input"></div>
+                                        <div class="form-group"><label class="form-label">Waist (cm)</label><input type="number" id="talent-waist" class="form-input"></div>
+                                        <div class="form-group"><label class="form-label">Hips (cm)</label><input type="number" id="talent-hips" class="form-input"></div>
+                                        <div class="form-group"><label class="form-label">Shoe Size</label><input type="number" id="talent-shoe" class="form-input"></div>
+                                        <div class="form-group"><label class="form-label">Hair Color</label><input type="text" id="talent-hair" class="form-input"></div>
+                                        <div class="form-group"><label class="form-label">Eye Color</label><input type="text" id="talent-eyes" class="form-input"></div>
+                                    </div>
+
+                                    <!-- Skills -->
+                                    <h2 style="color: var(--foreground); font-size: 16px; font-weight: 700; margin: 0 0 20px 0; text-transform: uppercase; letter-spacing: 0.5px; opacity: 0.8;">Skills & Experience</h2>
+                                    <div class="form-group" style="margin-bottom: 32px;"><label class="form-label">Skills</label><textarea id="talent-skills" class="form-input" style="min-height: 120px;"></textarea></div>
+
+                                    <!-- Action Buttons -->
+                                    <div style="display: flex; gap: 12px; border-top: 1px solid var(--border); padding-top: 32px;">
+                                        <button type="button" class="btn" onclick="saveTalent()" style="background: var(--primary); color: white; padding: 14px 32px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; flex: 1; font-size: 15px;">✓ Save Talent</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Talent Detail Page -->
+<!-- Edit Talent Page -->
+<div id="edit-talent-page" class="tab-content">
+    <div style="max-width: 900px; margin: 0 auto; padding: 40px 20px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px;">
+            <h1 style="color: var(--foreground); font-size: 32px; font-weight: 800; margin: 0;">Edit Talent</h1>
+            <button onclick="showTab('talents-tab')" style="background: var(--error); color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 14px;">Close</button>
+        </div>
+
+        <div style="background: var(--surface); border-radius: 16px; padding: 32px; border: 1px solid var(--border); box-shadow: 0 4px 20px rgba(0,0,0,0.1);">
+            <div style="margin-bottom: 32px;">
+                <h2 style="color: var(--foreground); font-size: 16px; font-weight: 700; margin: 0 0 16px 0; text-transform: uppercase; letter-spacing: 0.5px; opacity: 0.8;">Media Gallery</h2>
+                <div id="edit-media-display" style="background: linear-gradient(135deg, var(--primary), #1e3a5f); border-radius: 12px; width: 100%; height: 400px; display: flex; align-items: center; justify-content: center; margin-bottom: 16px; position: relative; overflow: hidden;">
+                    <div id="edit-main-media" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background-size: cover; background-position: center;">
+                        <span style="color: white; font-size: 16px; opacity: 0.8;">📸 No media selected</span>
+                    </div>
+                </div>
+                <div id="edit-media-thumbnails" style="display: flex; gap: 10px; overflow-x: auto; padding: 12px 0; margin-bottom: 16px; min-height: 90px; scroll-behavior: smooth;"></div>
+                <div style="display: flex; gap: 12px;">
+                    <label style="flex: 1; cursor: pointer;">
+                        <input type="file" id="edit-talent-photo" multiple accept="image/*" style="display: none;">
+                        <div style="background: var(--primary); color: white; padding: 14px 20px; border-radius: 8px; text-align: center; font-weight: 600; cursor: pointer; transition: all 0.3s;">📷 Add Photos</div>
+                    </label>
+                    <label style="flex: 1; cursor: pointer;">
+                        <input type="file" id="edit-talent-video" multiple accept="video/*" style="display: none;">
+                        <div style="background: var(--primary); color: white; padding: 14px 20px; border-radius: 8px; text-align: center; font-weight: 600; cursor: pointer; transition: all 0.3s;">🎥 Add Videos</div>
+                    </label>
+                </div>
+            </div>
+            <div style="border-top: 1px solid var(--border); padding-top: 32px; margin-bottom: 32px;"></div>
+            <form onsubmit="updateTalent(event)">
+                <h2 style="color: var(--foreground); font-size: 16px; font-weight: 700; margin: 0 0 20px 0; text-transform: uppercase; letter-spacing: 0.5px; opacity: 0.8;">Basic Information</h2>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 32px;">
+                    <div><label class="form-label">Name *</label><input type="text" id="edit-talent-name" class="form-input" required></div>
+                    <div><label class="form-label">Category *</label><select id="edit-talent-category" class="form-input" required><option value="">Select</option><option value="Actors">Actors</option><option value="Influencers">Influencers</option><option value="Models">Models</option><option value="Extras">Extras</option></select></div>
+                    <div><label class="form-label">Price (KD) *</label><input type="number" id="edit-talent-price" class="form-input" required></div>
+                    <div><label class="form-label">Gender</label><select id="edit-talent-gender" class="form-input"><option value="">Select</option><option value="Male">Male</option><option value="Female">Female</option></select></div>
+                    <div><label class="form-label">Date of Birth</label><input type="date" id="edit-talent-birthdate" class="form-input"></div>
+                </div>
+
+                <h2 style="color: var(--foreground); font-size: 16px; font-weight: 700; margin: 0 0 20px 0; text-transform: uppercase; letter-spacing: 0.5px; opacity: 0.8;">Contact Information</h2>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 32px;">
+                    <div><label class="form-label">Phone</label><input type="tel" id="edit-talent-phone" class="form-input"></div>
+                    <div><label class="form-label">Instagram</label><input type="text" id="edit-talent-instagram" class="form-input" placeholder="Username"></div>
+                    <div><label class="form-label">TikTok</label><input type="text" id="edit-talent-tiktok" class="form-input" placeholder="Username"></div>
+                </div>
+
+                <h2 style="color: var(--foreground); font-size: 16px; font-weight: 700; margin: 0 0 20px 0; text-transform: uppercase; letter-spacing: 0.5px; opacity: 0.8;">Measurements</h2>
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 24px; margin-bottom: 32px;">
+                    <div><label class="form-label">Height (cm)</label><input type="number" id="edit-talent-height" class="form-input"></div>
+                    <div><label class="form-label">Weight (kg)</label><input type="number" id="edit-talent-weight" class="form-input"></div>
+                    <div><label class="form-label">Chest (cm)</label><input type="number" id="edit-talent-chest" class="form-input"></div>
+                    <div><label class="form-label">Waist (cm)</label><input type="number" id="edit-talent-waist" class="form-input"></div>
+                    <div><label class="form-label">Hips (cm)</label><input type="number" id="edit-talent-hips" class="form-input"></div>
+                    <div><label class="form-label">Shoe Size</label><input type="number" id="edit-talent-shoe" class="form-input"></div>
+                    <div><label class="form-label">Hair Color</label><input type="text" id="edit-talent-hair" class="form-input"></div>
+                    <div><label class="form-label">Eye Color</label><input type="text" id="edit-talent-eyes" class="form-input"></div>
+                </div>
+
+                <h2 style="color: var(--foreground); font-size: 16px; font-weight: 700; margin: 0 0 20px 0; text-transform: uppercase; letter-spacing: 0.5px; opacity: 0.8;">Skills</h2>
+                <div style="margin-bottom: 32px;"><label class="form-label">Skills</label><textarea id="edit-talent-skills" class="form-input" style="min-height: 120px;"></textarea></div>
+
+                <div style="display: flex; gap: 12px; border-top: 1px solid var(--border); padding-top: 32px;">
+                    <button type="button" onclick="updateTalent(event)" class="btn" style="background: var(--primary); color: white; padding: 14px 32px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; flex: 1; font-size: 15px;">Update Talent</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
                 <div id="talent-detail" class="detail-page">
                     <div class="detail-header">
                         <div>
@@ -1033,42 +1246,45 @@
                             <div class="talent-category" id="detail-category"></div>
                         </div>
                         <div style="display: flex; gap: 12px;">
-                            <button class="btn btn-primary" onclick="editTalentFromDetail()">تعديل</button>
-                            <button class="btn btn-secondary" onclick="backToTalents()">← العودة</button>
+                            <button class="btn btn-primary" onclick="editTalentFromDetail()">Edit</button>
+                            <button class="btn btn-secondary" onclick="backToTalents()">← Back</button>
                         </div>
                     </div>
 
                     <div style="display: flex; gap: 32px; margin-bottom: 32px;">
                         <div>
-                            <div class="detail-image" id="detail-emoji"></div>
+                            <div class="detail-image" id="detail-media-container" style="width: 300px; height: 300px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: white; font-size: 14px; overflow: hidden;">
+                                <div id="detail-media-display" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;">📸 No media</div>
+                            </div>
+                            <div id="detail-media-thumbnails" style="display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap;"></div>
                         </div>
                         <div style="flex: 1;">
                             <div class="detail-info">
                                 <div class="detail-info-item">
-                                    <div class="detail-info-label">الفئة</div>
+                                    <div class="detail-info-label">Category</div>
                                     <div class="detail-info-value" id="detail-category-value">-</div>
                                 </div>
                                 <div class="detail-info-item">
-                                    <div class="detail-info-label">السعر</div>
+                                    <div class="detail-info-label">Price</div>
                                     <div class="detail-info-value" id="detail-price">-</div>
                                 </div>
                                 <div class="detail-info-item">
-                                    <div class="detail-info-label">الجنس</div>
+                                    <div class="detail-info-label">Gender</div>
                                     <div class="detail-info-value" id="detail-gender">-</div>
                                 </div>
                                 <div class="detail-info-item">
-                                    <div class="detail-info-label">العمر</div>
+                                    <div class="detail-info-label">Age</div>
                                     <div class="detail-info-value" id="detail-age">-</div>
                                 </div>
                                 <div class="detail-info-item">
-                                    <div class="detail-info-label">رقم الهاتف</div>
+                                    <div class="detail-info-label">Phone</div>
                                     <div class="detail-info-value" id="detail-phone" style="cursor: pointer; color: var(--primary); text-decoration: underline;" onclick="openWhatsAppFromPhone()">-</div>
                                 </div>
 
                                 <div class="detail-info-item">
-                                    <div class="detail-info-label">المفضلة</div>
+                                    <div class="detail-info-label">Favorite</div>
                                     <div class="detail-info-value" id="detail-favorite">
-                                        <button class="btn" id="favorite-btn" style="background: linear-gradient(135deg, #f093fb, #f5576c); color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer;" onclick="toggleFavorite()">إضافة للمفضلة</button>
+                                        <button class="btn" id="favorite-btn" style="background: linear-gradient(135deg, #f093fb, #f5576c); color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer;" onclick="toggleFavorite()">Add to Favorites</button>
                                     </div>
                                 </div>
                             </div>
@@ -1082,9 +1298,9 @@
                     
                     <!-- Project History -->
                     <div style="background: var(--surface); border-radius: 12px; padding: 20px; border: 1px solid var(--border);">
-                        <h2 style="margin-bottom: 16px; color: var(--text);">المشاريع</h2>
+                        <h2 style="margin-bottom: 16px; color: var(--text);">Projects</h2>
                         <div id="detail-projects-list" style="display: grid; gap: 12px;"></div>
-                        <div id="no-projects" style="text-align: center; color: var(--muted); padding: 20px;">لم يشارك في أي مشاريع حتى الآن</div>
+                        <div id="no-projects" style="text-align: center; color: var(--muted); padding: 20px;">No projects yet</div>
                     </div>
 
                 </div>
@@ -1095,31 +1311,31 @@
     <!-- Add/Edit Talent Modal -->
     <div id="talent-modal" class="modal">
         <div class="modal-content">
-            <div class="modal-header" id="modal-title">إضافة موديل جديد</div>
+            <div class="modal-header" id="modal-title">Add New Model</div>
             <div class="form-group">
-                <label class="form-label">الاسم</label>
+                <label class="form-label">Name</label>
                 <input type="text" id="talent-name" class="form-input">
             </div>
             <div class="form-group">
-                <label class="form-label">الفئة</label>
+                <label class="form-label">Category</label>
                 <select id="talent-category" class="form-select">
-                    <option value="">اختر الفئة</option>
-                    <option value="ممثلين">ممثلين</option>
-                    <option value="مؤثرين">مؤثرين</option>
-                    <option value="عارضين">عارضين</option>
-                    <option value="كومبارس">كومبارس</option>
+                    <option value="">Select Category</option>
+                    <option value="Actors">Actors</option>
+                    <option value="Influencers">Influencers</option>
+                    <option value="Models">Models</option>
+                    <option value="Extras">Extras</option>
                 </select>
             </div>
             <div class="form-group">
-                <label class="form-label">السعر (KD)</label>
+                <label class="form-label">Price (KD)</label>
                 <input type="number" id="talent-price" class="form-input">
             </div>
             <div class="form-group">
-                <label class="form-label">الجنس</label>
+                <label class="form-label">Gender</label>
                 <select id="talent-gender" class="form-select">
-                    <option value="">اختر</option>
-                    <option value="ذكر">ذكر</option>
-                    <option value="أنثى">أنثى</option>
+                    <option value="">Select</option>
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
                 </select>
             </div>
             <div class="form-group">
@@ -1128,68 +1344,68 @@
             </div>
             <div class="form-group">
                 <label class="form-label">Age (Auto-calculated)</label>
-                <input type="number" id="talent-age" class="form-input" readonly style="background: var(--surface); cursor: not-allowed;">
+                <input type="number" id="talent-age" class="form-input" readonly style="background: var(--background); color: var(--text-light); cursor: not-allowed; opacity: 0.7;">
             </div>
             <div class="form-group">
-                <label class="form-label">رقم الهاتف</label>
+                <label class="form-label">Phone</label>
                 <input type="tel" id="talent-phone" class="form-input">
             </div>
             <div class="form-group">
                 <label class="form-label">Instagram</label>
-                <input type="text" id="talent-instagram" class="form-input" placeholder="اسم المستخدم">
+                <input type="text" id="talent-instagram" class="form-input" placeholder="Username">
             </div>
             <div class="form-group">
                 <label class="form-label">TikTok</label>
-                <input type="text" id="talent-tiktok" class="form-input" placeholder="اسم المستخدم">
+                <input type="text" id="talent-tiktok" class="form-input" placeholder="Username">
             </div>
             <div style="border-top: 1px solid var(--border); padding-top: 16px; margin-top: 16px;">
-                <h3 style="font-size: 14px; font-weight: 600; margin-bottom: 12px; color: var(--primary);">المقاسات والبيانات الإضافية</h3>
+                <h3 style="font-size: 14px; font-weight: 600; margin-bottom: 12px; color: var(--primary);">Measurements and Additional Data</h3>
             </div>
             <div class="form-group">
-                <label class="form-label">الطول (سم)</label>
-                <input type="number" id="talent-height" class="form-input" placeholder="مثال: 180">
+                <label class="form-label">Height (cm)</label>
+                <input type="number" id="talent-height" class="form-input" placeholder="Example: 180">
             </div>
             <div class="form-group">
-                <label class="form-label">الوزن (كغ)</label>
-                <input type="number" id="talent-weight" class="form-input" placeholder="مثال: 75">
+                <label class="form-label">Weight (kg)</label>
+                <input type="number" id="talent-weight" class="form-input" placeholder="Example: 75">
             </div>
             <div class="form-group">
-                <label class="form-label">الصدر (سم)</label>
-                <input type="number" id="talent-chest" class="form-input" placeholder="مثال: 95">
+                <label class="form-label">Chest (cm)</label>
+                <input type="number" id="talent-chest" class="form-input" placeholder="Example: 95">
             </div>
             <div class="form-group">
-                <label class="form-label">الخصر (سم)</label>
-                <input type="number" id="talent-waist" class="form-input" placeholder="مثال: 82">
+                <label class="form-label">Waist (cm)</label>
+                <input type="number" id="talent-waist" class="form-input" placeholder="Example: 82">
             </div>
             <div class="form-group">
-                <label class="form-label">الأرداف (سم)</label>
-                <input type="number" id="talent-hips" class="form-input" placeholder="مثال: 92">
+                <label class="form-label">Hips (cm)</label>
+                <input type="number" id="talent-hips" class="form-input" placeholder="Example: 92">
             </div>
             <div class="form-group">
-                <label class="form-label">مقاس الحذاء</label>
-                <input type="number" id="talent-shoe" class="form-input" placeholder="مثال: 42">
+                <label class="form-label">Shoe Size</label>
+                <input type="number" id="talent-shoe" class="form-input" placeholder="Example: 42">
             </div>
             <div class="form-group">
-                <label class="form-label">لون الشعر</label>
-                <input type="text" id="talent-hair" class="form-input" placeholder="مثال: أسود، بني">
+                <label class="form-label">Hair Color</label>
+                <input type="text" id="talent-hair" class="form-input" placeholder="Example: Black, Brown">
             </div>
             <div class="form-group">
-                <label class="form-label">لون العيون</label>
-                <input type="text" id="talent-eyes" class="form-input" placeholder="مثال: أسود، أزرق">
+                <label class="form-label">Eye Color</label>
+                <input type="text" id="talent-eyes" class="form-input" placeholder="Example: Black, Blue">
             </div>
             <div class="form-group">
-                <label class="form-label">المهارات والخبرات</label>
-                <textarea id="talent-skills" class="form-input" placeholder="مثال: تمثيل، رقص، عرض أزياء" style="min-height: 60px; resize: vertical;"></textarea>
+                <label class="form-label">Skills and Experience</label>
+                <textarea id="talent-skills" class="form-input" placeholder="Example: Acting, Dancing, Fashion Show" style="min-height: 60px; resize: vertical;"></textarea>
             </div>
             <div class="form-group">
-                <label class="form-label">الصورة</label>
+                <label class="form-label">Photo</label>
                 <input type="file" id="talent-photo" class="form-input" accept="image/*" onchange="handleTalentPhotoUpload()">
-                <small style="color: var(--text-light); margin-top: 4px; display: block;">اختر صورة للموديل</small>
+                <small style="color: var(--text-light); margin-top: 4px; display: block;">Select a photo for the model</small>
                 <div id="talent-photo-preview" style="margin-top: 8px;"></div>
             </div>
             <div class="form-actions">
-                <button class="btn btn-primary" onclick="saveTalent()">حفظ</button>
-                <button class="btn btn-secondary" onclick="closeTalentModal()">إلغاء</button>
+                <button class="btn btn-primary" onclick="saveTalent()">Save</button>
+                <button class="btn btn-secondary" onclick="closeTalentModal()">Cancel</button>
             </div>
         </div>
     </div>
@@ -1197,60 +1413,60 @@
     <!-- Project Modal -->
     <div id="project-modal" class="modal">
         <div class="modal-content" style="max-height: 90vh; overflow-y: auto;">
-            <div class="modal-header" id="project-modal-title">إنشاء مشروع جديد</div>
+            <div class="modal-header" id="project-modal-title">Create New Project</div>
             <input type="hidden" id="editing-project-index" value="">
             <div class="form-group">
-                <label class="form-label">اسم المشروع</label>
+                <label class="form-label">Project Name</label>
                 <input type="text" id="project-name" class="form-input">
             </div>
             <div class="form-group">
-                <label class="form-label">الشركة المنفذة</label>
-                <input type="text" id="project-executing-company" class="form-input" placeholder="اسم الشركة المنفذة">
+                <label class="form-label">Executing Company</label>
+                <input type="text" id="project-executing-company" class="form-input" placeholder="Executing Company name">
             </div>
             <div class="form-group">
-                <label class="form-label">الشركة المنتجة</label>
-                <input type="text" id="project-producing-company" class="form-input" placeholder="اسم الشركة المنتجة">
+                <label class="form-label">Producing Company</label>
+                <input type="text" id="project-producing-company" class="form-input" placeholder="Producing Company name">
             </div>
             <div class="form-group">
-                <label class="form-label">اسم المخرج</label>
-                <input type="text" id="project-director" class="form-input" placeholder="اسم المخرج">
+                <label class="form-label">Director Name</label>
+                <input type="text" id="project-director" class="form-input" placeholder="Director Name">
             </div>
             <div class="form-group">
-                <label class="form-label">تاريخ البداية</label>
+                <label class="form-label">Start Date</label>
                 <input type="date" id="project-start-date" class="form-input">
             </div>
             <div class="form-group">
-                <label class="form-label">تاريخ النهاية</label>
+                <label class="form-label">End Date</label>
                 <input type="date" id="project-end-date" class="form-input">
             </div>
             <div class="form-group">
-                <label class="form-label">تاريخ الفيتنق (Fitting)</label>
+                <label class="form-label">Fitting Date</label>
                 <input type="date" id="project-fitting-date" class="form-input">
             </div>
             <div class="form-group">
-                <label class="form-label">تاريخ الكاستنق (Casting)</label>
+                <label class="form-label">Casting Date</label>
                 <input type="date" id="project-casting-date" class="form-input">
             </div>
             <div class="form-group">
-                <label class="form-label">ملاحظات</label>
-                <textarea id="project-notes" class="form-input" placeholder="ملاحظات إضافية عن المشروع" style="min-height: 60px; resize: vertical;"></textarea>
+                <label class="form-label">Notes</label>
+                <textarea id="project-notes" class="form-input" placeholder="Additional notes about the project" style="min-height: 60px; resize: vertical;"></textarea>
             </div>
             <div class="form-group">
-                <label class="form-label">رابط قروب واتساب</label>
+                <label class="form-label">WhatsApp Group Link</label>
                 <input type="text" id="project-whatsapp-group" class="form-input" placeholder="https://chat.whatsapp.com/...">
-                <small style="color: var(--text-light); margin-top: 4px; display: block;">رابط قروب الواتساب الخاص بالمشروع</small>
+                <small style="color: var(--text-light); margin-top: 4px; display: block;">Project WhatsApp Group Link</small>
             </div>
             <div class="form-group">
-                <label class="form-label">اختر الموديلز</label>
+                <label class="form-label">Select Models</label>
                 <div id="talent-selector" style="max-height: 300px; overflow-y: auto; border: 1px solid var(--border); border-radius: 8px; padding: 12px;"></div>
             </div>
             <div style="background: var(--surface-alt); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
-                <div style="font-size: 14px; color: var(--text-light);">التكلفة الإجمالية</div>
+                <div style="font-size: 14px; color: var(--text-light);">Total Cost</div>
                 <div style="font-size: 24px; font-weight: 700; color: var(--primary);" id="project-total">KD 0</div>
             </div>
             <div class="form-actions">
-                <button class="btn btn-primary" id="save-project-btn" onclick="saveProject()">إنشاء</button>
-                <button class="btn btn-secondary" onclick="closeProjectModal()">إلغاء</button>
+                <button class="btn btn-primary" id="save-project-btn" onclick="saveProject()">Create</button>
+                <button class="btn btn-secondary" onclick="closeProjectModal()">Cancel</button>
             </div>
         </div>
     </div>
@@ -1260,9 +1476,9 @@
         let categories = JSON.parse(localStorage.getItem('categories') || '["Actors", "Influencers", "Models", "Extras"]');
         
         let talents = [
-            { id: 1, name: 'أحمد علي', category: 'ممثلين', price: 7000, gender: 'ذكر', age: 25, phone: '501234567', instagram: 'ahmed_ali', tiktok: 'ahmed_ali', height: '180', weight: '75', chest: '95', waist: '82', hips: '92', shoe: '42', hair: 'بني', eyes: 'بني', skills: 'تمثيل، رقص', rating: 4.5, isFavorite: false, projects: [] },
-            { id: 2, name: 'فاطمة محمد', category: 'عارضين', price: 8000, gender: 'أنثى', age: 22, phone: '502345678', instagram: 'fatima_m', tiktok: 'fatima_m', height: '175', weight: '62', chest: '88', waist: '65', hips: '90', shoe: '38', hair: 'أسود', eyes: 'أسود', skills: 'عرض أزياء، تصوير', rating: 5, isFavorite: true, projects: [] },
-            { id: 3, name: 'محمود حسن', category: 'كومبارس', price: 3000, gender: 'ذكر', age: 30, phone: '503456789', instagram: 'mahmoud_h', tiktok: 'mahmoud_h', height: '178', weight: '80', chest: '100', waist: '85', hips: '95', shoe: '43', hair: 'أسود', eyes: 'بني', skills: 'تمثيل، كومبارس', rating: 3.5, isFavorite: false, projects: [] }
+            { id: 1, name: 'Ahmed Ali', category: 'Actors', price: 7000, gender: 'Male', age: 25, phone: '501234567', instagram: 'ahmed_ali', tiktok: 'ahmed_ali', height: '180', weight: '75', chest: '95', waist: '82', hips: '92', shoe: '42', hair: 'Brown', eyes: 'Brown', skills: 'Acting, Dancing', rating: 4.5, isFavorite: false, projects: [] },
+            { id: 2, name: 'Fatima Mohamed', category: 'Models', price: 8000, gender: 'Female', age: 22, phone: '502345678', instagram: 'fatima_m', tiktok: 'fatima_m', height: '175', weight: '62', chest: '88', waist: '65', hips: '90', shoe: '38', hair: 'Black', eyes: 'Black', skills: 'Fashion Show, Photography', rating: 5, isFavorite: true, projects: [] },
+            { id: 3, name: 'Mahmoud Hassan', category: 'Extras', price: 3000, gender: 'Male', age: 30, phone: '503456789', instagram: 'mahmoud_h', tiktok: 'mahmoud_h', height: '178', weight: '80', chest: '100', waist: '85', hips: '95', shoe: '43', hair: 'Black', eyes: 'Brown', skills: 'Acting, Extras', rating: 3.5, isFavorite: false, projects: [] }
         ];
 
         let projects = [];
@@ -1290,6 +1506,200 @@
         let editingTalentIndex = null;
         let selectedProjectTalents = [];
         let draggedPhotoIndex = null;
+        
+        // Media Gallery Management
+        let talentMediaItems = {}; // Store media for each talent
+        let currentMediaItems = []; // Current media being added
+        let currentPrimaryMediaIndex = 0;
+        
+        // Load media items from localStorage on initialization
+        function loadMediaItemsFromStorage() {
+            const savedMediaItems = localStorage.getItem('talentMediaItems');
+            if (savedMediaItems) {
+                try {
+                    talentMediaItems = JSON.parse(savedMediaItems);
+                } catch (e) {
+                    console.error('Error loading media items:', e);
+                    talentMediaItems = {};
+                }
+            }
+        }
+        
+        // Load on page load
+        loadMediaItemsFromStorage();
+        
+        function addMediaToTalent(event, type) {
+            event.preventDefault();
+            event.stopPropagation();
+            const files = event.target.files;
+            if (!files || files.length === 0) return;
+            
+            let filesProcessed = 0;
+            const totalFiles = files.length;
+            
+            for (let file of files) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    currentMediaItems.push({
+                        type: type,
+                        src: e.target.result,
+                        name: file.name
+                    });
+                    filesProcessed++;
+                    if (filesProcessed === totalFiles) {
+                        renderMediaGallery();
+                    }
+                };
+                reader.onerror = function() {
+                    console.error('Error reading file:', file.name);
+                    filesProcessed++;
+                    if (filesProcessed === totalFiles) {
+                        renderMediaGallery();
+                    }
+                };
+                reader.readAsDataURL(file);
+            }
+            
+            event.target.value = '';
+        }
+        
+        function renderMediaGallery() {
+            const thumbnailsContainer = document.getElementById('media-thumbnails');
+            const mainMedia = document.getElementById('main-media');
+            
+            if (!thumbnailsContainer || !mainMedia) return;
+            
+            thumbnailsContainer.innerHTML = '';
+            
+            if (currentMediaItems.length === 0) {
+                mainMedia.innerHTML = '<span style="color: white; font-size: 16px; opacity: 0.8;">📸 No media selected</span>';
+                return;
+            }
+            
+            // Ensure primary index is valid
+            if (currentPrimaryMediaIndex >= currentMediaItems.length) {
+                currentPrimaryMediaIndex = currentMediaItems.length - 1;
+            }
+            
+            // Display main media
+            const primary = currentMediaItems[currentPrimaryMediaIndex];
+            if (primary.type === 'image') {
+                mainMedia.innerHTML = `<img src="${primary.src}" style="width: 100%; height: 100%; object-fit: cover;">`;
+            } else {
+                mainMedia.innerHTML = `<video src="${primary.src}" style="width: 100%; height: 100%; object-fit: cover;" controls></video>`;
+            }
+            
+            // Display thumbnails
+            currentMediaItems.forEach((item, index) => {
+                const thumb = document.createElement('div');
+                thumb.style.cssText = `
+                    width: 80px;
+                    height: 80px;
+                    border-radius: 8px;
+                    cursor: pointer;
+                    border: 3px solid ${index === currentPrimaryMediaIndex ? 'var(--primary)' : 'transparent'};
+                    overflow: hidden;
+                    flex-shrink: 0;
+                    position: relative;
+                    transition: all 0.3s;
+                `;
+                
+                if (item.type === 'image') {
+                    thumb.innerHTML = `<img src="${item.src}" style="width: 100%; height: 100%; object-fit: cover;">`;
+                } else {
+                    thumb.innerHTML = `<video src="${item.src}" style="width: 100%; height: 100%; object-fit: cover;"></video><div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: white; font-size: 24px;">▶</div>`;
+                }
+                
+                thumb.onclick = () => {
+                    currentPrimaryMediaIndex = index;
+                    renderMediaGallery();
+                };
+                
+                // Delete button
+                const deleteBtn = document.createElement('button');
+                deleteBtn.type = 'button';
+                deleteBtn.innerHTML = '✕';
+                deleteBtn.style.cssText = `
+                    position: absolute;
+                    top: 2px;
+                    right: 2px;
+                    background: var(--danger);
+                    color: white;
+                    border: none;
+                    width: 20px;
+                    height: 20px;
+                    border-radius: 50%;
+                    cursor: pointer;
+                    font-size: 12px;
+                    padding: 0;
+                    display: none;
+                    z-index: 10;
+                `;
+                deleteBtn.onclick = (e) => {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    currentMediaItems.splice(index, 1);
+                    if (currentMediaItems.length === 0) {
+                        currentPrimaryMediaIndex = 0;
+                    } else if (currentPrimaryMediaIndex >= currentMediaItems.length) {
+                        currentPrimaryMediaIndex = currentMediaItems.length - 1;
+                    }
+                    renderMediaGallery();
+                };
+                
+                thumb.appendChild(deleteBtn);
+                thumb.addEventListener('mouseenter', () => deleteBtn.style.display = 'block');
+                thumb.addEventListener('mouseleave', () => deleteBtn.style.display = 'none');
+                
+                thumbnailsContainer.appendChild(thumb);
+            });
+        }
+        
+        function renderEditMediaGallery(talentId) {
+            const thumbnailsContainer = document.getElementById('edit-media-thumbnails');
+            const mainMedia = document.getElementById('edit-main-media');
+            
+            if (!thumbnailsContainer || !mainMedia) return;
+            
+            const mediaItems = talentMediaItems[talentId] || [];
+            thumbnailsContainer.innerHTML = '';
+            
+            if (mediaItems.length === 0) {
+                mainMedia.innerHTML = '<span style="color: white; font-size: 16px; opacity: 0.8;">📸 No media selected</span>';
+                return;
+            }
+            
+            // Display main media
+            const primary = mediaItems[0];
+            if (primary.type === 'image') {
+                mainMedia.innerHTML = `<img src="${primary.src}" style="width: 100%; height: 100%; object-fit: cover;">`;
+            } else {
+                mainMedia.innerHTML = `<video src="${primary.src}" style="width: 100%; height: 100%; object-fit: cover;" controls></video>`;
+            }
+            
+            // Display thumbnails
+            mediaItems.forEach((item, index) => {
+                const thumb = document.createElement('div');
+                thumb.style.cssText = `
+                    width: 80px;
+                    height: 80px;
+                    border-radius: 8px;
+                    cursor: pointer;
+                    border: 3px solid ${index === 0 ? 'var(--primary)' : 'transparent'};
+                    overflow: hidden;
+                    flex-shrink: 0;
+                    position: relative;
+                `;
+                
+                if (item.type === 'image') {
+                    thumb.innerHTML = `<img src="${item.src}" style="width: 100%; height: 100%; object-fit: cover;">`;
+                } else {
+                    thumb.innerHTML = `<video src="${item.src}" style="width: 100%; height: 100%; object-fit: cover;"></video><div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: white; font-size: 24px;">▶</div>`;
+                }
+                
+                thumbnailsContainer.appendChild(thumb);
+            });
+        }
 
         function showTab(tabId) {
             // Close talent detail view if open
@@ -1336,6 +1746,7 @@
             }
 
             if (tabId === 'stats-tab') renderStats();
+            if (tabId === 'projects-tab') renderProjects();
         }
 
         function renderTalents() {
@@ -1362,7 +1773,20 @@
                 const actualIndex = talents.indexOf(talent);
                 const talentId = talent.id || actualIndex;
                 const photos = currentTalentPhotos[talentId] || [];
-                const photoDisplay = photos.length > 0 ? `<img src="${photos[0]}" alt="صورة" style="width: 100%; height: 100%; object-fit: cover;">` : '';
+                const mediaItems = talentMediaItems[talentId] || [];
+                let photoDisplay = '';
+                
+                // Use media gallery if available, otherwise use old photos
+                if (mediaItems.length > 0) {
+                    const firstMedia = mediaItems[0];
+                    if (firstMedia.type === 'image') {
+                        photoDisplay = `<img src="${firstMedia.src}" alt="Photo" style="width: 100%; height: 100%; object-fit: cover;">`;
+                    } else {
+                        photoDisplay = `<video src="${firstMedia.src}" style="width: 100%; height: 100%; object-fit: cover;"></video><div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: white; font-size: 32px; text-shadow: 0 2px 4px rgba(0,0,0,0.5);">▶</div>`;
+                    }
+                } else if (photos.length > 0) {
+                    photoDisplay = `<img src="${photos[0]}" alt="Photo" style="width: 100%; height: 100%; object-fit: cover;">`;
+                }
 
                 const isFavorite = talent.isFavorite || false;
                 return `
@@ -1376,18 +1800,18 @@
                             <div class="talent-category">${talent.category}</div>
                             <div class="talent-price">${talent.price} KD</div>
                             <div class="talent-meta">
-                                <span>${talent.gender} • ${talent.age} سنة</span>
+                                <span>${talent.gender} • ${talent.age} years</span>
                             </div>
                             <div class="talent-actions" onclick="event.stopPropagation()">
-                                <button class="btn btn-primary btn-small" onclick="editTalent(event, ${actualIndex})">تعديل</button>
-                                <button class="btn btn-danger btn-small" onclick="deleteTalent(event, ${actualIndex})">حذف</button>
+                                <button class="btn btn-primary btn-small" onclick="editTalent(event, ${actualIndex})">Edit</button>
+                                <button class="btn btn-danger btn-small" onclick="deleteTalent(event, ${actualIndex})">Delete</button>
                             </div>
                         </div>
                     </div>
                 `;
             }).join('');
 
-            document.getElementById('talents-list').innerHTML = html || '<div class="empty-state"><div class="empty-state-icon">📭</div><div class="empty-state-title">لا توجد موديلز</div></div>';
+            document.getElementById('talents-list').innerHTML = html || '<div class="empty-state"><div class="empty-state-icon">📭</div><div class="empty-state-title">No Models</div></div>';
         }
 
         function updateCardSize() {
@@ -1416,7 +1840,7 @@
 
         function openAddTalentModal() {
             editingTalentIndex = null;
-            document.getElementById('modal-title').textContent = 'إضافة موديل جديد';
+            // Clear form fields
             document.getElementById('talent-name').value = '';
             document.getElementById('talent-category').value = '';
             document.getElementById('talent-price').value = '';
@@ -1426,24 +1850,28 @@
             document.getElementById('talent-phone').value = '';
             document.getElementById('talent-instagram').value = '';
             document.getElementById('talent-tiktok').value = '';
-            document.getElementById('talent-modal').classList.add('active');
+            document.getElementById('talent-height').value = '';
+            document.getElementById('talent-weight').value = '';
+            document.getElementById('talent-chest').value = '';
+            document.getElementById('talent-waist').value = '';
+            document.getElementById('talent-hips').value = '';
+            document.getElementById('talent-shoe').value = '';
+            document.getElementById('talent-hair').value = '';
+            document.getElementById('talent-eyes').value = '';
+            document.getElementById('talent-skills').value = '';
+            document.getElementById('talent-photo').value = '';
+            // Navigate to add talent page
+            showTab('add-talent-page');
         }
 
         function editTalent(event, index) {
             event.stopPropagation();
             editingTalentIndex = index;
             const talent = talents[index];
-            document.getElementById('modal-title').textContent = 'تعديل الموديل';
-            document.getElementById('talent-name').value = talent.name;
-            document.getElementById('talent-category').value = talent.category;
-            document.getElementById('talent-price').value = talent.price;
-            document.getElementById('talent-gender').value = talent.gender;
-            document.getElementById('talent-birthdate').value = talent.birthdate || '';
-            document.getElementById('talent-age').value = talent.age;
-            document.getElementById('talent-phone').value = talent.phone;
-            document.getElementById('talent-instagram').value = talent.instagram || '';
-            document.getElementById('talent-tiktok').value = talent.tiktok || '';
-            document.getElementById('talent-modal').classList.add('active');
+            // Store talent data for edit page
+            localStorage.setItem('editingTalentIndex', index);
+            // Navigate to edit-talent-page
+            showTab('edit-talent-page');
         }
 
         function editTalentFromDetail() {
@@ -1488,7 +1916,8 @@
             document.getElementById('talent-age').value = age;
         }
 
-        function saveTalent() {
+        function saveTalent(event) {
+            if (event) event.preventDefault();
             const name = document.getElementById('talent-name').value;
             const category = document.getElementById('talent-category').value;
             const price = parseInt(document.getElementById('talent-price').value);
@@ -1509,22 +1938,45 @@
             const skills = document.getElementById('talent-skills').value;
 
             if (!name || !category || !price) {
-                alert('يرجى ملء جميع الحقول المطلوبة');
+                alert('Please fill in all required fields');
                 return;
             }
 
+            let newTalentId = null;
             if (editingTalentIndex !== null) {
+                const talentId = talents[editingTalentIndex].id;
+                newTalentId = talentId;
                 talents[editingTalentIndex] = { ...talents[editingTalentIndex], name, category, price, gender, birthdate, age, phone, instagram, tiktok, height, weight, chest, waist, hips, shoe, hair, eyes, skills };
+                if (currentMediaItems.length > 0) {
+                    talentMediaItems[talentId] = [...currentMediaItems];
+                }
                 if (currentDetailTalentIndex === editingTalentIndex) {
                     showTalentDetail(editingTalentIndex);
                 }
             } else {
-                talents.push({ id: Date.now(), name, category, price, gender, birthdate, age, phone, instagram, tiktok, height, weight, chest, waist, hips, shoe, hair, eyes, skills });
+                newTalentId = Date.now();
+                const newTalent = { id: newTalentId, name, category, price, gender, birthdate, age, phone, instagram, tiktok, height, weight, chest, waist, hips, shoe, hair, eyes, skills };
+                talents.push(newTalent);
+                if (currentMediaItems.length > 0) {
+                    talentMediaItems[newTalentId] = [...currentMediaItems];
+                }
             }
 
             localStorage.setItem('talents', JSON.stringify(talents));
             localStorage.setItem('talentPhotos', JSON.stringify(currentTalentPhotos));
-            closeTalentModal();
+            localStorage.setItem('talentMediaItems', JSON.stringify(talentMediaItems));
+            
+            // Reset media
+            currentMediaItems = [];
+            currentPrimaryMediaIndex = 0;
+            
+            // Reset form
+            const forms = document.querySelectorAll('form');
+            forms.forEach(form => {
+                if (form.id !== 'edit-talent-form') form.reset();
+            });
+            
+            showTab('talents-tab');
             renderTalents();
             if (currentDetailTalentIndex !== null) {
                 showTalentDetail(currentDetailTalentIndex);
@@ -1533,7 +1985,7 @@
 
         function deleteTalent(event, index) {
             event.stopPropagation();
-            if (confirm('هل تريد حذف هذا الموديل؟')) {
+            if (confirm('Are you sure you want to delete this model?')) {
                 talents.splice(index, 1);
                 renderTalents();
             }
@@ -1557,12 +2009,19 @@
             document.getElementById('detail-age').textContent = talent.age;
             document.getElementById('detail-phone').textContent = talent.phone;
 
-            const photos = currentTalentPhotos[talentId] || [];
-            const detailImage = document.getElementById('detail-emoji');
-            if (photos.length > 0) {
-                detailImage.innerHTML = `<img src="${photos[0]}" alt="صورة">`;
+            // Display media from talentMediaItems
+            const mediaDisplay = document.getElementById('detail-media-display');
+            const mediaItems = talentMediaItems[talentId] || [];
+            
+            if (mediaItems.length > 0) {
+                const primaryMedia = mediaItems[0];
+                if (primaryMedia.type === 'image') {
+                    mediaDisplay.innerHTML = '<img src="' + primaryMedia.src + '" alt="Media" style="width: 100%; height: 100%; object-fit: cover;">';
+                } else {
+                    mediaDisplay.innerHTML = '<video src="' + primaryMedia.src + '" style="width: 100%; height: 100%; object-fit: cover;" controls></video>';
+                }
             } else {
-                detailImage.textContent = '';
+                mediaDisplay.innerHTML = '📸 No media';
             }
 
             document.getElementById('talent-detail').classList.add('active');
@@ -1594,10 +2053,10 @@
         function updateFavoriteButton() {
             const btn = document.getElementById('favorite-btn');
             if (talents[currentDetailTalentIndex].isFavorite) {
-                btn.textContent = 'إزالة من المفضلة';
+                btn.textContent = 'إزالة من Favorite';
                 btn.style.background = 'linear-gradient(135deg, #f093fb, #f5576c)';
             } else {
-                btn.textContent = 'إضافة للمفضلة';
+                btn.textContent = 'Add to Favorites';
                 btn.style.background = 'linear-gradient(135deg, #667eea, #764ba2)';
             }
         }
@@ -1620,7 +2079,7 @@
 
             grid.innerHTML = photos.map((photo, index) => `
                 <div class="photo-item">
-                    <img src="${photo}" alt="صورة">
+                    <img src="${photo}" alt="Photo">
                     <button type="button" class="photo-delete-btn" onclick="deletePhoto(${index})">×</button>
                 </div>
             `).join('');
@@ -1713,9 +2172,9 @@
                     actions.id = 'bulk-actions';
                     actions.style.cssText = 'display: flex; gap: 12px; margin-top: 16px; padding: 16px; background: var(--surface); border-radius: 8px;';
                     actions.innerHTML = `
-                        <button class="btn btn-primary" onclick="bulkAddToNewProject()" style="flex: 1;">إضافة لمشروع جديد</button>
-                        <button class="btn btn-secondary" onclick="bulkAddToExistingProject()" style="flex: 1;">إضافة لمشروع حالي</button>
-                        <button class="btn btn-secondary" onclick="clearSelection()" style="flex: 1;">إلغاء التحديد</button>
+                        <button class="btn btn-primary" onclick="bulkAddToNewProject()" style="flex: 1;">Add to New Project</button>
+                        <button class="btn btn-secondary" onclick="bulkAddToExistingProject()" style="flex: 1;">Add to Existing Project</button>
+                        <button class="btn btn-secondary" onclick="clearSelection()" style="flex: 1;">Cancel التحديد</button>
                     `;
                     container.appendChild(actions);
                 }
@@ -1737,10 +2196,10 @@
 
         function bulkAddToExistingProject() {
             if (projects.length === 0) {
-                alert('لا توجد مشاريع حالية. يرجى إنشاء مشروع أولاً');
+                alert('No Projects حالية. يرجى Create مشروع أولاً');
                 return;
             }
-            const projectIndex = prompt('اختر رقم المشروع (0-' + (projects.length - 1) + ')');
+            const projectIndex = prompt('Select رقم المشروع (0-' + (projects.length - 1) + ')');
             if (projectIndex !== null && projectIndex >= 0 && projectIndex < projects.length) {
                 selectedTalents.forEach(talentIndex => {
                     const talentName = talents[talentIndex].name;
@@ -1752,7 +2211,7 @@
                 localStorage.setItem('projects', JSON.stringify(projects));
                 clearSelection();
                 renderProjects();
-                alert('تم إضافة الموديلز للمشروع بنجاح');
+                alert('Models added to project successfully');
             }
         }
 
@@ -1801,8 +2260,8 @@
             document.getElementById('project-casting-date').value = '';
             document.getElementById('project-notes').value = '';
             document.getElementById('project-whatsapp-group').value = '';
-            document.getElementById('project-modal-title').textContent = 'إنشاء مشروع جديد';
-            document.getElementById('save-project-btn').textContent = 'إنشاء';
+            document.getElementById('project-modal-title').textContent = 'Create New Project';
+            document.getElementById('save-project-btn').textContent = 'Create';
             document.getElementById('save-project-btn').onclick = () => saveProject();
             document.getElementById('editing-project-index').value = '';
             renderTalentSelector();
@@ -1845,7 +2304,7 @@
             const whatsappGroup = document.getElementById('project-whatsapp-group').value;
             
             if (!name || selectedProjectTalents.length === 0) {
-                alert('يرجى إدخال اسم المشروع واختيار موديلز');
+                alert('يرجى إدخال Project Name واختيار موديلز');
                 return;
             }
 
@@ -1885,8 +2344,8 @@
         function closeProjectModal() {
             document.getElementById('project-modal').classList.remove('active');
             // Reset modal to create mode
-            document.getElementById('project-modal-title').textContent = 'إنشاء مشروع جديد';
-            document.getElementById('save-project-btn').textContent = 'إنشاء';
+            document.getElementById('project-modal-title').textContent = 'Create New Project';
+            document.getElementById('save-project-btn').textContent = 'Create';
             document.getElementById('save-project-btn').onclick = () => saveProject();
             document.getElementById('editing-project-index').value = '';
             selectedProjectTalents = [];
@@ -1916,8 +2375,131 @@
             `).join('');
         }
 
+        function viewProjectDetails(index) {
+            const project = projects[index];
+            if (!project) return;
+            
+            let modelsHTML = '';
+            project.talents.forEach(talentName => {
+                const talent = talents.find(t => t.name === talentName);
+                if (talent) {
+                    modelsHTML += `
+                        <div style="background: var(--surface-alt); padding: 12px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <div style="font-weight: 600;">${talent.name}</div>
+                                <div style="font-size: 12px; color: var(--text-light);">${talent.category} • ${talent.phone}</div>
+                            </div>
+                            <div style="font-weight: 600; color: var(--primary);">KD ${talent.price}</div>
+                        </div>
+                    `;
+                }
+            });
+            
+            const notesSection = project.notes ? `
+                <div style="border-top: 1px solid var(--border); padding-top: 16px; margin-bottom: 24px;">
+                    <h3 style="margin-bottom: 12px; color: var(--text);">Notes</h3>
+                    <div style="background: var(--surface-alt); padding: 12px; border-radius: 8px; white-space: pre-wrap;">${project.notes}</div>
+                </div>
+            ` : '';
+            
+            const detailHTML = `
+                <div id="project-detail-modal" class="modal" style="display: flex;">
+                    <div class="modal-content" style="max-width: 800px; max-height: 90vh; overflow-y: auto;">
+                        <div class="modal-header" style="display: flex; justify-content: space-between; align-items: center;">
+                            <div>${project.name}</div>
+                            <button onclick="closeProjectDetail()" style="background: none; border: none; font-size: 24px; cursor: pointer; color: var(--text);">×</button>
+                        </div>
+                        <div style="padding: 20px;">
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px;">
+                                <div>
+                                    <div style="font-size: 12px; color: var(--text-light); text-transform: uppercase; margin-bottom: 4px;">Executing Company</div>
+                                    <div style="font-size: 16px; font-weight: 600;">${project.executingCompany || 'N/A'}</div>
+                                </div>
+                                <div>
+                                    <div style="font-size: 12px; color: var(--text-light); text-transform: uppercase; margin-bottom: 4px;">Producing Company</div>
+                                    <div style="font-size: 16px; font-weight: 600;">${project.producingCompany || 'N/A'}</div>
+                                </div>
+                                <div>
+                                    <div style="font-size: 12px; color: var(--text-light); text-transform: uppercase; margin-bottom: 4px;">Director</div>
+                                    <div style="font-size: 16px; font-weight: 600;">${project.director || 'N/A'}</div>
+                                </div>
+                                <div>
+                                    <div style="font-size: 12px; color: var(--text-light); text-transform: uppercase; margin-bottom: 4px;">Total Cost</div>
+                                    <div style="font-size: 16px; font-weight: 600; color: var(--primary);">KD ${project.total}</div>
+                                </div>
+                            </div>
+                            
+                            <div style="border-top: 1px solid var(--border); padding-top: 16px; margin-bottom: 24px;">
+                                <h3 style="margin-bottom: 12px; color: var(--text);">Dates</h3>
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                                    <div>
+                                        <div style="font-size: 12px; color: var(--text-light);">Start Date</div>
+                                        <div>${project.startDate || 'N/A'}</div>
+                                    </div>
+                                    <div>
+                                        <div style="font-size: 12px; color: var(--text-light);">End Date</div>
+                                        <div>${project.endDate || 'N/A'}</div>
+                                    </div>
+                                    <div>
+                                        <div style="font-size: 12px; color: var(--text-light);">Fitting Date</div>
+                                        <div>${project.fittingDate || 'N/A'}</div>
+                                    </div>
+                                    <div>
+                                        <div style="font-size: 12px; color: var(--text-light);">Casting Date</div>
+                                        <div>${project.castingDate || 'N/A'}</div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div style="border-top: 1px solid var(--border); padding-top: 16px; margin-bottom: 24px;">
+                                <h3 style="margin-bottom: 12px; color: var(--text);">Models in Project</h3>
+                                <div style="display: grid; gap: 12px;">
+                                    ${modelsHTML}
+                                </div>
+                            </div>
+                            
+                            ${notesSection}
+                            
+                            <div style="border-top: 1px solid var(--border); padding-top: 16px; display: flex; gap: 8px;">
+                                <button class="btn btn-primary" onclick="createWhatsAppGroup(${index})" style="flex: 1;">Create WhatsApp Group</button>
+                                <button class="btn btn-secondary" onclick="editProject(${index})" style="flex: 1;">Edit</button>
+                                <button class="btn btn-danger" onclick="deleteProjectDetail(${index})" style="flex: 1;">Delete</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            const existing = document.getElementById('project-detail-modal');
+            if (existing) existing.remove();
+            document.body.insertAdjacentHTML('beforeend', detailHTML);
+        }
+        
+        function closeProjectDetail() {
+            const modal = document.getElementById('project-detail-modal');
+            if (modal) modal.remove();
+        }
+        
+        function deleteProjectDetail(index) {
+            if (confirm('Are you sure you want to delete this project?')) {
+                projects.splice(index, 1);
+                localStorage.setItem('projects', JSON.stringify(projects));
+                closeProjectDetail();
+                renderProjects();
+                renderStats();
+            }
+        }
+        
+        function createWhatsAppGroup(index) {
+            const project = projects[index];
+            const talentsList = project.talents.join(', ');
+            const message = `Project: ${project.name}\nModels: ${talentsList}\nTotal Cost: KD ${project.total}`;
+            const encodedMessage = encodeURIComponent(message);
+            window.open(`https://wa.me/?text=${encodedMessage}`, '_blank');
+        }
+
         function deleteProject(index) {
-            if (confirm('هل تريد حذف هذا المشروع؟')) {
+            if (confirm('Are you sure you want to delete this project?')) {
                 projects.splice(index, 1);
                 localStorage.setItem('projects', JSON.stringify(projects));
                 renderProjects();
@@ -1959,8 +2541,8 @@
             updateProjectTotal();
             
             // Update modal title and button
-            document.getElementById('project-modal-title').textContent = 'تعديل المشروع';
-            document.getElementById('save-project-btn').textContent = 'حفظ التعديلات';
+            document.getElementById('project-modal-title').textContent = 'Edit المشروع';
+            document.getElementById('save-project-btn').textContent = 'Save الEditات';
             document.getElementById('save-project-btn').onclick = () => saveProject(index);
             
             document.getElementById('project-modal').classList.add('active');
@@ -1975,8 +2557,8 @@
             const completedProjects = projects.filter(p => p.endDate && new Date(p.endDate) < new Date()).length;
             const ongoingProjects = projects.filter(p => !p.endDate || new Date(p.endDate) >= new Date()).length;
 
-            const maleCount = talents.filter(t => t.gender === 'ذكر').length;
-            const femaleCount = talents.filter(t => t.gender === 'أنثى').length;
+            const maleCount = talents.filter(t => t.gender === 'Male').length;
+            const femaleCount = talents.filter(t => t.gender === 'Female').length;
             const avgAge = totalTalents > 0 ? Math.round(talents.reduce((sum, t) => sum + (t.age || 0), 0) / totalTalents) : 0;
             const upcomingProjects = projects.filter(p => p.startDate && new Date(p.startDate) > new Date()).length;
 
@@ -2094,7 +2676,7 @@
             const appName = document.getElementById('app-name').value || 'Talent Manager';
             localStorage.setItem('appName', appName);
             document.querySelector('.sidebar-title span').textContent = appName;
-            showNotification('تم حفظ الإعدادات', 'success');
+            showNotification('تم Save الإعدادات', 'success');
         }
         
         function saveWebTitle() {
@@ -2139,7 +2721,7 @@
         }
 
         function clearAllData() {
-            if (confirm('هل تريد حذف جميع البيانات؟ هذا الإجراء غير قابل للتراجع!')) {
+            if (confirm('Are you sure you want to delete all data? This action cannot be undone!')) {
                 talents = [];
                 projects = [];
                 currentTalentPhotos = {};
@@ -2271,6 +2853,13 @@
             sidebar.classList.toggle('collapsed');
             toggleBtn.textContent = sidebar.classList.contains('collapsed') ? '☰' : '✕';
             localStorage.setItem('sidebarCollapsed', sidebar.classList.contains('collapsed'));
+            // Recalculate grid after sidebar toggle
+            setTimeout(() => {
+                const cardSizeSlider = document.getElementById('card-size');
+                if (cardSizeSlider) {
+                    updateCardSize(cardSizeSlider.value);
+                }
+            }, 300);
         }
         
         function setTheme(theme) {
@@ -2402,7 +2991,7 @@
             a.href = url;
             a.download = 'talent-manager-backup.json';
             a.click();
-            alert('تم تصدير البيانات بنجاح');
+            alert('Data exported successfully');
         }
 
         function importData() {
@@ -2419,11 +3008,11 @@
                         projects = data.projects || [];
                         localStorage.setItem('talents', JSON.stringify(talents));
                         localStorage.setItem('projects', JSON.stringify(projects));
-                        alert('تم استيراد البيانات بنجاح');
+                        alert('Data imported successfully');
                         renderTalents();
                         renderStats();
                     } catch (err) {
-                        alert('خطأ في قراءة الملف');
+                        alert('Error reading file');
                     }
                 };
                 reader.readAsText(file);
@@ -2556,6 +3145,192 @@
                 currentYear++;
             }
             renderCalendarGrid();
+        }
+
+        // Edit media items
+        let editMediaItems = [];
+        let editPrimaryMediaIndex = 0;
+
+        function addEditMedia(event, type) {
+            const files = event.target.files;
+            for (let file of files) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    editMediaItems.push({
+                        type: type,
+                        src: e.target.result,
+                        name: file.name
+                    });
+                    renderEditMediaGallery();
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function renderEditMediaGallery() {
+            const thumbnailsContainer = document.getElementById('edit-media-thumbnails');
+            const mainMedia = document.getElementById('edit-main-media');
+            thumbnailsContainer.innerHTML = '';
+            if (editMediaItems.length === 0) {
+                mainMedia.innerHTML = '<span style="color: white; font-size: 16px; opacity: 0.8;">📸 No media selected</span>';
+                return;
+            }
+            const primary = editMediaItems[editPrimaryMediaIndex];
+            mainMedia.innerHTML = '';
+            if (primary.type === 'image') {
+                const img = document.createElement('img');
+                img.src = primary.src;
+                img.style.cssText = 'width: 100%; height: 100%; object-fit: cover;';
+                mainMedia.appendChild(img);
+            } else {
+                const video = document.createElement('video');
+                video.src = primary.src;
+                video.style.cssText = 'width: 100%; height: 100%; object-fit: cover;';
+                video.controls = true;
+                mainMedia.appendChild(video);
+            }
+            editMediaItems.forEach((item, index) => {
+                const thumb = document.createElement('div');
+                const borderColor = index === editPrimaryMediaIndex ? 'var(--primary)' : 'var(--border)';
+                thumb.style.cssText = 'position: relative; width: 80px; height: 80px; border-radius: 8px; cursor: pointer; border: 3px solid ' + borderColor + '; flex-shrink: 0; overflow: hidden;';
+                if (item.type === 'image') {
+                    thumb.innerHTML = '<img src="' + item.src + '" style="width: 100%; height: 100%; object-fit: cover;">';
+                } else {
+                    thumb.innerHTML = '<video src="' + item.src + '" style="width: 100%; height: 100%; object-fit: cover;"></video>';
+                }
+                const deleteBtn = document.createElement('button');
+                deleteBtn.style.cssText = 'position: absolute; top: -8px; right: -8px; background: var(--error); color: white; border: none; width: 24px; height: 24px; border-radius: 50%; cursor: pointer; font-size: 14px; display: flex; align-items: center; justify-content: center; padding: 0;';
+                deleteBtn.textContent = '×';
+                deleteBtn.onclick = function(e) {
+                    e.preventDefault();
+                    editMediaItems.splice(index, 1);
+                    if (editPrimaryMediaIndex >= editMediaItems.length) {
+                        editPrimaryMediaIndex = Math.max(0, editMediaItems.length - 1);
+                    }
+                    renderEditMediaGallery();
+                };
+                thumb.appendChild(deleteBtn);
+                thumb.onclick = function() {
+                    editPrimaryMediaIndex = index;
+                    renderEditMediaGallery();
+                };
+                thumbnailsContainer.appendChild(thumb);
+            });
+        }
+
+        function updateTalent(event) {
+            event.preventDefault();
+            const editingIndex = parseInt(localStorage.getItem('editingTalentIndex'));
+            if (editingIndex === null || isNaN(editingIndex)) return;
+
+            const talent = talents[editingIndex];
+            const talentId = talent.id || editingIndex;
+            
+            talent.name = document.getElementById('edit-talent-name').value;
+            talent.category = document.getElementById('edit-talent-category').value;
+            talent.price = parseFloat(document.getElementById('edit-talent-price').value);
+            talent.gender = document.getElementById('edit-talent-gender').value;
+            talent.birthdate = document.getElementById('edit-talent-birthdate').value;
+            talent.phone = document.getElementById('edit-talent-phone').value;
+            talent.instagram = document.getElementById('edit-talent-instagram').value;
+            talent.tiktok = document.getElementById('edit-talent-tiktok').value;
+            talent.height = parseFloat(document.getElementById('edit-talent-height').value) || 0;
+            talent.weight = parseFloat(document.getElementById('edit-talent-weight').value) || 0;
+            talent.chest = parseFloat(document.getElementById('edit-talent-chest').value) || 0;
+            talent.waist = parseFloat(document.getElementById('edit-talent-waist').value) || 0;
+            talent.hips = parseFloat(document.getElementById('edit-talent-hips').value) || 0;
+            talent.shoe = parseFloat(document.getElementById('edit-talent-shoe').value) || 0;
+            talent.hair = document.getElementById('edit-talent-hair').value;
+            talent.eyes = document.getElementById('edit-talent-eyes').value;
+            talent.skills = document.getElementById('edit-talent-skills').value;
+            talent.media = editMediaItems;
+
+            // Save media items to talentMediaItems
+            if (editMediaItems.length > 0) {
+                talentMediaItems[talentId] = [...editMediaItems];
+            }
+
+            localStorage.setItem('talents', JSON.stringify(talents));
+            localStorage.setItem('talentMediaItems', JSON.stringify(talentMediaItems));
+            localStorage.removeItem('editingTalentIndex');
+            editMediaItems = [];
+            editPrimaryMediaIndex = 0;
+            showTab('talents-tab');
+            renderTalents();
+        }
+
+        // Setup edit talent page
+        const originalShowTab = window.showTab;
+        window.showTab = function(tabName) {
+            if (tabName === 'edit-talent-page') {
+                const editingIndex = parseInt(localStorage.getItem('editingTalentIndex'));
+                if (editingIndex !== null && !isNaN(editingIndex) && talents[editingIndex]) {
+                    const talent = talents[editingIndex];
+                    const talentId = talent.id || editingIndex;
+                    document.getElementById('edit-talent-name').value = talent.name || '';
+                    document.getElementById('edit-talent-category').value = talent.category || '';
+                    document.getElementById('edit-talent-price').value = talent.price || '';
+                    document.getElementById('edit-talent-gender').value = talent.gender || '';
+                    document.getElementById('edit-talent-birthdate').value = talent.birthdate || '';
+                    document.getElementById('edit-talent-phone').value = talent.phone || '';
+                    document.getElementById('edit-talent-instagram').value = talent.instagram || '';
+                    document.getElementById('edit-talent-tiktok').value = talent.tiktok || '';
+                    document.getElementById('edit-talent-height').value = talent.height || '';
+                    document.getElementById('edit-talent-weight').value = talent.weight || '';
+                    document.getElementById('edit-talent-chest').value = talent.chest || '';
+                    document.getElementById('edit-talent-waist').value = talent.waist || '';
+                    document.getElementById('edit-talent-hips').value = talent.hips || '';
+                    document.getElementById('edit-talent-shoe').value = talent.shoe || '';
+                    document.getElementById('edit-talent-hair').value = talent.hair || '';
+                    document.getElementById('edit-talent-eyes').value = talent.eyes || '';
+                    document.getElementById('edit-talent-skills').value = talent.skills || '';
+                    // Load media from talentMediaItems instead of talent.media
+                    editMediaItems = talentMediaItems[talentId] ? [...talentMediaItems[talentId]] : [];
+                    editPrimaryMediaIndex = 0;
+                    renderEditMediaGallery();
+                }
+            }
+            originalShowTab(tabName);
+        };
+
+        // Setup edit media upload event listeners
+        const editPhotoInput = document.getElementById('edit-talent-photo');
+        const editVideoInput = document.getElementById('edit-talent-video');
+        if (editPhotoInput) {
+            editPhotoInput.addEventListener('change', function(e) {
+                addEditMedia(e, 'image');
+            });
+        }
+        if (editVideoInput) {
+            editVideoInput.addEventListener('change', function(e) {
+                addEditMedia(e, 'video');
+            });
+        }
+        
+        // Add event listeners for media upload in add talent page
+        const photoInput = document.getElementById('talent-photo');
+        const videoInput = document.getElementById('talent-video');
+        
+        if (photoInput) {
+            photoInput.addEventListener('change', function(e) {
+                addMediaToTalent(e, 'image');
+            });
+        }
+        
+        if (videoInput) {
+            videoInput.addEventListener('change', function(e) {
+                addMediaToTalent(e, 'video');
+            });
+        }
+        
+        // Load media items from localStorage on page load
+        const savedMediaItems = localStorage.getItem('talentMediaItems');
+        if (savedMediaItems) {
+            try {
+                talentMediaItems = JSON.parse(savedMediaItems);
+            } catch (e) {
+                console.error('Error loading media items:', e);
+            }
         }
 </script>
 </body>

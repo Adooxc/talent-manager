@@ -201,6 +201,7 @@
             transition: all 0.2s ease;
             display: inline-flex;
             align-items: center;
+            justify-content: center;
             gap: 8px;
             text-decoration: none;
         }
@@ -609,27 +610,30 @@
 
         @media (max-width: 768px) {
             .container {
-                flex-direction: column;
+                flex-direction: row;
             }
 
             .sidebar {
-                width: 100%;
-                border-right: none;
-                border-bottom: 1px solid var(--border);
+                width: 200px;
+                border-right: 1px solid var(--border);
+                border-bottom: none;
                 display: flex;
-                gap: 16px;
-                padding: 16px;
-                overflow-x: auto;
+                flex-direction: column;
+                gap: 8px;
+                padding: 12px;
+                overflow-x: visible;
             }
 
             .sidebar-header {
-                margin-bottom: 0;
-                padding-bottom: 0;
-                border-bottom: none;
+                margin-bottom: 8px;
+                padding-bottom: 8px;
+                border-bottom: 1px solid var(--border);
             }
 
             .nav-item {
-                white-space: nowrap;
+                white-space: normal;
+                padding: 8px 12px;
+                border-radius: 6px;
             }
 
             .talents-grid {
@@ -637,11 +641,55 @@
             }
 
             .content {
-                padding: 16px;
+                padding: 8px;
+            }
+            
+            .talent-card {
+                margin-bottom: 8px;
+            }
+            
+            .form-group {
+                margin-bottom: 12px;
+            }
+            
+            .form-input, .form-select, .form-textarea {
+                padding: 8px 12px;
+                font-size: 14px;
             }
 
             .header {
-                padding: 16px;
+                padding: 12px;
+                flex-wrap: wrap;
+            }
+            
+            .header-title {
+                font-size: 18px;
+            }
+            
+            .header-actions {
+                width: 100%;
+            }
+            
+            .btn {
+                padding: 8px 16px;
+                font-size: 12px;
+            }
+            
+            .talent-card {
+                padding: 12px;
+            }
+            
+            .detail-page {
+                padding: 12px;
+            }
+            
+            .detail-header {
+                flex-direction: column;
+                gap: 12px;
+            }
+            
+            .detail-info {
+                grid-template-columns: 1fr;
             }
         }
     </style>
@@ -1114,7 +1162,7 @@
 
                                     <!-- Action Buttons -->
                                     <div style="display: flex; gap: 12px; border-top: 1px solid var(--border); padding-top: 32px;">
-                                        <button type="submit" class="btn" style="background: var(--primary); color: white; padding: 14px 32px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; flex: 1; font-size: 15px;">✓ Save Talent</button>
+                                        <button type="button" class="btn" onclick="saveTalent()" style="background: var(--primary); color: white; padding: 14px 32px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; flex: 1; font-size: 15px;">✓ Save Talent</button>
                                     </div>
                                 </form>
                             </div>
@@ -1139,7 +1187,9 @@
                         <span style="color: white; font-size: 16px; opacity: 0.8;">📸 No media selected</span>
                     </div>
                 </div>
-                <div id="edit-media-thumbnails" style="display: flex; gap: 10px; overflow-x: auto; padding: 12px 0; margin-bottom: 16px; min-height: 90px; scroll-behavior: smooth;"></div>
+                <!-- Grid Gallery (Instagram Style) -->
+                <div id="edit-media-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 12px; margin-bottom: 20px; max-height: 300px; overflow-y: auto; padding: 12px; background: rgba(0,0,0,0.1); border-radius: 8px;"></div>
+                <div id="edit-media-thumbnails" style="display: none;"></div>
                 <div style="display: flex; gap: 12px;">
                     <label style="flex: 1; cursor: pointer;">
                         <input type="file" id="edit-talent-photo" multiple accept="image/*" style="display: none;">
@@ -1185,7 +1235,7 @@
                 <div style="margin-bottom: 32px;"><label class="form-label">Skills</label><textarea id="edit-talent-skills" class="form-input" style="min-height: 120px;"></textarea></div>
 
                 <div style="display: flex; gap: 12px; border-top: 1px solid var(--border); padding-top: 32px;">
-                    <button type="submit" class="btn" style="background: var(--primary); color: white; padding: 14px 32px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; flex: 1; font-size: 15px;">Update Talent</button>
+                    <button type="button" onclick="updateTalent(event)" class="btn" style="background: var(--primary); color: white; padding: 14px 32px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; flex: 1; font-size: 15px;">Update Talent</button>
                 </div>
             </form>
         </div>
@@ -1205,7 +1255,24 @@
 
                     <div style="display: flex; gap: 32px; margin-bottom: 32px;">
                         <div>
-                            <div class="detail-image" id="detail-emoji"></div>
+                            <!-- Main Media Display -->
+                            <div class="detail-image" id="detail-media-container" style="width: 300px; height: 300px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: white; font-size: 14px; overflow: hidden; position: relative;">
+                                <div id="detail-media-display" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;">📸 No media</div>
+                                <!-- Navigation arrows -->
+                                <button id="detail-media-prev" style="position: absolute; left: 8px; top: 50%; transform: translateY(-50%); background: rgba(0,0,0,0.5); color: white; border: none; width: 36px; height: 36px; border-radius: 50%; cursor: pointer; font-size: 18px; display: none;">‹</button>
+                                <button id="detail-media-next" style="position: absolute; right: 8px; top: 50%; transform: translateY(-50%); background: rgba(0,0,0,0.5); color: white; border: none; width: 36px; height: 36px; border-radius: 50%; cursor: pointer; font-size: 18px; display: none;">›</button>
+                                <!-- Media counter -->
+                                <div id="detail-media-counter" style="position: absolute; bottom: 8px; right: 8px; background: rgba(0,0,0,0.6); color: white; padding: 4px 8px; border-radius: 4px; font-size: 12px; display: none;"></div>
+                            </div>
+                            <!-- Instagram-style grid gallery -->
+                            <!-- Instagram-style Media Gallery -->
+                            <div id="detail-media-gallery-container" style="margin-top: 20px;">
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                                    <h3 style="margin: 0; color: white; font-size: 14px; font-weight: 600;">MEDIA GALLERY</h3>
+                                    <span id="detail-media-count" style="color: var(--muted); font-size: 12px;"></span>
+                                </div>
+                                <div id="detail-media-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); gap: 12px; padding: 12px; background: rgba(0,0,0,0.2); border-radius: 12px; border: 1px solid var(--border); max-height: 250px; overflow-y: auto;"></div>
+                            </div>
                         </div>
                         <div style="flex: 1;">
                             <div class="detail-info">
@@ -1456,25 +1523,179 @@
         let selectedProjectTalents = [];
         let draggedPhotoIndex = null;
         
-        // Media Gallery Management
-        let talentMediaItems = {}; // Store media for each talent
-        let currentMediaItems = []; // Current media being added
+        // Media Gallery Management with IndexedDB
+        let talentMediaItems = {};
+        let currentMediaItems = [];
         let currentPrimaryMediaIndex = 0;
+        let db = null;
         
-        function addMediaToTalent(event, type) {
-            const files = event.target.files;
-            for (let file of files) {
+        // Initialize IndexedDB for persistent image storage
+        function initIndexedDB() {
+            return new Promise((resolve, reject) => {
+                const request = indexedDB.open('TalentManagerDB', 1);
+                request.onerror = () => resolve(null);
+                request.onsuccess = () => {
+                    db = request.result;
+                    resolve(db);
+                };
+                request.onupgradeneeded = (event) => {
+                    const database = event.target.result;
+                    if (!database.objectStoreNames.contains('talentImages')) {
+                        database.createObjectStore('talentImages', { keyPath: 'id', autoIncrement: true });
+                    }
+                };
+            });
+        }
+        
+        // Save image to IndexedDB
+        function saveImageToIndexedDB(talentId, imageData) {
+            return new Promise((resolve) => {
+                if (!db) { resolve(null); return; }
+                const transaction = db.transaction(['talentImages'], 'readwrite');
+                const store = transaction.objectStore('talentImages');
+                const data = { talentId: talentId, imageData: imageData, timestamp: Date.now() };
+                const request = store.add(data);
+                request.onsuccess = () => resolve(request.result);
+                request.onerror = () => resolve(null);
+            });
+        }
+        
+        // Load images from IndexedDB for a talent
+        function loadImagesFromIndexedDB(talentId) {
+            return new Promise((resolve) => {
+                if (!db) { 
+                    console.log('DB not initialized, initializing now...');
+                    initIndexedDB().then(() => {
+                        if (!db) { resolve([]); return; }
+                        const transaction = db.transaction(['talentImages'], 'readonly');
+                        const store = transaction.objectStore('talentImages');
+                        const request = store.getAll();
+                        request.onsuccess = () => {
+                            const images = request.result.filter(item => item.talentId === talentId);
+                            console.log('Loaded images for talent', talentId, ':', images.length);
+                            resolve(images);
+                        };
+                        request.onerror = () => resolve([]);
+                    });
+                    return;
+                }
+                const transaction = db.transaction(['talentImages'], 'readonly');
+                const store = transaction.objectStore('talentImages');
+                const request = store.getAll();
+                request.onsuccess = () => {
+                    const images = request.result.filter(item => item.talentId === talentId);
+                    console.log('Loaded images for talent', talentId, ':', images.length);
+                    resolve(images);
+                };
+                request.onerror = () => {
+                    console.error('Error loading images from IndexedDB');
+                    resolve([]);
+                };
+            });
+        }
+        
+        // Load media items from IndexedDB on initialization
+        async function loadMediaItemsFromStorage() {
+            try {
+                await initIndexedDB();
+            } catch (e) {
+                console.error('Error initializing media storage:', e);
+            }
+        }
+        
+        loadMediaItemsFromStorage();
+        
+        // Compress image for Add Talent page
+        function compressImageForAdd(file, maxWidth, maxHeight, quality) {
+            return new Promise((resolve, reject) => {
                 const reader = new FileReader();
                 reader.onload = function(e) {
-                    currentMediaItems.push({
-                        type: type,
-                        src: e.target.result,
-                        name: file.name
-                    });
-                    renderMediaGallery();
+                    const img = new Image();
+                    img.onload = function() {
+                        const canvas = document.createElement('canvas');
+                        let width = img.width;
+                        let height = img.height;
+                        
+                        if (width > maxWidth) {
+                            height = (height * maxWidth) / width;
+                            width = maxWidth;
+                        }
+                        if (height > maxHeight) {
+                            width = (width * maxHeight) / height;
+                            height = maxHeight;
+                        }
+                        
+                        canvas.width = width;
+                        canvas.height = height;
+                        
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, width, height);
+                        
+                        const compressedDataUrl = canvas.toDataURL('image/jpeg', quality);
+                        resolve(compressedDataUrl);
+                    };
+                    img.onerror = reject;
+                    img.src = e.target.result;
                 };
+                reader.onerror = reject;
                 reader.readAsDataURL(file);
+            });
+        }
+
+        function addMediaToTalent(event, type) {
+            event.preventDefault();
+            event.stopPropagation();
+            const files = event.target.files;
+            if (!files || files.length === 0) return;
+            
+            let filesProcessed = 0;
+            const totalFiles = files.length;
+            
+            for (let file of files) {
+                if (type === 'image') {
+                    // Compress images to max 400x400 with 60% quality
+                    compressImageForAdd(file, 400, 400, 0.6).then(compressedSrc => {
+                        currentMediaItems.push({
+                            type: type,
+                            src: compressedSrc,
+                            name: file.name
+                        });
+                        filesProcessed++;
+                        if (filesProcessed === totalFiles) {
+                            renderMediaGallery();
+                        }
+                    }).catch(err => {
+                        console.error('Error compressing image:', err);
+                        filesProcessed++;
+                        if (filesProcessed === totalFiles) {
+                            renderMediaGallery();
+                        }
+                    });
+                } else {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        currentMediaItems.push({
+                            type: type,
+                            src: e.target.result,
+                            name: file.name
+                        });
+                        filesProcessed++;
+                        if (filesProcessed === totalFiles) {
+                            renderMediaGallery();
+                        }
+                    };
+                    reader.onerror = function() {
+                        console.error('Error reading file:', file.name);
+                        filesProcessed++;
+                        if (filesProcessed === totalFiles) {
+                            renderMediaGallery();
+                        }
+                    };
+                    reader.readAsDataURL(file);
+                }
             }
+            
+            event.target.value = '';
         }
         
         function renderMediaGallery() {
@@ -1488,6 +1709,11 @@
             if (currentMediaItems.length === 0) {
                 mainMedia.innerHTML = '<span style="color: white; font-size: 16px; opacity: 0.8;">📸 No media selected</span>';
                 return;
+            }
+            
+            // Ensure primary index is valid
+            if (currentPrimaryMediaIndex >= currentMediaItems.length) {
+                currentPrimaryMediaIndex = currentMediaItems.length - 1;
             }
             
             // Display main media
@@ -1526,6 +1752,7 @@
                 
                 // Delete button
                 const deleteBtn = document.createElement('button');
+                deleteBtn.type = 'button';
                 deleteBtn.innerHTML = '✕';
                 deleteBtn.style.cssText = `
                     position: absolute;
@@ -1541,12 +1768,15 @@
                     font-size: 12px;
                     padding: 0;
                     display: none;
+                    z-index: 10;
                 `;
                 deleteBtn.onclick = (e) => {
                     e.stopPropagation();
                     e.preventDefault();
                     currentMediaItems.splice(index, 1);
-                    if (currentPrimaryMediaIndex >= currentMediaItems.length && currentMediaItems.length > 0) {
+                    if (currentMediaItems.length === 0) {
+                        currentPrimaryMediaIndex = 0;
+                    } else if (currentPrimaryMediaIndex >= currentMediaItems.length) {
                         currentPrimaryMediaIndex = currentMediaItems.length - 1;
                     }
                     renderMediaGallery();
@@ -1847,33 +2077,46 @@
                 return;
             }
 
+            let newTalentId = null;
             if (editingTalentIndex !== null) {
                 const talentId = talents[editingTalentIndex].id;
+                newTalentId = talentId;
                 talents[editingTalentIndex] = { ...talents[editingTalentIndex], name, category, price, gender, birthdate, age, phone, instagram, tiktok, height, weight, chest, waist, hips, shoe, hair, eyes, skills };
                 if (currentMediaItems.length > 0) {
-                    talentMediaItems[talentId] = currentMediaItems;
+                    talentMediaItems[talentId] = [...currentMediaItems];
                 }
                 if (currentDetailTalentIndex === editingTalentIndex) {
                     showTalentDetail(editingTalentIndex);
                 }
             } else {
-                const newTalent = { id: Date.now(), name, category, price, gender, birthdate, age, phone, instagram, tiktok, height, weight, chest, waist, hips, shoe, hair, eyes, skills };
+                newTalentId = Date.now();
+                const newTalent = { id: newTalentId, name, category, price, gender, birthdate, age, phone, instagram, tiktok, height, weight, chest, waist, hips, shoe, hair, eyes, skills };
                 talents.push(newTalent);
                 if (currentMediaItems.length > 0) {
-                    talentMediaItems[newTalent.id] = currentMediaItems;
+                    talentMediaItems[newTalentId] = [...currentMediaItems];
                 }
             }
 
             localStorage.setItem('talents', JSON.stringify(talents));
             localStorage.setItem('talentPhotos', JSON.stringify(currentTalentPhotos));
-            localStorage.setItem('talentMediaItems', JSON.stringify(talentMediaItems));
+            // Save images to IndexedDB for persistent storage
+            if (currentMediaItems.length > 0) {
+                currentMediaItems.forEach(item => {
+                    if (item.type === 'image') {
+                        saveImageToIndexedDB(newTalentId, item.src);
+                    }
+                });
+            }
             
             // Reset media
             currentMediaItems = [];
             currentPrimaryMediaIndex = 0;
             
             // Reset form
-            document.querySelector('form').reset();
+            const forms = document.querySelectorAll('form');
+            forms.forEach(form => {
+                if (form.id !== 'edit-talent-form') form.reset();
+            });
             
             showTab('talents-tab');
             renderTalents();
@@ -1895,6 +2138,64 @@
             editingTalentIndex = null;
         }
 
+        let detailMediaIndex = 0;
+        function renderDetailMediaGallery() {
+            if (currentDetailTalentIndex === null) return;
+            const talentId = talents[currentDetailTalentIndex].id || currentDetailTalentIndex;
+            const mediaItems = talentMediaItems[talentId] || [];
+            const grid = document.getElementById('detail-media-grid');
+            grid.innerHTML = '';
+            if (mediaItems.length === 0) return;
+            mediaItems.forEach((item, index) => {
+                const gridItem = document.createElement('div');
+                gridItem.style.cssText = 'position: relative; width: 100%; aspect-ratio: 1; border-radius: 6px; cursor: pointer; border: ' + (index === detailMediaIndex ? '3px solid var(--primary)' : '2px solid var(--border)') + '; overflow: hidden;';
+                if (item.type === 'image') {
+                    gridItem.innerHTML = '<img src="' + item.src + '" style="width: 100%; height: 100%; object-fit: cover;">';
+                } else {
+                    gridItem.innerHTML = '<video src="' + item.src + '" style="width: 100%; height: 100%; object-fit: cover;"></video>';
+                }
+                gridItem.onclick = function() {
+                    detailMediaIndex = index;
+                    renderDetailMediaGallery();
+                    displayDetailMedia();
+                };
+                grid.appendChild(gridItem);
+            });
+        }
+        function displayDetailMedia() {
+            if (currentDetailTalentIndex === null) return;
+            const talentId = talents[currentDetailTalentIndex].id || currentDetailTalentIndex;
+            const mediaItems = talentMediaItems[talentId] || [];
+            const mediaDisplay = document.getElementById('detail-media-display');
+            if (mediaItems.length === 0) return;
+            const media = mediaItems[detailMediaIndex];
+            mediaDisplay.innerHTML = '';
+            if (media.type === 'image') {
+                const img = document.createElement('img');
+                img.src = media.src;
+                img.style.cssText = 'width: 100%; height: 100%; object-fit: cover;';
+                mediaDisplay.appendChild(img);
+            }
+        }
+        function nextDetailMedia() {
+            if (currentDetailTalentIndex === null) return;
+            const talentId = talents[currentDetailTalentIndex].id || currentDetailTalentIndex;
+            const mediaItems = talentMediaItems[talentId] || [];
+            if (mediaItems.length === 0) return;
+            detailMediaIndex = (detailMediaIndex + 1) % mediaItems.length;
+            renderDetailMediaGallery();
+            displayDetailMedia();
+        }
+        function prevDetailMedia() {
+            if (currentDetailTalentIndex === null) return;
+            const talentId = talents[currentDetailTalentIndex].id || currentDetailTalentIndex;
+            const mediaItems = talentMediaItems[talentId] || [];
+            if (mediaItems.length === 0) return;
+            detailMediaIndex = (detailMediaIndex - 1 + mediaItems.length) % mediaItems.length;
+            renderDetailMediaGallery();
+            displayDetailMedia();
+        }
+
         function showTalentDetail(index) {
             currentDetailTalentIndex = index;
             const talent = talents[index];
@@ -1908,13 +2209,14 @@
             document.getElementById('detail-age').textContent = talent.age;
             document.getElementById('detail-phone').textContent = talent.phone;
 
-            const photos = currentTalentPhotos[talentId] || [];
-            const detailImage = document.getElementById('detail-emoji');
-            if (photos.length > 0) {
-                detailImage.innerHTML = `<img src="${photos[0]}" alt="Photo">`;
-            } else {
-                detailImage.textContent = '';
-            }
+            // Display media from talentMediaItems
+            detailMediaIndex = 0;
+            displayDetailMedia();
+            renderDetailMediaGallery();
+            
+            // Setup navigation buttons
+            document.getElementById('detail-media-prev').onclick = prevDetailMedia;
+            document.getElementById('detail-media-next').onclick = nextDetailMedia;
 
             document.getElementById('talent-detail').classList.add('active');
             document.getElementById('talents-tab').classList.remove('active');
@@ -3040,107 +3342,278 @@
         }
 
         // Edit media items
-        let editMediaItems = [];
+        let editMediaItems = new Map(); // Use Map to prevent duplicates by src
         let editPrimaryMediaIndex = 0;
+
+        // Compress image to reduce size for localStorage
+        function compressImage(file, maxWidth, maxHeight, quality) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const img = new Image();
+                    img.onload = function() {
+                        const canvas = document.createElement('canvas');
+                        let width = img.width;
+                        let height = img.height;
+                        
+                        // Calculate new dimensions
+                        if (width > maxWidth) {
+                            height = (height * maxWidth) / width;
+                            width = maxWidth;
+                        }
+                        if (height > maxHeight) {
+                            width = (width * maxHeight) / height;
+                            height = maxHeight;
+                        }
+                        
+                        canvas.width = width;
+                        canvas.height = height;
+                        
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, width, height);
+                        
+                        // Convert to compressed JPEG
+                        const compressedDataUrl = canvas.toDataURL('image/jpeg', quality);
+                        resolve(compressedDataUrl);
+                    };
+                    img.onerror = reject;
+                    img.src = e.target.result;
+                };
+                reader.onerror = reject;
+                reader.readAsDataURL(file);
+            });
+        }
 
         function addEditMedia(event, type) {
             const files = event.target.files;
             for (let file of files) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    editMediaItems.push({
-                        type: type,
-                        src: e.target.result,
-                        name: file.name
+                if (type === 'image') {
+                    compressImage(file, 400, 400, 0.6).then(compressedSrc => {
+                        // Use src as key to prevent duplicates
+                        editMediaItems.set(compressedSrc, {
+                            type: type,
+                            src: compressedSrc,
+                            name: file.name
+                        });
+                        renderEditMediaGallery();
+                    }).catch(err => {
+                        console.error('Error compressing image:', err);
                     });
-                    renderEditMediaGallery();
-                };
-                reader.readAsDataURL(file);
+                } else {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        // Use src as key to prevent duplicates
+                        editMediaItems.set(e.target.result, {
+                            type: type,
+                            src: e.target.result,
+                            name: file.name
+                        });
+                        renderEditMediaGallery();
+                    };
+                    reader.readAsDataURL(file);
+                }
             }
         }
 
         function renderEditMediaGallery() {
-            const thumbnailsContainer = document.getElementById('edit-media-thumbnails');
+            const gridContainer = document.getElementById('edit-media-grid');
             const mainMedia = document.getElementById('edit-main-media');
-            thumbnailsContainer.innerHTML = '';
-            if (editMediaItems.length === 0) {
+            const infoDiv = document.getElementById('edit-media-info');
+            
+            if (!gridContainer) return; // Grid not ready yet
+            gridContainer.innerHTML = '';
+            
+            // Convert Map to Array for easier iteration
+            const items = Array.from(editMediaItems.values());
+            
+            if (items.length === 0) {
                 mainMedia.innerHTML = '<span style="color: white; font-size: 16px; opacity: 0.8;">📸 No media selected</span>';
+                if (infoDiv) infoDiv.textContent = '0 media items';
                 return;
             }
-            const primary = editMediaItems[editPrimaryMediaIndex];
+            
+            // Ensure editPrimaryMediaIndex is valid
+            if (editPrimaryMediaIndex >= items.length) {
+                editPrimaryMediaIndex = 0;
+            }
+            
+            const primary = items[editPrimaryMediaIndex];
             mainMedia.innerHTML = '';
-            if (primary.type === 'image') {
+            if (primary && primary.type === 'image') {
                 const img = document.createElement('img');
                 img.src = primary.src;
                 img.style.cssText = 'width: 100%; height: 100%; object-fit: cover;';
                 mainMedia.appendChild(img);
-            } else {
+            } else if (primary && primary.type === 'video') {
                 const video = document.createElement('video');
                 video.src = primary.src;
                 video.style.cssText = 'width: 100%; height: 100%; object-fit: cover;';
                 video.controls = true;
                 mainMedia.appendChild(video);
             }
-            editMediaItems.forEach((item, index) => {
-                const thumb = document.createElement('div');
-                const borderColor = index === editPrimaryMediaIndex ? 'var(--primary)' : 'var(--border)';
-                thumb.style.cssText = 'position: relative; width: 80px; height: 80px; border-radius: 8px; cursor: pointer; border: 3px solid ' + borderColor + '; flex-shrink: 0; overflow: hidden;';
+            
+            items.forEach((item, index) => {
+                const gridItem = document.createElement('div');
+                gridItem.draggable = true;
+                gridItem.dataset.index = index;
+                
+                const isPrimary = index === editPrimaryMediaIndex;
+                const borderColor = isPrimary ? '3px solid var(--primary)' : '2px solid var(--border)';
+                
+                gridItem.style.cssText = 'position: relative; width: 100%; aspect-ratio: 1; border-radius: 8px; cursor: pointer; border: ' + borderColor + '; overflow: hidden; transition: all 0.2s; background: rgba(0,0,0,0.1);';
+                
                 if (item.type === 'image') {
-                    thumb.innerHTML = '<img src="' + item.src + '" style="width: 100%; height: 100%; object-fit: cover;">';
+                    gridItem.innerHTML = '<img src="' + item.src + '" style="width: 100%; height: 100%; object-fit: cover;">';
                 } else {
-                    thumb.innerHTML = '<video src="' + item.src + '" style="width: 100%; height: 100%; object-fit: cover;"></video>';
+                    gridItem.innerHTML = '<video src="' + item.src + '" style="width: 100%; height: 100%; object-fit: cover;"></video><div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: white; font-size: 24px;">▶</div>';
                 }
+                
+                if (isPrimary) {
+                    const badge = document.createElement('div');
+                    badge.style.cssText = 'position: absolute; top: 4px; left: 4px; background: var(--primary); color: white; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 600;';
+                    badge.textContent = '⭐ PRIMARY';
+                    gridItem.appendChild(badge);
+                }
+                
                 const deleteBtn = document.createElement('button');
-                deleteBtn.style.cssText = 'position: absolute; top: -8px; right: -8px; background: var(--error); color: white; border: none; width: 24px; height: 24px; border-radius: 50%; cursor: pointer; font-size: 14px; display: flex; align-items: center; justify-content: center; padding: 0;';
-                deleteBtn.textContent = '×';
+                deleteBtn.style.cssText = 'position: absolute; top: 4px; right: 4px; background: var(--error); color: white; border: none; width: 28px; height: 28px; border-radius: 50%; cursor: pointer; font-size: 16px; display: flex; align-items: center; justify-content: center; padding: 0; opacity: 0; transition: opacity 0.2s;';
+                deleteBtn.textContent = '✕';
                 deleteBtn.onclick = function(e) {
-                    e.preventDefault();
-                    editMediaItems.splice(index, 1);
-                    if (editPrimaryMediaIndex >= editMediaItems.length) {
-                        editPrimaryMediaIndex = Math.max(0, editMediaItems.length - 1);
+                    e.stopPropagation();
+                    const key = Array.from(editMediaItems.keys())[index];
+                    editMediaItems.delete(key);
+                    const newItems = Array.from(editMediaItems.values());
+                    if (editPrimaryMediaIndex >= newItems.length) {
+                        editPrimaryMediaIndex = Math.max(0, newItems.length - 1);
                     }
                     renderEditMediaGallery();
                 };
-                thumb.appendChild(deleteBtn);
-                thumb.onclick = function() {
+                gridItem.appendChild(deleteBtn);
+                
+                gridItem.onmouseenter = function() { deleteBtn.style.opacity = '1'; };
+                gridItem.onmouseleave = function() { deleteBtn.style.opacity = '0'; };
+                
+                gridItem.onclick = function() {
                     editPrimaryMediaIndex = index;
                     renderEditMediaGallery();
                 };
-                thumbnailsContainer.appendChild(thumb);
+                
+                gridItem.ondragstart = function(e) {
+                    e.dataTransfer.effectAllowed = 'move';
+                    e.dataTransfer.setData('text/plain', index);
+                };
+                
+                gridItem.ondragover = function(e) {
+                    e.preventDefault();
+                    e.dataTransfer.dropEffect = 'move';
+                    gridItem.style.opacity = '0.7';
+                };
+                
+                gridItem.ondragleave = function(e) { gridItem.style.opacity = '1'; };
+                
+                gridItem.ondrop = function(e) {
+                    e.preventDefault();
+                    gridItem.style.opacity = '1';
+                    const fromIndex = parseInt(e.dataTransfer.getData('text/plain'));
+                    if (fromIndex !== index) {
+                        const itemsArray = Array.from(editMediaItems.entries());
+                        const [key, movedItem] = itemsArray[fromIndex];
+                        editMediaItems.delete(key);
+                        const newItemsArray = Array.from(editMediaItems.entries());
+                        if (index < newItemsArray.length) {
+                            const targetKey = newItemsArray[index][0];
+                            editMediaItems.delete(targetKey);
+                            editMediaItems.set(targetKey, newItemsArray[index][1]);
+                        }
+                        editMediaItems.set(key, movedItem);
+                        if (editPrimaryMediaIndex === fromIndex) {
+                            editPrimaryMediaIndex = index;
+                        }
+                        renderEditMediaGallery();
+                    }
+                };
+                
+                gridContainer.appendChild(gridItem);
             });
+            
+            if (infoDiv) infoDiv.textContent = items.length + ' media item' + (items.length !== 1 ? 's' : '');
         }
 
-        function updateTalent(event) {
-            event.preventDefault();
-            const editingIndex = parseInt(localStorage.getItem('editingTalentIndex'));
-            if (editingIndex === null || isNaN(editingIndex)) return;
+        function updateTalent() {
+            try {
+                const editingIndex = parseInt(localStorage.getItem('editingTalentIndex'));
+                if (editingIndex === null || isNaN(editingIndex) || !talents[editingIndex]) {
+                    alert('Error: Talent not found');
+                    return;
+                }
 
-            const talent = talents[editingIndex];
-            talent.name = document.getElementById('edit-talent-name').value;
-            talent.category = document.getElementById('edit-talent-category').value;
-            talent.price = parseFloat(document.getElementById('edit-talent-price').value);
-            talent.gender = document.getElementById('edit-talent-gender').value;
-            talent.birthdate = document.getElementById('edit-talent-birthdate').value;
-            talent.phone = document.getElementById('edit-talent-phone').value;
-            talent.instagram = document.getElementById('edit-talent-instagram').value;
-            talent.tiktok = document.getElementById('edit-talent-tiktok').value;
-            talent.height = parseFloat(document.getElementById('edit-talent-height').value) || 0;
-            talent.weight = parseFloat(document.getElementById('edit-talent-weight').value) || 0;
-            talent.chest = parseFloat(document.getElementById('edit-talent-chest').value) || 0;
-            talent.waist = parseFloat(document.getElementById('edit-talent-waist').value) || 0;
-            talent.hips = parseFloat(document.getElementById('edit-talent-hips').value) || 0;
-            talent.shoe = parseFloat(document.getElementById('edit-talent-shoe').value) || 0;
-            talent.hair = document.getElementById('edit-talent-hair').value;
-            talent.eyes = document.getElementById('edit-talent-eyes').value;
-            talent.skills = document.getElementById('edit-talent-skills').value;
-            talent.media = editMediaItems;
+                const talent = talents[editingIndex];
+                const talentId = talent.id || editingIndex;
+                
+                const nameValue = document.getElementById('edit-talent-name').value.trim();
+                if (!nameValue) {
+                    alert('Please enter talent name');
+                    return;
+                }
+                
+                const categoryValue = document.getElementById('edit-talent-category').value.trim();
+                if (!categoryValue) {
+                    alert('Please select a category');
+                    return;
+                }
+                
+                const priceValue = document.getElementById('edit-talent-price').value.trim();
+                if (!priceValue) {
+                    alert('Please enter price');
+                    return;
+                }
 
-            localStorage.setItem('talents', JSON.stringify(talents));
-            localStorage.removeItem('editingTalentIndex');
-            editMediaItems = [];
-            editPrimaryMediaIndex = 0;
-            showTab('talents-tab');
-            renderTalents();
+                talent.name = nameValue;
+                talent.category = categoryValue;
+                talent.price = parseFloat(priceValue);
+                talent.gender = document.getElementById('edit-talent-gender').value || '';
+                talent.birthdate = document.getElementById('edit-talent-birthdate').value || '';
+                talent.phone = document.getElementById('edit-talent-phone').value || '';
+                talent.instagram = document.getElementById('edit-talent-instagram').value || '';
+                talent.tiktok = document.getElementById('edit-talent-tiktok').value || '';
+                talent.height = parseFloat(document.getElementById('edit-talent-height').value) || 0;
+                talent.weight = parseFloat(document.getElementById('edit-talent-weight').value) || 0;
+                talent.chest = parseFloat(document.getElementById('edit-talent-chest').value) || 0;
+                talent.waist = parseFloat(document.getElementById('edit-talent-waist').value) || 0;
+                talent.hips = parseFloat(document.getElementById('edit-talent-hips').value) || 0;
+                talent.shoe = parseFloat(document.getElementById('edit-talent-shoe').value) || 0;
+                talent.hair = document.getElementById('edit-talent-hair').value || '';
+                talent.eyes = document.getElementById('edit-talent-eyes').value || '';
+                talent.skills = document.getElementById('edit-talent-skills').value || '';
+
+                if (editMediaItems.size > 0) {
+                    // Convert Map to array (no duplicates since Map uses src as key)
+                    const uniqueItems = Array.from(editMediaItems.values());
+                    // Store primary media index
+                    talent.primaryMediaIndex = editPrimaryMediaIndex;
+                    talentMediaItems[talentId] = [...uniqueItems];
+                    uniqueItems.forEach(item => {
+                        if (item.type === 'image') {
+                            saveImageToIndexedDB(talentId, item.src);
+                        }
+                    });
+                } else {
+                    delete talentMediaItems[talentId];
+                }
+
+                localStorage.setItem('talents', JSON.stringify(talents));
+                // Note: Images are stored in memory only (talentMediaItems) to avoid localStorage quota issues
+                localStorage.removeItem('editingTalentIndex');
+                
+                editMediaItems = new Map();
+                editPrimaryMediaIndex = 0;
+                
+                showTab('talents-tab');
+                renderTalents();
+            } catch (error) {
+                console.error('Error updating talent:', error);
+                alert('Error updating talent: ' + error.message);
+            }
         }
 
         // Setup edit talent page
@@ -3150,6 +3623,7 @@
                 const editingIndex = parseInt(localStorage.getItem('editingTalentIndex'));
                 if (editingIndex !== null && !isNaN(editingIndex) && talents[editingIndex]) {
                     const talent = talents[editingIndex];
+                    const talentId = talent.id || editingIndex;
                     document.getElementById('edit-talent-name').value = talent.name || '';
                     document.getElementById('edit-talent-category').value = talent.category || '';
                     document.getElementById('edit-talent-price').value = talent.price || '';
@@ -3167,9 +3641,35 @@
                     document.getElementById('edit-talent-hair').value = talent.hair || '';
                     document.getElementById('edit-talent-eyes').value = talent.eyes || '';
                     document.getElementById('edit-talent-skills').value = talent.skills || '';
-                    editMediaItems = talent.media || [];
+                    // Load media from IndexedDB (persistent storage)
+                    editMediaItems = new Map(); // Use Map to prevent duplicates
                     editPrimaryMediaIndex = 0;
-                    renderEditMediaGallery();
+                    loadImagesFromIndexedDB(talentId).then(images => {
+                        editMediaItems = new Map(); // Clear and use Map
+                        if (images && images.length > 0) {
+                            images.forEach(img => {
+                                const item = {
+                                    type: 'image',
+                                    src: img.imageData,
+                                    name: 'Saved image'
+                                };
+                                editMediaItems.set(item.src, item);
+                            });
+                        }
+                        renderEditMediaGallery();
+                    }).catch(err => {
+                        console.log('No IndexedDB images found, using memory storage');
+                        // Use Map for deduplication
+                    editMediaItems = new Map();
+                    if (talentMediaItems[talentId]) {
+                        talentMediaItems[talentId].forEach(item => {
+                            editMediaItems.set(item.src, item);
+                        });
+                    }
+                    editPrimaryMediaIndex = talent.primaryMediaIndex || 0;
+                        renderEditMediaGallery();
+                    });
+
                 }
             }
             originalShowTab(tabName);
@@ -3205,15 +3705,9 @@
             });
         }
         
-        // Load media items from localStorage on page load
-        const savedMediaItems = localStorage.getItem('talentMediaItems');
-        if (savedMediaItems) {
-            try {
-                talentMediaItems = JSON.parse(savedMediaItems);
-            } catch (e) {
-                console.error('Error loading media items:', e);
-            }
-        }
+        // Media items are stored in memory only during the session
+        // They are NOT saved to localStorage to avoid quota issues
+        // talentMediaItems is initialized as an empty object at the top of the script
 </script>
 </body>
 </html>
