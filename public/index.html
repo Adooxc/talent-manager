@@ -63,6 +63,40 @@
             padding: 24px;
             overflow-y: auto;
             box-shadow: var(--shadow-sm);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .sidebar.collapsed {
+            width: 0;
+            padding: 0;
+            border-right: none;
+            overflow: hidden;
+        }
+        
+        .sidebar-toggle {
+            position: fixed;
+            left: 20px;
+            top: 20px;
+            z-index: 1000;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            width: 40px;
+            height: 40px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow-md);
+        }
+        
+        .sidebar-toggle:hover {
+            transform: scale(1.05);
+            box-shadow: var(--shadow-lg);
         }
 
         .sidebar-header {
@@ -600,8 +634,9 @@
     </style>
 </head>
 <body>
+    <button class="sidebar-toggle" onclick="toggleSidebar()" id="sidebar-toggle-btn">☰</button>
     <div class="container">
-        <div class="sidebar">
+        <div class="sidebar" id="sidebar">
             <div class="sidebar-header">
 
                 <div class="sidebar-title" style="display: flex; align-items: center; gap: 10px;">
@@ -1915,6 +1950,11 @@
                     const logoContent = document.getElementById('logo-preview-content');
                     logoContent.innerHTML = '<img src="' + logoData + '" style="width: 100%; height: 100%; object-fit: cover;">';
                     updateFavicon(logoData);
+                    // Update sidebar logo immediately
+                    const sidebarLogo = document.querySelector('.sidebar-logo');
+                    if (sidebarLogo) {
+                        sidebarLogo.innerHTML = '<img src="' + logoData + '" style="width: 100%; height: 100%; object-fit: cover;">';
+                    }
                 };
                 reader.readAsDataURL(file);
             }
@@ -1955,6 +1995,15 @@
             if (logoContent) logoContent.innerHTML = '<img src="' + savedLogo + '" style="width: 100%; height: 100%; object-fit: cover;">';
         }
         
+        // Restore sidebar state
+        const sidebarCollapsed = localStorage.getItem('sidebarCollapsed') === 'true';
+        if (sidebarCollapsed) {
+            const sidebar = document.getElementById('sidebar');
+            const toggleBtn = document.getElementById('sidebar-toggle-btn');
+            sidebar.classList.add('collapsed');
+            toggleBtn.textContent = '✕';
+        }
+        
         // Apply theme on page load
         const savedTheme = localStorage.getItem('theme') || 'light';
         setTheme(savedTheme);
@@ -1988,6 +2037,14 @@
         loadMenuNames();
         setLastUpdateDate();
     
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const toggleBtn = document.getElementById('sidebar-toggle-btn');
+            sidebar.classList.toggle('collapsed');
+            toggleBtn.textContent = sidebar.classList.contains('collapsed') ? '☰' : '✕';
+            localStorage.setItem('sidebarCollapsed', sidebar.classList.contains('collapsed'));
+        }
+        
         function setTheme(theme) {
             localStorage.setItem('theme', theme);
             if (theme === 'dark') {
