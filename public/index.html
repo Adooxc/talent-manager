@@ -1014,11 +1014,14 @@
                 const talentId = talent.id || actualIndex;
                 const photoCount = (currentTalentPhotos[talentId] || []).length;
 
+                const photos = currentTalentPhotos[talentId] || [];
+                const photoDisplay = photos.length > 0 ? `<img src="${photos[0]}" alt="صورة" style="width: 80px; height: 80px; object-fit: cover; border-radius: 8px;">` : '😊';
+                
                 return `
                     <div class="talent-card" onclick="showTalentDetail(${actualIndex})">
                         <div class="talent-card-header">
                             <div class="talent-info">
-                                <div class="talent-name">😊 ${talent.name}</div>
+                                <div class="talent-name">${photoDisplay} ${talent.name}</div>
                                 <div class="talent-category">${talent.category}</div>
                             </div>
                             <div class="talent-price">${talent.price} KD</div>
