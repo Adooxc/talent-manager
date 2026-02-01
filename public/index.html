@@ -796,8 +796,17 @@
 
                 <!-- Projects Tab -->
                 <div id="projects-tab" class="tab-content">
-                    <div style="margin-bottom: 24px;">
+                    <div style="margin-bottom: 24px; display: flex; gap: 12px; flex-wrap: wrap; align-items: center;">
                         <button class="btn btn-primary" onclick="openCreateProjectModal()">+ Create Project</button>
+                        <input type="text" id="projects-search" placeholder="Search projects..." class="form-input" style="flex: 1; min-width: 200px;" onkeyup="filterProjects()">
+                        <select id="projects-status-filter" class="form-input" style="min-width: 150px;" onchange="filterProjects()">
+                            <option value="">All Status</option>
+                            <option value="Planning">Planning</option>
+                            <option value="In Progress">In Progress</option>
+                            <option value="Completed">Completed</option>
+                            <option value="On Hold">On Hold</option>
+                            <option value="Cancelled">Cancelled</option>
+                        </select>
                     </div>
                     
                     <!-- Calendar View -->
@@ -1462,6 +1471,27 @@
             <div class="form-group">
                 <label class="form-label">Casting Date</label>
                 <input type="date" id="project-casting-date" class="form-input">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Project Color</label>
+                <input type="color" id="project-color" class="form-input" value="#0a7ea4" style="height: 50px; cursor: pointer;">
+                <small style="color: var(--text-light); margin-top: 4px; display: block;">Select a color to identify this project in the calendar</small>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                <div class="form-group">
+                    <label class="form-label">Budget (KD)</label>
+                    <input type="number" id="project-budget" class="form-input" placeholder="Project budget">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Status</label>
+                    <select id="project-status" class="form-input">
+                        <option value="Planning">Planning</option>
+                        <option value="In Progress">In Progress</option>
+                        <option value="Completed">Completed</option>
+                        <option value="On Hold">On Hold</option>
+                        <option value="Cancelled">Cancelled</option>
+                    </select>
+                </div>
             </div>
             <div class="form-group">
                 <label class="form-label">Notes</label>
@@ -2423,6 +2453,9 @@
         function bulkAddToNewProject() {
             selectedProjectTalents = selectedTalents;
             openCreateProjectModal();
+            document.getElementById('project-color').value = '#0a7ea4';
+            document.getElementById('project-budget').value = '';
+            document.getElementById('project-status').value = 'Planning';
         }
 
         function bulkAddToExistingProject() {
@@ -2533,6 +2566,9 @@
             const castingDate = document.getElementById('project-casting-date').value;
             const notes = document.getElementById('project-notes').value;
             const whatsappGroup = document.getElementById('project-whatsapp-group').value;
+            const color = document.getElementById('project-color').value;
+            const budget = parseFloat(document.getElementById('project-budget').value) || 0;
+            const status = document.getElementById('project-status').value;
             
             if (!name || selectedProjectTalents.length === 0) {
                 alert('يرجى إدخال Project Name واختيار موديلز');
@@ -2556,6 +2592,9 @@
                 castingDate,
                 notes,
                 whatsappGroup,
+                color,
+                budget,
+                status,
                 talents: selectedProjectTalents.map(i => talents[i].name),
                 total
             };
@@ -2582,15 +2621,34 @@
             selectedProjectTalents = [];
         }
 
+        function filterProjects() {
+            const searchTerm = document.getElementById('projects-search').value.toLowerCase();
+            const statusFilter = document.getElementById('projects-status-filter').value;
+            
+            const filtered = projects.filter(p => {
+                const matchesSearch = p.name.toLowerCase().includes(searchTerm);
+                const matchesStatus = !statusFilter || p.status === statusFilter;
+                return matchesSearch && matchesStatus;
+            });
+            
+            renderProjectsList(filtered);
+        }
+        
         function renderProjects() {
+            renderProjectsList(projects);
+        }
+        
+        function renderProjectsList(projectsToRender) {
             const list = document.getElementById('projects-list');
-            if (projects.length === 0) {
+            if (projectsToRender.length === 0) {
                 list.innerHTML = '<div class="empty-state"><div class="empty-state-icon">📭</div><div class="empty-state-title">No Projects</div></div>';
                 return;
             }
 
-            list.innerHTML = projects.map((project, index) => `
-                <div class="settings-card" style="cursor: pointer; transition: all 0.3s ease;" onclick="viewProjectDetails(${index})" onmouseover="this.style.boxShadow='var(--shadow-lg)'" onmouseout="this.style.boxShadow='var(--shadow-sm)'">
+            list.innerHTML = projectsToRender.map((project, index) => {
+                const actualIndex = projects.indexOf(project);
+                return `
+                <div class="settings-card" style="cursor: pointer; transition: all 0.3s ease;" onclick="viewProjectDetails(${actualIndex})" onmouseover="this.style.boxShadow='var(--shadow-lg)'" onmouseout="this.style.boxShadow='var(--shadow-sm)'">
                     <div style="display: flex; justify-content: space-between; align-items: start;">
                         <div style="flex: 1;">
                             <div class="settings-card-title">${project.name}</div>
@@ -2598,12 +2656,13 @@
                             <div style="font-size: 18px; font-weight: 700; color: var(--primary);">KD ${project.total}</div>
                         </div>
                         <div style="display: flex; gap: 8px;" onclick="event.stopPropagation();">
-                            <button class="btn btn-primary btn-small" onclick="editProject(${index})">Edit</button>
-                            <button class="btn btn-danger btn-small" onclick="deleteProject(${index})">Delete</button>
+                            <button class="btn btn-primary btn-small" onclick="editProject(${actualIndex})">Edit</button>
+                            <button class="btn btn-danger btn-small" onclick="deleteProject(${actualIndex})">Delete</button>
                         </div>
                     </div>
                 </div>
-            `).join('');
+            `;
+            }).join('');
         }
 
         function viewProjectDetails(index) {
@@ -2760,6 +2819,9 @@
             document.getElementById('project-casting-date').value = project.castingDate || '';
             document.getElementById('project-notes').value = project.notes || '';
             document.getElementById('project-whatsapp-group').value = project.whatsappGroup || '';
+            document.getElementById('project-color').value = project.color || '#0a7ea4';
+            document.getElementById('project-budget').value = project.budget || '';
+            document.getElementById('project-status').value = project.status || 'Planning';
             
             renderTalentSelector();
             
@@ -2772,12 +2834,18 @@
             updateProjectTotal();
             
             // Update modal title and button
-            document.getElementById('project-modal-title').textContent = 'Edit المشروع';
-            document.getElementById('save-project-btn').textContent = 'Save الEditات';
+            document.getElementById('project-modal-title').textContent = 'Edit Project';
+            document.getElementById('save-project-btn').textContent = 'Save Changes';
             document.getElementById('save-project-btn').onclick = () => saveProject(index);
             
             document.getElementById('project-modal').classList.add('active');
             document.getElementById('editing-project-index').value = index;
+            
+            // Scroll to top of modal
+            setTimeout(() => {
+                const modal = document.getElementById('project-modal');
+                if (modal) modal.querySelector('.modal-content').scrollTop = 0;
+            }, 100);
         }
 
         function renderStats() {
@@ -3347,17 +3415,72 @@
                 const hasProject = projectsOnDay.length > 0;
                 
                 const isToday = new Date().toLocaleDateString('en-US') === dateStr;
-                const bgColor = (isToday || hasProject) ? 'var(--primary)' : 'transparent';
-                const textColor = (isToday || hasProject) ? 'white' : 'var(--text)';
-                html += `<div style="padding: 12px 4px; border-radius: 8px; text-align: center; background: ${bgColor}; color: ${textColor}; cursor: pointer; font-weight: 500; min-height: 50px; display: flex; flex-direction: column; justify-content: center;">${day}${hasProject ? '<div style="font-size: 9px; margin-top: 2px;">' + projectsOnDay.length + ' event</div>' : ''}</div>`;
+                let bgColor = 'transparent';
+                let textColor = 'var(--text)';
+                
+                if (isToday) {
+                    bgColor = 'var(--primary)';
+                    textColor = 'white';
+                } else if (hasProject) {
+                    // Use the color of the first project on this day
+                    bgColor = projectsOnDay[0].color || 'var(--primary)';
+                    textColor = 'white';
+                }
+                
+                let projectsHTML = '';
+                if (hasProject) {
+                    projectsHTML = '<div style="font-size: 9px; margin-top: 2px; max-width: 100%; overflow: hidden; text-overflow: ellipsis;">';
+                    projectsOnDay.forEach(p => {
+                        projectsHTML += `<div style="background: rgba(255,255,255,0.3); padding: 2px 4px; border-radius: 3px; margin: 1px 0; font-size: 8px;">${p.name}</div>`;
+                    });
+                    projectsHTML += '</div>';
+                }
+                
+                html += `<div style="padding: 12px 4px; border-radius: 8px; text-align: center; background: ${bgColor}; color: ${textColor}; cursor: pointer; font-weight: 500; min-height: 50px; display: flex; flex-direction: column; justify-content: center; border: 2px solid ${hasProject ? bgColor : 'var(--border)'};">${day}${projectsHTML}</div>`;
             }
             
             document.getElementById('calendar-grid').innerHTML = html;
+            
+            // Add click handlers to calendar days
+            const calendarDays = document.querySelectorAll('#calendar-grid > div');
+            calendarDays.forEach((day, index) => {
+                const dayNum = index - firstDay + 1;
+                if (dayNum > 0 && dayNum <= daysInMonth) {
+                    const dateObj = new Date(currentYear, currentMonth, dayNum);
+                    const dateStr = dateObj.toLocaleDateString('en-US');
+                    const projectsOnDay = projects.filter(p => p.startDate && new Date(p.startDate).toLocaleDateString('en-US') === dateStr);
+                    if (projectsOnDay.length > 0) {
+                        day.style.cursor = 'pointer';
+                        day.onclick = () => {
+                            showProjectsOnDay(dateStr, projectsOnDay);
+                        };
+                    }
+                }
+            });
             
             const monthYear = document.getElementById('calendar-month');
             if (monthYear) {
                 monthYear.textContent = monthNames[currentMonth] + ' ' + currentYear;
             }
+        }
+        
+        function showProjectsOnDay(dateStr, projectsOnDay) {
+            const modal = document.createElement('div');
+            modal.style.cssText = 'position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 1000;';
+            
+            let projectsHTML = '';
+            projectsOnDay.forEach((p, i) => {
+                const projIndex = projects.indexOf(p);
+                projectsHTML += `<div style="background: var(--surface); border-left: 4px solid ${p.color || 'var(--primary)'}; padding: 16px; border-radius: 8px; margin-bottom: 12px; cursor: pointer;" onclick="editProject(${projIndex})">
+                    <div style="font-weight: 600; color: var(--foreground); margin-bottom: 4px;">${p.name}</div>
+                    <div style="font-size: 12px; color: var(--text-light); margin-bottom: 4px;">${p.executingCompany || 'No company'}</div>
+                    <div style="font-size: 12px; color: var(--text-light);">Status: <span style="background: ${p.color || 'var(--primary)'}; color: white; padding: 2px 8px; border-radius: 4px;">${p.status || 'Planning'}</span></div>
+                </div>`;
+            });
+            
+            modal.innerHTML = `<div style="background: var(--background); border-radius: 12px; padding: 24px; max-width: 500px; max-height: 80vh; overflow-y: auto; box-shadow: 0 10px 40px rgba(0,0,0,0.3);"><div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;"><h2 style="color: var(--foreground); margin: 0; font-size: 18px;">Projects on ${dateStr}</h2><button onclick="this.closest('div').parentElement.remove()" style="background: var(--error); color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: 600;">Close</button></div><div>${projectsHTML}</div></div>`;
+            
+            document.body.appendChild(modal);
         }
         
         function previousMonth() {
