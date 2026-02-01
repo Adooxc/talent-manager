@@ -756,19 +756,19 @@
                     <div style="padding: 20px;">
                         <h1 style="margin-bottom: 30px; font-size: 28px; color: var(--text);">Dashboard</h1>
                         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 40px;">
-                            <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; border-radius: 12px;">
+                            <div style="background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; padding: 30px; border-radius: 12px;">
                                 <div style="font-size: 13px; opacity: 0.9; margin-bottom: 10px;">Total Talents</div>
                                 <div style="font-size: 40px; font-weight: bold;" id="dash-total-talents">0</div>
                             </div>
-                            <div style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; padding: 30px; border-radius: 12px;">
+                            <div style="background: linear-gradient(135deg, var(--active-menu-gradient-start), var(--active-menu-gradient-end)); color: white; padding: 30px; border-radius: 12px;">
                                 <div style="font-size: 13px; opacity: 0.9; margin-bottom: 10px;">Total Projects</div>
                                 <div style="font-size: 40px; font-weight: bold;" id="dash-total-projects">0</div>
                             </div>
-                            <div style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white; padding: 30px; border-radius: 12px;">
+                            <div style="background: linear-gradient(135deg, var(--primary), var(--active-menu-gradient-start)); color: white; padding: 30px; border-radius: 12px;">
                                 <div style="font-size: 13px; opacity: 0.9; margin-bottom: 10px;">Favorites</div>
                                 <div style="font-size: 40px; font-weight: bold;" id="dash-total-favorites">0</div>
                             </div>
-                            <div style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); color: white; padding: 30px; border-radius: 12px;">
+                            <div style="background: linear-gradient(135deg, var(--active-menu-gradient-start), var(--secondary)); color: white; padding: 30px; border-radius: 12px;">
                                 <div style="font-size: 13px; opacity: 0.9; margin-bottom: 10px;">Average Age</div>
                                 <div style="font-size: 40px; font-weight: bold;" id="dash-avg-age">0</div>
                             </div>
@@ -868,22 +868,8 @@
                                     <span id="border-color-value" style="color: var(--text-light); font-size: 14px;">#e2e8f0</span>
                                 </div>
                             </div>
-                            
-                            <div class="form-group">
-                                <label class="form-label">Surface Color</label>
-                                <div style="display: flex; gap: 12px; margin-top: 8px; align-items: center;">
-                                    <input type="color" id="surface-color" class="form-input" value="#ffffff" style="width: 60px; height: 40px; cursor: pointer; border-radius: 8px; border: 1px solid var(--border);">
-                                    <span id="surface-color-value" style="color: var(--text-light); font-size: 14px;">#ffffff</span>
-                                </div>
-                            </div>
-                            
-                            <div class="form-group">
-                                <label class="form-label">Surface Color</label>
-                                <div style="display: flex; gap: 12px; margin-top: 8px; align-items: center;">
-                                    <input type="color" id="surface-color" class="form-input" value="#ffffff" style="width: 60px; height: 40px; cursor: pointer; border-radius: 8px; border: 1px solid var(--border);">
-                                    <span id="surface-color-value" style="color: var(--text-light); font-size: 14px;">#ffffff</span>
-                                </div>
-                            </div>
+
+
                             <div class="form-group">
                                 <label class="form-label">Active Menu Gradient Start</label>
                                 <div style="display: flex; gap: 12px; margin-top: 8px; align-items: center;">
@@ -1095,8 +1081,12 @@
                 </select>
             </div>
             <div class="form-group">
-                <label class="form-label">العمر</label>
-                <input type="number" id="talent-age" class="form-input">
+                <label class="form-label">Date of Birth</label>
+                <input type="date" id="talent-birthdate" class="form-input" onchange="calculateAge()">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Age (Auto-calculated)</label>
+                <input type="number" id="talent-age" class="form-input" readonly style="background: var(--surface); cursor: not-allowed;">
             </div>
             <div class="form-group">
                 <label class="form-label">رقم الهاتف</label>
@@ -1389,6 +1379,7 @@
             document.getElementById('talent-category').value = '';
             document.getElementById('talent-price').value = '';
             document.getElementById('talent-gender').value = '';
+            document.getElementById('talent-birthdate').value = '';
             document.getElementById('talent-age').value = '';
             document.getElementById('talent-phone').value = '';
             document.getElementById('talent-instagram').value = '';
@@ -1405,6 +1396,7 @@
             document.getElementById('talent-category').value = talent.category;
             document.getElementById('talent-price').value = talent.price;
             document.getElementById('talent-gender').value = talent.gender;
+            document.getElementById('talent-birthdate').value = talent.birthdate || '';
             document.getElementById('talent-age').value = talent.age;
             document.getElementById('talent-phone').value = talent.phone;
             document.getElementById('talent-instagram').value = talent.instagram || '';
@@ -1438,11 +1430,28 @@
             reader.readAsDataURL(file);
         }
 
+        function calculateAge() {
+            const birthdate = document.getElementById('talent-birthdate').value;
+            if (!birthdate) {
+                document.getElementById('talent-age').value = '';
+                return;
+            }
+            const birthDate = new Date(birthdate);
+            const today = new Date();
+            let age = today.getFullYear() - birthDate.getFullYear();
+            const monthDiff = today.getMonth() - birthDate.getMonth();
+            if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+                age--;
+            }
+            document.getElementById('talent-age').value = age;
+        }
+
         function saveTalent() {
             const name = document.getElementById('talent-name').value;
             const category = document.getElementById('talent-category').value;
             const price = parseInt(document.getElementById('talent-price').value);
             const gender = document.getElementById('talent-gender').value;
+            const birthdate = document.getElementById('talent-birthdate').value;
             const age = parseInt(document.getElementById('talent-age').value);
             const phone = document.getElementById('talent-phone').value;
             const instagram = document.getElementById('talent-instagram').value;
@@ -1463,12 +1472,12 @@
             }
 
             if (editingTalentIndex !== null) {
-                talents[editingTalentIndex] = { ...talents[editingTalentIndex], name, category, price, gender, age, phone, instagram, tiktok, height, weight, chest, waist, hips, shoe, hair, eyes, skills };
+                talents[editingTalentIndex] = { ...talents[editingTalentIndex], name, category, price, gender, birthdate, age, phone, instagram, tiktok, height, weight, chest, waist, hips, shoe, hair, eyes, skills };
                 if (currentDetailTalentIndex === editingTalentIndex) {
                     showTalentDetail(editingTalentIndex);
                 }
             } else {
-                talents.push({ id: Date.now(), name, category, price, gender, age, phone, instagram, tiktok, height, weight, chest, waist, hips, shoe, hair, eyes, skills });
+                talents.push({ id: Date.now(), name, category, price, gender, birthdate, age, phone, instagram, tiktok, height, weight, chest, waist, hips, shoe, hair, eyes, skills });
             }
 
             localStorage.setItem('talents', JSON.stringify(talents));
