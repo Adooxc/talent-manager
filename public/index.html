@@ -206,7 +206,7 @@
         }
 
         .btn-primary {
-            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            background: linear-gradient(135deg, var(--active-menu-gradient-start), var(--active-menu-gradient-end));
             color: white;
             box-shadow: var(--shadow-md);
         }
@@ -294,7 +294,7 @@
         .talent-card-image {
             width: 100%;
             aspect-ratio: 1 / 1;
-            background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+            background: linear-gradient(135deg, var(--active-menu-gradient-start), var(--active-menu-gradient-end));
             display: flex;
             align-items: center;
             justify-content: center;
@@ -325,7 +325,7 @@
             display: inline-block;
             font-size: 12px;
             font-weight: 600;
-            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            background: linear-gradient(135deg, var(--active-menu-gradient-start), var(--active-menu-gradient-end));
             color: white;
             padding: 4px 12px;
             border-radius: 20px;
@@ -843,21 +843,7 @@
                                 </div>
                             </div>
                             
-                            <div class="form-group">
-                                <label class="form-label">Card Gradient Start Color</label>
-                                <div style="display: flex; gap: 12px; margin-top: 8px; align-items: center;">
-                                    <input type="color" id="gradient-start-color" class="form-input" value="#667eea" style="width: 60px; height: 40px; cursor: pointer; border-radius: 8px; border: 1px solid var(--border);">
-                                    <span id="gradient-start-value" style="color: var(--text-light); font-size: 14px;">#667eea</span>
-                                </div>
-                            </div>
-                            
-                            <div class="form-group">
-                                <label class="form-label">Card Gradient End Color</label>
-                                <div style="display: flex; gap: 12px; margin-top: 8px; align-items: center;">
-                                    <input type="color" id="gradient-end-color" class="form-input" value="#ec4899" style="width: 60px; height: 40px; cursor: pointer; border-radius: 8px; border: 1px solid var(--border);">
-                                    <span id="gradient-end-value" style="color: var(--text-light); font-size: 14px;">#ec4899</span>
-                                </div>
-                            </div>
+
                             
                             <div class="form-group">
                                 <label class="form-label">Background Color</label>
@@ -2243,12 +2229,7 @@
             const secondaryColor = document.getElementById('secondary-color').value;
             document.documentElement.style.setProperty('--secondary', secondaryColor);
             localStorage.setItem('secondaryColor', secondaryColor);
-            const gradientStart = document.getElementById('gradient-start-color').value;
-            const gradientEnd = document.getElementById('gradient-end-color').value;
-            localStorage.setItem('gradientStart', gradientStart);
-            localStorage.setItem('gradientEnd', gradientEnd);
-            document.documentElement.style.setProperty('--gradient-start', gradientStart);
-            document.documentElement.style.setProperty('--gradient-end', gradientEnd);
+
             const bgColor = document.getElementById('bg-color').value;
             document.documentElement.style.setProperty('--bg', bgColor);
             localStorage.setItem('bgColor', bgColor);
@@ -2342,7 +2323,7 @@
             const list = document.getElementById('categories-list');
             if (!list) return;
             list.innerHTML = categories.map((cat, idx) => `
-                <div style="background: var(--secondary); color: white; padding: 8px 12px; border-radius: 6px; display: flex; align-items: center; gap: 8px; font-size: 14px;">
+                <div style="background: linear-gradient(135deg, var(--active-menu-gradient-start), var(--active-menu-gradient-end)); color: white; padding: 8px 12px; border-radius: 6px; display: flex; align-items: center; gap: 8px; font-size: 14px;">
                     ${cat}
                     <button onclick="deleteCategory(${idx})" style="background: none; border: none; color: white; cursor: pointer; font-weight: bold; padding: 0; margin-left: 4px;">×</button>
                 </div>
