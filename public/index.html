@@ -606,7 +606,7 @@
             </div>
             <div class="nav-item active" onclick="showTab('talents-tab')">الموديلز</div>
             <div class="nav-item" onclick="showTab('projects-tab')">المشاريع</div>
-            <div class="nav-item" onclick="showTab('stats-tab')">الإحصائيات</div>
+            <div class="nav-item" onclick="showTab('stats-tab')">لوحة التحكم</div>
             <div class="nav-item" onclick="showTab('settings-tab')">الإعدادات</div>
         </div>
 
@@ -736,6 +736,10 @@
                             <div style="font-size: 14px; opacity: 0.9; margin-bottom: 8px;">متوسط التقييم</div>
                             <div style="font-size: 32px; font-weight: bold;" id="avg-rating">0</div>
                         </div>
+                    </div>
+                    <div style="background: var(--surface); border-radius: 12px; padding: 20px; border: 1px solid var(--border); margin-top: 20px;">
+                        <h2 style="margin-bottom: 16px; color: var(--text);">تقويم المشاريع</h2>
+                        <div id="calendar-view" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px;"></div>
                     </div>
                     <div class="stats-grid" id="stats-grid"></div>
                 </div>
@@ -1101,7 +1105,6 @@
                             <div class="talent-price">${talent.price} KD</div>
                             <div class="talent-meta">
                                 <span>${talent.gender} • ${talent.age} سنة</span>
-                                ${photos.length > 0 ? `<span>${photos.length}</span>` : ''}
                             </div>
                             <div class="talent-actions" onclick="event.stopPropagation()">
                                 <button class="btn btn-primary btn-small" onclick="editTalent(event, ${actualIndex})">تعديل</button>
