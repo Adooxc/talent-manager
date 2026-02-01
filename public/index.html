@@ -630,12 +630,50 @@
                             <option value="عارضين">عارضين</option>
                             <option value="كومبارس">كومبارس</option>
                         </select>
-                        <div style="display: flex; align-items: center; gap: 12px; margin-top: 12px;">
-                            <label style="font-weight: 600; color: var(--text-light);">حجم البطاقات:</label>
-                            <input type="range" id="card-size" min="250" max="400" value="320" style="flex: 1; cursor: pointer;" onchange="updateCardSize()">
-                            <span id="card-size-label" style="min-width: 40px; text-align: center; color: var(--primary); font-weight: 600;">320px</span>
+                        <button class="btn btn-primary" onclick="toggleAdvancedSearch()" style="margin-top: 12px; width: 100%;">🔍 بحث متقدم</button>
+                    </div>
+                    
+                    <!-- Advanced Search Filters -->
+                    <div id="advanced-search" style="display: none; background: var(--surface-alt); border-radius: 12px; padding: 20px; margin-bottom: 20px; border: 1px solid var(--border);">
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px;">
+                            <div class="form-group">
+                                <label class="form-label">السعر من (KD)</label>
+                                <input type="number" id="price-min" class="form-input" placeholder="الحد الأدنى" onchange="renderTalents()" oninput="renderTalents()">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">السعر إلى (KD)</label>
+                                <input type="number" id="price-max" class="form-input" placeholder="الحد الأقصى" onchange="renderTalents()" oninput="renderTalents()">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">العمر من (سنة)</label>
+                                <input type="number" id="age-min" class="form-input" placeholder="الحد الأدنى" onchange="renderTalents()" oninput="renderTalents()">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">العمر إلى (سنة)</label>
+                                <input type="number" id="age-max" class="form-input" placeholder="الحد الأقصى" onchange="renderTalents()" oninput="renderTalents()">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">الجنس</label>
+                                <select id="gender-filter" class="form-input" onchange="renderTalents()">
+                                    <option value="">الكل</option>
+                                    <option value="ذكر">ذكر</option>
+                                    <option value="أنثى">أنثى</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">حجم البطاقات</label>
+                                <div style="display: flex; align-items: center; gap: 8px;">
+                                    <input type="range" id="card-size" min="250" max="400" value="320" style="flex: 1; cursor: pointer;" onchange="updateCardSize()">
+                                    <span id="card-size-label" style="min-width: 40px; text-align: center; color: var(--primary); font-weight: 600;">320px</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div style="display: flex; gap: 12px; margin-top: 16px;">
+                            <button class="btn btn-primary" onclick="renderTalents()" style="flex: 1;">🔍 بحث</button>
+                            <button class="btn btn-secondary" onclick="clearAdvancedFilters()" style="flex: 1;">🔄 إعادة تعيين</button>
                         </div>
                     </div>
+                    
                     <div class="talents-grid" id="talents-list"></div>
                 </div>
 
@@ -863,11 +901,19 @@
         function renderTalents() {
             const search = document.getElementById('search').value.toLowerCase();
             const category = document.getElementById('category').value;
+            const priceMin = document.getElementById('price-min').value ? parseInt(document.getElementById('price-min').value) : null;
+            const priceMax = document.getElementById('price-max').value ? parseInt(document.getElementById('price-max').value) : null;
+            const ageMin = document.getElementById('age-min').value ? parseInt(document.getElementById('age-min').value) : null;
+            const ageMax = document.getElementById('age-max').value ? parseInt(document.getElementById('age-max').value) : null;
+            const genderFilter = document.getElementById('gender-filter').value;
 
             let filtered = talents.filter(t => {
                 const matchSearch = t.name.toLowerCase().includes(search);
                 const matchCategory = !category || t.category === category;
-                return matchSearch && matchCategory;
+                const matchPrice = (priceMin === null || t.price >= priceMin) && (priceMax === null || t.price <= priceMax);
+                const matchAge = (ageMin === null || t.age >= ageMin) && (ageMax === null || t.age <= ageMax);
+                const matchGender = !genderFilter || t.gender === genderFilter;
+                return matchSearch && matchCategory && matchPrice && matchAge && matchGender;
             });
 
             const html = filtered.map((talent, index) => {
@@ -905,6 +951,22 @@
             document.getElementById('card-size-label').textContent = size + 'px';
             const grid = document.getElementById('talents-list').parentElement;
             grid.style.gridTemplateColumns = `repeat(auto-fill, minmax(${size}px, 1fr))`;
+        }
+
+        function toggleAdvancedSearch() {
+            const advancedSearch = document.getElementById('advanced-search');
+            advancedSearch.style.display = advancedSearch.style.display === 'none' ? 'block' : 'none';
+        }
+
+        function clearAdvancedFilters() {
+            document.getElementById('price-min').value = '';
+            document.getElementById('price-max').value = '';
+            document.getElementById('age-min').value = '';
+            document.getElementById('age-max').value = '';
+            document.getElementById('gender-filter').value = '';
+            document.getElementById('search').value = '';
+            document.getElementById('category').value = '';
+            renderTalents();
         }
 
         function openAddTalentModal() {
