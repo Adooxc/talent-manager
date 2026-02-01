@@ -869,6 +869,13 @@
                                 </div>
                             </div>
 
+                            <div class="form-group">
+                                <label class="form-label">Surface Color</label>
+                                <div style="display: flex; gap: 12px; margin-top: 8px; align-items: center;">
+                                    <input type="color" id="surface-color" class="form-input" value="#ffffff" style="width: 60px; height: 40px; cursor: pointer; border-radius: 8px; border: 1px solid var(--border);">
+                                    <span id="surface-color-value" style="color: var(--text-light); font-size: 14px;">#ffffff</span>
+                                </div>
+                            </div>
 
                             <div class="form-group">
                                 <label class="form-label">Active Menu Gradient Start</label>
@@ -883,6 +890,7 @@
                                     <input type="color" id="active-menu-gradient-end" class="form-input" value="#16a34a" style="width: 60px; height: 40px; cursor: pointer; border-radius: 8px; border: 1px solid var(--border);">
                                     <span id="active-menu-gradient-end-value" style="color: var(--text-light); font-size: 14px;">#16a34a</span>
                                 </div>
+                            </div>
                             </div>
                             </div>
                         </div>
@@ -910,6 +918,7 @@
                                     </div>
                                 </div>
                             </div>
+                            </div>
                         </div>
 
                         <!-- Menu Customization -->
@@ -934,6 +943,7 @@
                                 <label class="form-label">Dashboard Menu Name</label>
                                 <input type="text" id="dashboard-menu-name" class="form-input" value="Dashboard" onchange="saveMenuNames()" style="background: var(--background); border: 1px solid var(--border); color: var(--text); padding: 10px 12px; border-radius: 8px;">
                             </div>
+                            </div>
                         </div>
 
                         <!-- Categories Management -->
@@ -954,6 +964,7 @@
                             <div id="categories-list" style="display: flex; flex-wrap: wrap; gap: 8px;">
                                 <!-- Categories will be populated here -->
                             </div>
+                            </div>
                         </div>
 
                         <!-- Financial Settings -->
@@ -967,6 +978,7 @@
                             <div class="form-group">
                                 <label class="form-label">Profit Margin (%)</label>
                                 <input type="number" id="profit-margin" class="form-input" value="20" min="0" max="100" onchange="saveSettings()" style="background: var(--background); border: 1px solid var(--border); color: var(--text); padding: 10px 12px; border-radius: 8px;">
+                            </div>
                             </div>
                         </div>
 
@@ -983,6 +995,7 @@
                                 <button class="btn" style="background: var(--primary); color: white; padding: 10px 16px; border: none; border-radius: 8px; cursor: pointer; font-weight: 500;" onclick="importData()">Import Data</button>
                                 <button class="btn" style="background: var(--primary); color: white; padding: 10px 16px; border: none; border-radius: 8px; cursor: pointer; font-weight: 500;" onclick="backupData()">Backup Data</button>
                                 <button class="btn" style="background: #ef4444; color: white; padding: 10px 16px; border: none; border-radius: 8px; cursor: pointer; font-weight: 500;" onclick="clearAllData()">Clear All Data</button>
+                            </div>
                             </div>
                         </div>
                         
@@ -2167,7 +2180,8 @@
         document.documentElement.style.setProperty('--primary', savedColor);
         const colorInput = document.getElementById('primary-color');
         if (colorInput) colorInput.value = savedColor;
-        document.getElementById('color-value').textContent = savedColor;
+        const colorValueEl = document.getElementById('color-value');
+        if (colorValueEl) colorValueEl.textContent = savedColor;
         
         const savedSecondaryColor = localStorage.getItem('secondaryColor') || '#ec4899';
         document.documentElement.style.setProperty('--secondary', savedSecondaryColor);
@@ -2175,6 +2189,48 @@
         if (secondaryColorInput) secondaryColorInput.value = savedSecondaryColor;
         const secondaryColorValue = document.getElementById('secondary-color-value');
         if (secondaryColorValue) secondaryColorValue.textContent = savedSecondaryColor;
+        
+        const savedBgColorInit = localStorage.getItem('bgColor') || '#f8fafc';
+        document.documentElement.style.setProperty('--bg', savedBgColorInit);
+        const bgColorInput = document.getElementById('bg-color');
+        if (bgColorInput) bgColorInput.value = savedBgColorInit;
+        const bgColorValue = document.getElementById('bg-color-value');
+        if (bgColorValue) bgColorValue.textContent = savedBgColorInit;
+        
+        const savedTextColorInit = localStorage.getItem('textColor') || '#1a202c';
+        document.documentElement.style.setProperty('--text', savedTextColorInit);
+        const textColorInput = document.getElementById('text-color');
+        if (textColorInput) textColorInput.value = savedTextColorInit;
+        const textColorValue = document.getElementById('text-color-value');
+        if (textColorValue) textColorValue.textContent = savedTextColorInit;
+        
+        const savedBorderColorInit = localStorage.getItem('borderColor') || '#e2e8f0';
+        document.documentElement.style.setProperty('--border', savedBorderColorInit);
+        const borderColorInput = document.getElementById('border-color');
+        if (borderColorInput) borderColorInput.value = savedBorderColorInit;
+        const borderColorValue = document.getElementById('border-color-value');
+        if (borderColorValue) borderColorValue.textContent = savedBorderColorInit;
+        
+        const savedSurfaceColorInit = localStorage.getItem('surfaceColor') || '#ffffff';
+        document.documentElement.style.setProperty('--surface', savedSurfaceColorInit);
+        const surfaceColorInput = document.getElementById('surface-color');
+        if (surfaceColorInput) surfaceColorInput.value = savedSurfaceColorInit;
+        const surfaceColorValue = document.getElementById('surface-color-value');
+        if (surfaceColorValue) surfaceColorValue.textContent = savedSurfaceColorInit;
+        
+        const savedActiveMenuGradientStartInit = localStorage.getItem('activeMenuGradientStart') || '#22c55e';
+        document.documentElement.style.setProperty('--active-menu-gradient-start', savedActiveMenuGradientStartInit);
+        const activeMenuGradientStartInput = document.getElementById('active-menu-gradient-start');
+        if (activeMenuGradientStartInput) activeMenuGradientStartInput.value = savedActiveMenuGradientStartInit;
+        const activeMenuGradientStartValue = document.getElementById('active-menu-gradient-start-value');
+        if (activeMenuGradientStartValue) activeMenuGradientStartValue.textContent = savedActiveMenuGradientStartInit;
+        
+        const savedActiveMenuGradientEndInit = localStorage.getItem('activeMenuGradientEnd') || '#16a34a';
+        document.documentElement.style.setProperty('--active-menu-gradient-end', savedActiveMenuGradientEndInit);
+        const activeMenuGradientEndInput = document.getElementById('active-menu-gradient-end');
+        if (activeMenuGradientEndInput) activeMenuGradientEndInput.value = savedActiveMenuGradientEndInit;
+        const activeMenuGradientEndValue = document.getElementById('active-menu-gradient-end-value');
+        if (activeMenuGradientEndValue) activeMenuGradientEndValue.textContent = savedActiveMenuGradientEndInit;
         
         const savedCardSize = localStorage.getItem('cardSize') || '100';
         document.getElementById('card-size').value = savedCardSize;
@@ -2230,13 +2286,16 @@
         function restoreAppearanceState() {
             const sections = ['appearance', 'branding', 'menu', 'categories', 'financial', 'data'];
             sections.forEach(section => {
-                const isExpanded = localStorage.getItem(section + 'Expanded') !== 'false';
+                const isExpanded = localStorage.getItem(section + 'Expanded') === 'true';
                 const content = document.getElementById(section + '-content');
                 const button = document.getElementById(section + '-toggle');
                 if (content && button) {
                     if (!isExpanded) {
                         content.style.display = 'none';
                         button.textContent = '+';
+                    } else {
+                        content.style.display = 'block';
+                        button.textContent = '−';
                     }
                 }
             });
