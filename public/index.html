@@ -837,6 +837,103 @@
                         </div>
                     </div>
                     
+                    <!-- Project Details Page -->
+                    <div id="project-details-page" style="display: none; background: var(--surface); border-radius: 12px; padding: 24px; border: 1px solid var(--border);">
+                        <button onclick="closeProjectDetails()" style="background: var(--primary); color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: 600; margin-bottom: 20px;">← Back to Projects</button>
+                        
+                        <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 30px;">
+                            <!-- Main Content -->
+                            <div>
+                                <!-- Project Header -->
+                                <div style="margin-bottom: 30px; border-bottom: 2px solid var(--border); padding-bottom: 20px;">
+                                    <h1 id="detail-project-name" style="color: var(--text); font-size: 28px; font-weight: 700; margin-bottom: 10px;">Project Name</h1>
+                                    <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+                                        <span id="detail-project-status" style="background: var(--primary); color: white; padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 600;">Status</span>
+                                        <span id="detail-project-color" style="width: 24px; height: 24px; border-radius: 50%; border: 2px solid var(--border);"></span>
+                                    </div>
+                                </div>
+                                
+                                <!-- Project Info Grid -->
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 30px;">
+                                    <div style="background: var(--surface-alt); padding: 16px; border-radius: 8px;">
+                                        <div style="color: var(--text-light); font-size: 12px; font-weight: 600; margin-bottom: 6px; text-transform: uppercase;">Executing Company</div>
+                                        <div id="detail-executing-company" style="color: var(--text); font-size: 14px; font-weight: 500;">-</div>
+                                    </div>
+                                    <div style="background: var(--surface-alt); padding: 16px; border-radius: 8px;">
+                                        <div style="color: var(--text-light); font-size: 12px; font-weight: 600; margin-bottom: 6px; text-transform: uppercase;">Producing Company</div>
+                                        <div id="detail-producing-company" style="color: var(--text); font-size: 14px; font-weight: 500;">-</div>
+                                    </div>
+                                    <div style="background: var(--surface-alt); padding: 16px; border-radius: 8px;">
+                                        <div style="color: var(--text-light); font-size: 12px; font-weight: 600; margin-bottom: 6px; text-transform: uppercase;">Director</div>
+                                        <div id="detail-director" style="color: var(--text); font-size: 14px; font-weight: 500;">-</div>
+                                    </div>
+                                    <div style="background: var(--surface-alt); padding: 16px; border-radius: 8px;">
+                                        <div style="color: var(--text-light); font-size: 12px; font-weight: 600; margin-bottom: 6px; text-transform: uppercase;">WhatsApp Group</div>
+                                        <a id="detail-whatsapp-link" href="#" style="color: var(--primary); font-size: 14px; font-weight: 500; text-decoration: none;">Join Group</a>
+                                    </div>
+                                </div>
+                                
+                                <!-- Dates Section -->
+                                <div style="background: var(--surface-alt); padding: 20px; border-radius: 8px; margin-bottom: 30px;">
+                                    <h3 style="color: var(--text); font-size: 16px; font-weight: 600; margin-bottom: 16px;">Project Timeline</h3>
+                                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px;">
+                                        <div>
+                                            <div style="color: var(--text-light); font-size: 12px; font-weight: 600; margin-bottom: 6px; text-transform: uppercase;">Start Date</div>
+                                            <div id="detail-start-date" style="color: var(--text); font-size: 14px; font-weight: 500;">-</div>
+                                        </div>
+                                        <div>
+                                            <div style="color: var(--text-light); font-size: 12px; font-weight: 600; margin-bottom: 6px; text-transform: uppercase;">End Date</div>
+                                            <div id="detail-end-date" style="color: var(--text); font-size: 14px; font-weight: 500;">-</div>
+                                        </div>
+                                        <div>
+                                            <div style="color: var(--text-light); font-size: 12px; font-weight: 600; margin-bottom: 6px; text-transform: uppercase;">Fitting Date</div>
+                                            <div id="detail-fitting-date" style="color: var(--text); font-size: 14px; font-weight: 500;">-</div>
+                                        </div>
+                                        <div>
+                                            <div style="color: var(--text-light); font-size: 12px; font-weight: 600; margin-bottom: 6px; text-transform: uppercase;">Casting Date</div>
+                                            <div id="detail-casting-date" style="color: var(--text); font-size: 14px; font-weight: 500;">-</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Notes Section -->
+                                <div style="background: var(--surface-alt); padding: 20px; border-radius: 8px; margin-bottom: 30px;">
+                                    <h3 style="color: var(--text); font-size: 16px; font-weight: 600; margin-bottom: 12px;">Notes</h3>
+                                    <p id="detail-notes" style="color: var(--text); font-size: 14px; line-height: 1.6; margin: 0;">-</p>
+                                </div>
+                                
+                                <!-- Talents Section -->
+                                <div>
+                                    <h3 style="color: var(--text); font-size: 16px; font-weight: 600; margin-bottom: 16px;">Assigned Talents</h3>
+                                    <div id="detail-talents-list" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 16px;"></div>
+                                </div>
+                            </div>
+                            
+                            <!-- Sidebar -->
+                            <div>
+                                <!-- Budget Section -->
+                                <div style="background: linear-gradient(135deg, var(--primary), var(--primary-light)); color: white; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+                                    <div style="font-size: 12px; opacity: 0.9; margin-bottom: 8px; text-transform: uppercase; font-weight: 600;">Total Budget</div>
+                                    <div id="detail-budget" style="font-size: 32px; font-weight: 700; margin-bottom: 12px;">KD 0</div>
+                                    <div style="font-size: 12px; opacity: 0.9;">Allocated for this project</div>
+                                </div>
+                                
+                                <!-- Total Cost Section -->
+                                <div style="background: var(--surface-alt); padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+                                    <div style="font-size: 12px; color: var(--text-light); font-weight: 600; margin-bottom: 8px; text-transform: uppercase;">Total Talent Cost</div>
+                                    <div id="detail-total-cost" style="font-size: 28px; color: var(--primary); font-weight: 700; margin-bottom: 12px;">KD 0</div>
+                                    <div style="font-size: 12px; color: var(--text-light);">Sum of all selected talents</div>
+                                </div>
+                                
+                                <!-- Actions -->
+                                <div style="display: flex; flex-direction: column; gap: 12px;">
+                                    <button onclick="editCurrentProject()" style="background: var(--primary); color: white; border: none; padding: 12px 16px; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 14px;">Edit Project</button>
+                                    <button onclick="deleteCurrentProject()" style="background: var(--danger); color: white; border: none; padding: 12px 16px; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 14px;">Delete Project</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
                     <div id="projects-list"></div>
                 </div>
 
@@ -2537,6 +2634,93 @@
             selectedProjectTalents = [];
         }
         
+        let currentDetailProjectIndex = null;
+        
+        function showProjectDetails(projectIndex) {
+            currentDetailProjectIndex = projectIndex;
+            const project = projects[projectIndex];
+            
+            // Hide projects list and form
+            document.getElementById('projects-list').style.display = 'none';
+            document.getElementById('project-form-container').style.display = 'none';
+            
+            // Show details page
+            document.getElementById('project-details-page').style.display = 'block';
+            
+            // Populate project info
+            document.getElementById('detail-project-name').textContent = project.name;
+            document.getElementById('detail-project-status').textContent = project.status;
+            document.getElementById('detail-project-color').style.backgroundColor = project.color;
+            
+            document.getElementById('detail-executing-company').textContent = project.executingCompany || '-';
+            document.getElementById('detail-producing-company').textContent = project.producingCompany || '-';
+            document.getElementById('detail-director').textContent = project.director || '-';
+            
+            // Format dates
+            document.getElementById('detail-start-date').textContent = project.startDate ? new Date(project.startDate).toLocaleDateString() : '-';
+            document.getElementById('detail-end-date').textContent = project.endDate ? new Date(project.endDate).toLocaleDateString() : '-';
+            document.getElementById('detail-fitting-date').textContent = project.fittingDate ? new Date(project.fittingDate).toLocaleDateString() : '-';
+            document.getElementById('detail-casting-date').textContent = project.castingDate ? new Date(project.castingDate).toLocaleDateString() : '-';
+            
+            document.getElementById('detail-notes').textContent = project.notes || '-';
+            document.getElementById('detail-budget').textContent = 'KD ' + (project.budget || 0);
+            
+            // WhatsApp link
+            const whatsappLink = document.getElementById('detail-whatsapp-link');
+            if (project.whatsappGroup) {
+                whatsappLink.href = project.whatsappGroup;
+                whatsappLink.target = '_blank';
+                whatsappLink.textContent = 'Join Group';
+            } else {
+                whatsappLink.textContent = 'No Group';
+                whatsappLink.style.pointerEvents = 'none';
+                whatsappLink.style.opacity = '0.5';
+            }
+            
+            // Calculate total talent cost
+            let totalCost = 0;
+            const talentsList = document.getElementById('detail-talents-list');
+            talentsList.innerHTML = '';
+            
+            project.talentIndices.forEach(talentIndex => {
+                const talent = talents[talentIndex];
+                if (talent) {
+                    totalCost += talent.price;
+                    
+                    // Create talent card
+                    const talentCard = document.createElement('div');
+                    talentCard.style.cssText = 'background: var(--surface-alt); padding: 12px; border-radius: 8px; text-align: center; border: 1px solid var(--border);';
+                    talentCard.innerHTML = '<div style="width: 100%; height: 100px; background: linear-gradient(135deg, #667eea, #ec4899); border-radius: 6px; margin-bottom: 8px; display: flex; align-items: center; justify-content: center; color: white; font-weight: 600; font-size: 12px; text-align: center; padding: 8px;">' + talent.name + '</div><div style="color: var(--text); font-size: 13px; font-weight: 600; margin-bottom: 4px;">' + talent.name + '</div><div style="color: var(--primary); font-size: 14px; font-weight: 700;">' + talent.price + ' KD</div>';
+                    talentsList.appendChild(talentCard);
+                }
+            });
+            
+            document.getElementById('detail-total-cost').textContent = 'KD ' + totalCost;
+        }
+        
+        function closeProjectDetails() {
+            document.getElementById('project-details-page').style.display = 'none';
+            document.getElementById('projects-list').style.display = 'block';
+            currentDetailProjectIndex = null;
+            renderProjects();
+        }
+        
+        function editCurrentProject() {
+            if (currentDetailProjectIndex !== null) {
+                editProject(currentDetailProjectIndex);
+                closeProjectDetails();
+            }
+        }
+        
+        function deleteCurrentProject() {
+            if (currentDetailProjectIndex !== null && confirm('Are you sure you want to delete this project?')) {
+                projects.splice(currentDetailProjectIndex, 1);
+                localStorage.setItem('projects', JSON.stringify(projects));
+                closeProjectDetails();
+                renderProjects();
+            }
+        }
+        
         function renderInlineProjectForm() {
             const formContainer = document.getElementById('inline-project-form');
             let talentSelectorHTML = talents.map((talent, index) => `<div style="padding: 8px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 12px;"><input type="checkbox" id="talent-check-${index}" onchange="updateProjectTotal()"><label for="talent-check-${index}" style="flex: 1; cursor: pointer;">${talent.name} - ${talent.price} KD</label></div>`).join('');
@@ -2686,6 +2870,10 @@
         }
 
         function viewProjectDetails(index) {
+            showProjectDetails(index);
+        }
+        
+        function oldViewProjectDetails(index) {
             const project = projects[index];
             if (!project) return;
             
