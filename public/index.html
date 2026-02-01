@@ -2460,10 +2460,24 @@
 
 
 
+        let previousPageType = null;
+        
         function backToTalents() {
-            document.getElementById('talent-detail').classList.remove('active');
-            document.getElementById('talents-tab').classList.add('active');
+            if (previousPageType === 'project') {
+                document.getElementById('talent-detail').classList.remove('active');
+                document.getElementById('project-details-page').style.display = 'block';
+                previousPageType = null;
+            } else {
+                document.getElementById('talent-detail').classList.remove('active');
+                document.getElementById('talents-tab').classList.add('active');
+            }
             currentDetailTalentIndex = null;
+        }
+        
+        function viewTalentDetail(index) {
+            document.getElementById('project-details-page').style.display = 'none';
+            previousPageType = 'project';
+            showTalentDetail(index);
         }
 
         function renderPhotos() {
@@ -2746,7 +2760,10 @@
                     
                     // Create talent card
                     const talentCard = document.createElement('div');
-                    talentCard.style.cssText = 'background: var(--surface-alt); padding: 12px; border-radius: 8px; text-align: center; border: 1px solid var(--border);';
+                    talentCard.style.cssText = 'background: var(--surface-alt); padding: 12px; border-radius: 8px; text-align: center; border: 1px solid var(--border); cursor: pointer; transition: all 0.3s ease;';
+                    talentCard.onclick = () => viewTalentDetail(talentIndex);
+                    talentCard.onmouseover = () => talentCard.style.boxShadow = 'var(--shadow-lg)';
+                    talentCard.onmouseout = () => talentCard.style.boxShadow = 'none';
                     talentCard.innerHTML = '<div style="width: 100%; height: 100px; background: linear-gradient(135deg, #667eea, #ec4899); border-radius: 6px; margin-bottom: 8px; display: flex; align-items: center; justify-content: center; color: white; font-weight: 600; font-size: 12px; text-align: center; padding: 8px;">' + talent.name + '</div><div style="color: var(--text); font-size: 13px; font-weight: 600; margin-bottom: 4px;">' + talent.name + '</div><div style="color: var(--primary); font-size: 14px; font-weight: 700;">' + talent.price + ' KD</div>';
                     talentsList.appendChild(talentCard);
                 }
