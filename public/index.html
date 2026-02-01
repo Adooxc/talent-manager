@@ -826,6 +826,17 @@
                         </div>
                     </div>
                     
+                    <!-- Inline Project Form -->
+                    <div id="project-form-container" style="display: none; background: var(--surface); border-radius: 12px; padding: 24px; margin-bottom: 24px; border: 1px solid var(--border);">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                            <h2 id="project-form-title" style="color: var(--foreground); margin: 0; font-size: 20px; font-weight: 600;">Create New Project</h2>
+                            <button onclick="closeProjectForm()" style="background: var(--error); color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: 600;">Cancel</button>
+                        </div>
+                        <div style="max-height: 70vh; overflow-y: auto;">
+                            <div id="inline-project-form"></div>
+                        </div>
+                    </div>
+                    
                     <div id="projects-list"></div>
                 </div>
 
@@ -2514,22 +2525,23 @@
 
         function openCreateProjectModal() {
             selectedProjectTalents = [];
-            document.getElementById('project-name').value = '';
-            document.getElementById('project-executing-company').value = '';
-            document.getElementById('project-producing-company').value = '';
-            document.getElementById('project-director').value = '';
-            document.getElementById('project-start-date').value = '';
-            document.getElementById('project-end-date').value = '';
-            document.getElementById('project-fitting-date').value = '';
-            document.getElementById('project-casting-date').value = '';
-            document.getElementById('project-notes').value = '';
-            document.getElementById('project-whatsapp-group').value = '';
-            document.getElementById('project-modal-title').textContent = 'Create New Project';
-            document.getElementById('save-project-btn').textContent = 'Create';
-            document.getElementById('save-project-btn').onclick = () => saveProject();
+            document.getElementById('project-form-title').textContent = 'Create New Project';
             document.getElementById('editing-project-index').value = '';
-            renderTalentSelector();
-            document.getElementById('project-modal').classList.add('active');
+            renderInlineProjectForm();
+            document.getElementById('project-form-container').style.display = 'block';
+            document.getElementById('project-form-container').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+        
+        function closeProjectForm() {
+            document.getElementById('project-form-container').style.display = 'none';
+            selectedProjectTalents = [];
+        }
+        
+        function renderInlineProjectForm() {
+            const formContainer = document.getElementById('inline-project-form');
+            let talentSelectorHTML = talents.map((talent, index) => `<div style="padding: 8px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 12px;"><input type="checkbox" id="talent-check-${index}" onchange="updateProjectTotal()"><label for="talent-check-${index}" style="flex: 1; cursor: pointer;">${talent.name} - ${talent.price} KD</label></div>`).join('');
+            
+            formContainer.innerHTML = `<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;"><div class="form-group"><label class="form-label">Project Name</label><input type="text" id="project-name" class="form-input" placeholder="Project name"></div><div class="form-group"><label class="form-label">Executing Company</label><input type="text" id="project-executing-company" class="form-input" placeholder="Company name"></div><div class="form-group"><label class="form-label">Producing Company</label><input type="text" id="project-producing-company" class="form-input" placeholder="Company name"></div><div class="form-group"><label class="form-label">Director</label><input type="text" id="project-director" class="form-input" placeholder="Director name"></div><div class="form-group"><label class="form-label">Start Date</label><input type="date" id="project-start-date" class="form-input"></div><div class="form-group"><label class="form-label">End Date</label><input type="date" id="project-end-date" class="form-input"></div><div class="form-group"><label class="form-label">Fitting Date</label><input type="date" id="project-fitting-date" class="form-input"></div><div class="form-group"><label class="form-label">Casting Date</label><input type="date" id="project-casting-date" class="form-input"></div><div class="form-group"><label class="form-label">Project Color</label><input type="color" id="project-color" class="form-input" value="#0a7ea4" style="height: 50px; cursor: pointer;"></div><div class="form-group"><label class="form-label">Budget (KD)</label><input type="number" id="project-budget" class="form-input" placeholder="Project budget"></div><div class="form-group"><label class="form-label">Status</label><select id="project-status" class="form-input"><option value="Planning">Planning</option><option value="In Progress">In Progress</option><option value="Completed">Completed</option><option value="On Hold">On Hold</option><option value="Cancelled">Cancelled</option></select></div></div><div class="form-group"><label class="form-label">Notes</label><textarea id="project-notes" class="form-input" placeholder="Additional notes" style="min-height: 60px; resize: vertical;"></textarea></div><div class="form-group"><label class="form-label">WhatsApp Group Link</label><input type="text" id="project-whatsapp-group" class="form-input" placeholder="WhatsApp group link"></div><div class="form-group"><label class="form-label">Select Models</label><div style="border: 1px solid var(--border); border-radius: 8px; max-height: 300px; overflow-y: auto;">${talentSelectorHTML}</div></div><div class="form-group"><label class="form-label">Total Cost: <span id="project-total" style="color: var(--primary); font-weight: 600;">KD 0</span></label></div><div style="display: flex; gap: 12px; margin-top: 24px;"><button class="btn btn-primary" onclick="saveProject()">Save Project</button><button class="btn btn-secondary" onclick="closeProjectForm()">Cancel</button></div><input type="hidden" id="editing-project-index" value="">`;
         }
 
         function renderTalentSelector() {
@@ -2801,7 +2813,6 @@
             const project = projects[index];
             selectedProjectTalents = [];
             
-            // Find indices of talents in this project
             project.talents.forEach(talentName => {
                 const talentIndex = talents.findIndex(t => t.name === talentName);
                 if (talentIndex !== -1) {
@@ -2809,43 +2820,35 @@
                 }
             });
             
-            document.getElementById('project-name').value = project.name;
-            document.getElementById('project-executing-company').value = project.executingCompany || '';
-            document.getElementById('project-producing-company').value = project.producingCompany || '';
-            document.getElementById('project-director').value = project.director || '';
-            document.getElementById('project-start-date').value = project.startDate || '';
-            document.getElementById('project-end-date').value = project.endDate || '';
-            document.getElementById('project-fitting-date').value = project.fittingDate || '';
-            document.getElementById('project-casting-date').value = project.castingDate || '';
-            document.getElementById('project-notes').value = project.notes || '';
-            document.getElementById('project-whatsapp-group').value = project.whatsappGroup || '';
-            document.getElementById('project-color').value = project.color || '#0a7ea4';
-            document.getElementById('project-budget').value = project.budget || '';
-            document.getElementById('project-status').value = project.status || 'Planning';
-            
-            renderTalentSelector();
-            
-            // Check the selected talents
-            selectedProjectTalents.forEach(index => {
-                const checkbox = document.getElementById(`talent-check-${index}`);
-                if (checkbox) checkbox.checked = true;
-            });
-            
-            updateProjectTotal();
-            
-            // Update modal title and button
-            document.getElementById('project-modal-title').textContent = 'Edit Project';
-            document.getElementById('save-project-btn').textContent = 'Save Changes';
-            document.getElementById('save-project-btn').onclick = () => saveProject(index);
-            
-            document.getElementById('project-modal').classList.add('active');
+            document.getElementById('project-form-title').textContent = 'Edit Project';
             document.getElementById('editing-project-index').value = index;
+            renderInlineProjectForm();
             
-            // Scroll to top of modal
             setTimeout(() => {
-                const modal = document.getElementById('project-modal');
-                if (modal) modal.querySelector('.modal-content').scrollTop = 0;
+                document.getElementById('project-name').value = project.name;
+                document.getElementById('project-executing-company').value = project.executingCompany || '';
+                document.getElementById('project-producing-company').value = project.producingCompany || '';
+                document.getElementById('project-director').value = project.director || '';
+                document.getElementById('project-start-date').value = project.startDate || '';
+                document.getElementById('project-end-date').value = project.endDate || '';
+                document.getElementById('project-fitting-date').value = project.fittingDate || '';
+                document.getElementById('project-casting-date').value = project.castingDate || '';
+                document.getElementById('project-notes').value = project.notes || '';
+                document.getElementById('project-whatsapp-group').value = project.whatsappGroup || '';
+                document.getElementById('project-color').value = project.color || '#0a7ea4';
+                document.getElementById('project-budget').value = project.budget || '';
+                document.getElementById('project-status').value = project.status || 'Planning';
+                
+                selectedProjectTalents.forEach(talentIndex => {
+                    const checkbox = document.getElementById(`talent-check-${talentIndex}`);
+                    if (checkbox) checkbox.checked = true;
+                });
+                
+                updateProjectTotal();
             }, 100);
+            
+            document.getElementById('project-form-container').style.display = 'block';
+            document.getElementById('project-form-container').scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
 
         function renderStats() {
