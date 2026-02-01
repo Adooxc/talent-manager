@@ -12,12 +12,12 @@
             padding: 0;
             box-sizing: border-box;
         }
-
         :root {
-            --primary: #6366f1;
-            --primary-light: #818cf8;
-            --primary-dark: #4f46e5;
+            --primary: #667eea;
+            --primary-light: #8b9eff;
             --secondary: #ec4899;
+            --gradient-start: #667eea;
+            --gradient-end: #ec4899;
             --success: #10b981;
             --warning: #f59e0b;
             --danger: #ef4444;
@@ -292,7 +292,7 @@
         .talent-card-image {
             width: 100%;
             aspect-ratio: 1 / 1;
-            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
             display: flex;
             align-items: center;
             justify-content: center;
@@ -657,6 +657,7 @@
                 </div>
             </div>
 
+
             <div class="content">
                 <!-- Talents Tab -->
                 <div id="talents-tab" class="tab-content active">
@@ -833,6 +834,22 @@
                                 <div style="display: flex; gap: 12px; margin-top: 8px; align-items: center;">
                                     <input type="color" id="secondary-color" class="form-input" value="#ec4899" style="width: 60px; height: 40px; cursor: pointer; border-radius: 8px; border: 1px solid var(--border);">
                                     <span id="secondary-color-value" style="color: var(--text-light); font-size: 14px;">#ec4899</span>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">Card Gradient Start Color</label>
+                                <div style="display: flex; gap: 12px; margin-top: 8px; align-items: center;">
+                                    <input type="color" id="gradient-start-color" class="form-input" value="#667eea" style="width: 60px; height: 40px; cursor: pointer; border-radius: 8px; border: 1px solid var(--border);">
+                                    <span id="gradient-start-value" style="color: var(--text-light); font-size: 14px;">#667eea</span>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">Card Gradient End Color</label>
+                                <div style="display: flex; gap: 12px; margin-top: 8px; align-items: center;">
+                                    <input type="color" id="gradient-end-color" class="form-input" value="#ec4899" style="width: 60px; height: 40px; cursor: pointer; border-radius: 8px; border: 1px solid var(--border);">
+                                    <span id="gradient-end-value" style="color: var(--text-light); font-size: 14px;">#ec4899</span>
                                 </div>
                             </div>
                         </div>
@@ -2070,6 +2087,7 @@
         renderCategories();
         setLastUpdateDate();
     
+
         function toggleSidebar() {
             const sidebar = document.getElementById('sidebar');
             const toggleBtn = document.getElementById('sidebar-toggle-btn');
@@ -2109,6 +2127,11 @@
             const secondaryColor = document.getElementById('secondary-color').value;
             document.documentElement.style.setProperty('--secondary', secondaryColor);
             localStorage.setItem('secondaryColor', secondaryColor);
+            const gradientStart = document.getElementById('gradient-start-color').value;
+            const gradientEnd = document.getElementById('gradient-end-color').value;
+            localStorage.setItem('gradientStart', gradientStart);
+            localStorage.setItem('gradientEnd', gradientEnd);
+            renderTalents();
             showNotification('Settings saved successfully!', 'success');
         }
 
