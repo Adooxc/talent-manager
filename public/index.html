@@ -768,12 +768,11 @@
                                 </div>
                                 <div class="detail-info-item">
                                     <div class="detail-info-label">رقم الهاتف</div>
-                                    <div class="detail-info-value" id="detail-phone">-</div>
+                                    <div class="detail-info-value" id="detail-phone" style="cursor: pointer; color: var(--primary); text-decoration: underline;" onclick="openWhatsAppFromPhone()">-</div>
                                 </div>
                             </div>
 
                             <div style="margin-top: 20px; display: flex; gap: 12px; flex-wrap: wrap;">
-                                <button class="btn btn-primary" id="detail-whatsapp" onclick="openWhatsAppFromDetail()">WhatsApp</button>
                                 <button class="btn btn-secondary" id="detail-instagram" onclick="openSocialFromDetail('instagram')">Instagram</button>
                                 <button class="btn btn-secondary" id="detail-tiktok" onclick="openSocialFromDetail('tiktok')">TikTok</button>
                             </div>
@@ -832,6 +831,45 @@
                 <label class="form-label">TikTok</label>
                 <input type="text" id="talent-tiktok" class="form-input" placeholder="اسم المستخدم">
             </div>
+            <div style="border-top: 1px solid var(--border); padding-top: 16px; margin-top: 16px;">
+                <h3 style="font-size: 14px; font-weight: 600; margin-bottom: 12px; color: var(--primary);">المقاسات والبيانات الإضافية</h3>
+            </div>
+            <div class="form-group">
+                <label class="form-label">الطول (سم)</label>
+                <input type="number" id="talent-height" class="form-input" placeholder="مثال: 180">
+            </div>
+            <div class="form-group">
+                <label class="form-label">الوزن (كغ)</label>
+                <input type="number" id="talent-weight" class="form-input" placeholder="مثال: 75">
+            </div>
+            <div class="form-group">
+                <label class="form-label">الصدر (سم)</label>
+                <input type="number" id="talent-chest" class="form-input" placeholder="مثال: 95">
+            </div>
+            <div class="form-group">
+                <label class="form-label">الخصر (سم)</label>
+                <input type="number" id="talent-waist" class="form-input" placeholder="مثال: 82">
+            </div>
+            <div class="form-group">
+                <label class="form-label">الأرداف (سم)</label>
+                <input type="number" id="talent-hips" class="form-input" placeholder="مثال: 92">
+            </div>
+            <div class="form-group">
+                <label class="form-label">مقاس الحذاء</label>
+                <input type="number" id="talent-shoe" class="form-input" placeholder="مثال: 42">
+            </div>
+            <div class="form-group">
+                <label class="form-label">لون الشعر</label>
+                <input type="text" id="talent-hair" class="form-input" placeholder="مثال: أسود، بني">
+            </div>
+            <div class="form-group">
+                <label class="form-label">لون العيون</label>
+                <input type="text" id="talent-eyes" class="form-input" placeholder="مثال: أسود، أزرق">
+            </div>
+            <div class="form-group">
+                <label class="form-label">المهارات والخبرات</label>
+                <textarea id="talent-skills" class="form-input" placeholder="مثال: تمثيل، رقص، عرض أزياء" style="min-height: 60px; resize: vertical;"></textarea>
+            </div>
             <div class="form-group">
                 <label class="form-label">الصورة</label>
                 <input type="file" id="talent-photo" class="form-input" accept="image/*" onchange="handleTalentPhotoUpload()">
@@ -847,11 +885,48 @@
 
     <!-- Project Modal -->
     <div id="project-modal" class="modal">
-        <div class="modal-content">
+        <div class="modal-content" style="max-height: 90vh; overflow-y: auto;">
             <div class="modal-header">إنشاء مشروع جديد</div>
             <div class="form-group">
                 <label class="form-label">اسم المشروع</label>
                 <input type="text" id="project-name" class="form-input">
+            </div>
+            <div class="form-group">
+                <label class="form-label">الشركة المنفذة</label>
+                <input type="text" id="project-executing-company" class="form-input" placeholder="اسم الشركة المنفذة">
+            </div>
+            <div class="form-group">
+                <label class="form-label">الشركة المنتجة</label>
+                <input type="text" id="project-producing-company" class="form-input" placeholder="اسم الشركة المنتجة">
+            </div>
+            <div class="form-group">
+                <label class="form-label">اسم المخرج</label>
+                <input type="text" id="project-director" class="form-input" placeholder="اسم المخرج">
+            </div>
+            <div class="form-group">
+                <label class="form-label">تاريخ البداية</label>
+                <input type="date" id="project-start-date" class="form-input">
+            </div>
+            <div class="form-group">
+                <label class="form-label">تاريخ النهاية</label>
+                <input type="date" id="project-end-date" class="form-input">
+            </div>
+            <div class="form-group">
+                <label class="form-label">تاريخ الفيتنق (Fitting)</label>
+                <input type="date" id="project-fitting-date" class="form-input">
+            </div>
+            <div class="form-group">
+                <label class="form-label">تاريخ الكاستنق (Casting)</label>
+                <input type="date" id="project-casting-date" class="form-input">
+            </div>
+            <div class="form-group">
+                <label class="form-label">ملاحظات</label>
+                <textarea id="project-notes" class="form-input" placeholder="ملاحظات إضافية عن المشروع" style="min-height: 60px; resize: vertical;"></textarea>
+            </div>
+            <div class="form-group">
+                <label class="form-label">رابط قروب واتساب</label>
+                <input type="text" id="project-whatsapp-group" class="form-input" placeholder="https://chat.whatsapp.com/...">
+                <small style="color: var(--text-light); margin-top: 4px; display: block;">رابط قروب الواتساب الخاص بالمشروع</small>
             </div>
             <div class="form-group">
                 <label class="form-label">اختر الموديلز</label>
@@ -870,9 +945,9 @@
 
     <script>
         let talents = [
-            { id: 1, name: 'أحمد علي', category: 'ممثلين', price: 7000, gender: 'ذكر', age: 25, phone: '501234567', instagram: 'ahmed_ali', tiktok: 'ahmed_ali', twitter: 'ahmed_ali', facebook: 'ahmed.ali' },
-            { id: 2, name: 'فاطمة محمد', category: 'عارضين', price: 8000, gender: 'أنثى', age: 22, phone: '502345678', instagram: 'fatima_m', tiktok: 'fatima_m', twitter: 'fatima_m', facebook: 'fatima.m' },
-            { id: 3, name: 'محمود حسن', category: 'كومبارس', price: 3000, gender: 'ذكر', age: 30, phone: '503456789', instagram: 'mahmoud_h', tiktok: 'mahmoud_h', twitter: 'mahmoud_h', facebook: 'mahmoud.h' }
+            { id: 1, name: 'أحمد علي', category: 'ممثلين', price: 7000, gender: 'ذكر', age: 25, phone: '501234567', instagram: 'ahmed_ali', tiktok: 'ahmed_ali', height: '180', weight: '75', chest: '95', waist: '82', hips: '92', shoe: '42', hair: 'بني', eyes: 'بني', skills: 'تمثيل، رقص' },
+            { id: 2, name: 'فاطمة محمد', category: 'عارضين', price: 8000, gender: 'أنثى', age: 22, phone: '502345678', instagram: 'fatima_m', tiktok: 'fatima_m', height: '175', weight: '62', chest: '88', waist: '65', hips: '90', shoe: '38', hair: 'أسود', eyes: 'أسود', skills: 'عرض أزياء، تصوير' },
+            { id: 3, name: 'محمود حسن', category: 'كومبارس', price: 3000, gender: 'ذكر', age: 30, phone: '503456789', instagram: 'mahmoud_h', tiktok: 'mahmoud_h', height: '178', weight: '80', chest: '100', waist: '85', hips: '95', shoe: '43', hair: 'أسود', eyes: 'بني', skills: 'تمثيل، كومبارس' }
         ];
 
         let projects = [];
@@ -938,7 +1013,8 @@
                 const photoDisplay = photos.length > 0 ? `<img src="${photos[0]}" alt="صورة" style="width: 100%; height: 100%; object-fit: cover;">` : '';
 
                 return `
-                    <div class="talent-card" onclick="showTalentDetail(${actualIndex})">
+                    <div class="talent-card" onclick="showTalentDetail(${actualIndex})" style="position: relative;">
+                        <input type="checkbox" class="talent-checkbox" data-index="${actualIndex}" onclick="event.stopPropagation(); toggleTalentSelection(${actualIndex})" style="position: absolute; top: 8px; right: 8px; width: 18px; height: 18px; cursor: pointer; z-index: 10;">
                         <div class="talent-card-image">${photoDisplay}</div>
                         <div class="talent-card-body">
                             <div class="talent-name">${talent.name}</div>
@@ -951,7 +1027,6 @@
                             <div class="talent-actions" onclick="event.stopPropagation()">
                                 <button class="btn btn-primary btn-small" onclick="editTalent(event, ${actualIndex})">تعديل</button>
                                 <button class="btn btn-danger btn-small" onclick="deleteTalent(event, ${actualIndex})">حذف</button>
-                                <button class="btn btn-primary btn-small" onclick="openWhatsApp(event, '${talent.phone}')">واتس</button>
                             </div>
                         </div>
                     </div>
@@ -1050,6 +1125,15 @@
             const phone = document.getElementById('talent-phone').value;
             const instagram = document.getElementById('talent-instagram').value;
             const tiktok = document.getElementById('talent-tiktok').value;
+            const height = document.getElementById('talent-height').value;
+            const weight = document.getElementById('talent-weight').value;
+            const chest = document.getElementById('talent-chest').value;
+            const waist = document.getElementById('talent-waist').value;
+            const hips = document.getElementById('talent-hips').value;
+            const shoe = document.getElementById('talent-shoe').value;
+            const hair = document.getElementById('talent-hair').value;
+            const eyes = document.getElementById('talent-eyes').value;
+            const skills = document.getElementById('talent-skills').value;
 
             if (!name || !category || !price) {
                 alert('يرجى ملء جميع الحقول المطلوبة');
@@ -1057,12 +1141,12 @@
             }
 
             if (editingTalentIndex !== null) {
-                talents[editingTalentIndex] = { ...talents[editingTalentIndex], name, category, price, gender, age, phone, instagram, tiktok };
+                talents[editingTalentIndex] = { ...talents[editingTalentIndex], name, category, price, gender, age, phone, instagram, tiktok, height, weight, chest, waist, hips, shoe, hair, eyes, skills };
                 if (currentDetailTalentIndex === editingTalentIndex) {
                     showTalentDetail(editingTalentIndex);
                 }
             } else {
-                talents.push({ id: Date.now(), name, category, price, gender, age, phone, instagram, tiktok });
+                talents.push({ id: Date.now(), name, category, price, gender, age, phone, instagram, tiktok, height, weight, chest, waist, hips, shoe, hair, eyes, skills });
             }
 
             localStorage.setItem('talents', JSON.stringify(talents));
@@ -1185,15 +1269,88 @@
             renderTalents();
         }
 
+        let selectedTalents = [];
+
+        function toggleTalentSelection(index) {
+            const checkbox = document.querySelector(`input[data-index="${index}"]`);
+            if (checkbox.checked) {
+                if (!selectedTalents.includes(index)) {
+                    selectedTalents.push(index);
+                }
+            } else {
+                selectedTalents = selectedTalents.filter(i => i !== index);
+            }
+            updateBulkActionButtons();
+        }
+
+        function updateBulkActionButtons() {
+            const bulkActions = document.getElementById('bulk-actions');
+            if (selectedTalents.length > 0) {
+                if (!bulkActions) {
+                    const container = document.getElementById('talents-list').parentElement;
+                    const actions = document.createElement('div');
+                    actions.id = 'bulk-actions';
+                    actions.style.cssText = 'display: flex; gap: 12px; margin-top: 16px; padding: 16px; background: var(--surface); border-radius: 8px;';
+                    actions.innerHTML = `
+                        <button class="btn btn-primary" onclick="bulkAddToNewProject()" style="flex: 1;">إضافة لمشروع جديد</button>
+                        <button class="btn btn-secondary" onclick="bulkAddToExistingProject()" style="flex: 1;">إضافة لمشروع حالي</button>
+                        <button class="btn btn-secondary" onclick="clearSelection()" style="flex: 1;">إلغاء التحديد</button>
+                    `;
+                    container.appendChild(actions);
+                }
+            } else if (bulkActions) {
+                bulkActions.remove();
+            }
+        }
+
+        function clearSelection() {
+            selectedTalents = [];
+            document.querySelectorAll('.talent-checkbox').forEach(cb => cb.checked = false);
+            updateBulkActionButtons();
+        }
+
+        function bulkAddToNewProject() {
+            selectedProjectTalents = selectedTalents;
+            openCreateProjectModal();
+        }
+
+        function bulkAddToExistingProject() {
+            if (projects.length === 0) {
+                alert('لا توجد مشاريع حالية. يرجى إنشاء مشروع أولاً');
+                return;
+            }
+            const projectIndex = prompt('اختر رقم المشروع (0-' + (projects.length - 1) + ')');
+            if (projectIndex !== null && projectIndex >= 0 && projectIndex < projects.length) {
+                selectedTalents.forEach(talentIndex => {
+                    const talentName = talents[talentIndex].name;
+                    if (!projects[projectIndex].talents.includes(talentName)) {
+                        projects[projectIndex].talents.push(talentName);
+                        projects[projectIndex].total += talents[talentIndex].price;
+                    }
+                });
+                localStorage.setItem('projects', JSON.stringify(projects));
+                clearSelection();
+                renderProjects();
+                alert('تم إضافة الموديلز للمشروع بنجاح');
+            }
+        }
+
         function openWhatsApp(event, phone) {
             event.stopPropagation();
             const url = `https://wa.me/${phone}`;
             window.open(url, '_blank');
         }
 
-        function openWhatsAppFromDetail() {
+        function openWhatsAppFromPhone() {
             const talent = talents[currentDetailTalentIndex];
-            openWhatsApp({ stopPropagation: () => {} }, talent.phone);
+            if (talent && talent.phone) {
+                const url = `https://wa.me/${talent.phone}`;
+                window.open(url, '_blank');
+            }
+        }
+
+        function openWhatsAppFromDetail() {
+            openWhatsAppFromPhone();
         }
 
         function openSocialFromDetail(platform) {
@@ -1243,6 +1400,16 @@
 
         function saveProject() {
             const name = document.getElementById('project-name').value;
+            const executingCompany = document.getElementById('project-executing-company').value;
+            const producingCompany = document.getElementById('project-producing-company').value;
+            const director = document.getElementById('project-director').value;
+            const startDate = document.getElementById('project-start-date').value;
+            const endDate = document.getElementById('project-end-date').value;
+            const fittingDate = document.getElementById('project-fitting-date').value;
+            const castingDate = document.getElementById('project-casting-date').value;
+            const notes = document.getElementById('project-notes').value;
+            const whatsappGroup = document.getElementById('project-whatsapp-group').value;
+            
             if (!name || selectedProjectTalents.length === 0) {
                 alert('يرجى إدخال اسم المشروع واختيار موديلز');
                 return;
@@ -1256,9 +1423,19 @@
             projects.push({
                 id: Date.now(),
                 name,
+                executingCompany,
+                producingCompany,
+                director,
+                startDate,
+                endDate,
+                fittingDate,
+                castingDate,
+                notes,
+                whatsappGroup,
                 talents: selectedProjectTalents.map(i => talents[i].name),
                 total
             });
+            localStorage.setItem('projects', JSON.stringify(projects));
 
             closeProjectModal();
             renderProjects();
