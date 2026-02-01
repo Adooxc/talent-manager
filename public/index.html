@@ -816,89 +816,85 @@
                     <div style="max-width: 900px; padding: 20px;">
                         <!-- Appearance Settings -->
                         <div class="settings-card" style="background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin-bottom: 20px;">
-                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                                <div class="settings-card-title" style="font-size: 18px; color: var(--primary); font-weight: 600;">Appearance</div>
-                                <button id="appearance-toggle" onclick="toggleAppearance()" style="background: var(--primary); color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: 600;">−</button>
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <div class="settings-card-title" style="font-size: 16px; color: var(--primary); font-weight: 700;">Appearance</div>
+                                <button id="appearance-toggle" onclick="toggleSection('appearance')" style="background: var(--primary); color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: 600;">−</button>
                             </div>
                             <div id="appearance-content">
-                            
-                            <div class="form-group">
-                                <label class="form-label">Theme</label>
-                                <div style="display: flex; gap: 12px; margin-top: 8px;">
-                                    <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
-                                        <input type="radio" name="theme" value="light" checked onchange="setTheme('light')"> Light
-                                    </label>
-                                    <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
-                                        <input type="radio" name="theme" value="dark" onchange="setTheme('dark')"> Dark
-                                    </label>
+                                <div class="form-group">
+                                    <label class="form-label">Theme</label>
+                                    <div style="display: flex; gap: 12px; margin-top: 8px;">
+                                        <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                                            <input type="radio" name="theme" value="light" checked onchange="setTheme('light')"> Light
+                                        </label>
+                                        <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                                            <input type="radio" name="theme" value="dark" onchange="setTheme('dark')"> Dark
+                                        </label>
+                                    </div>
                                 </div>
-                            </div>
-                            
-                            <div class="form-group">
-                                <label class="form-label">Primary Color</label>
-                                <div style="display: flex; gap: 12px; margin-top: 8px; align-items: center;">
-                                    <input type="color" id="primary-color" class="form-input" value="#667eea" style="width: 60px; height: 40px; cursor: pointer; border-radius: 8px; border: 1px solid var(--border);">
-                                    <span id="color-value" style="color: var(--text-light); font-size: 14px;">#667eea</span>
+                                
+                                <div class="form-group">
+                                    <label class="form-label">Primary Color</label>
+                                    <div style="display: flex; gap: 12px; margin-top: 8px; align-items: center;">
+                                        <input type="color" id="primary-color" class="form-input" value="#667eea" style="width: 60px; height: 40px; cursor: pointer; border-radius: 8px; border: 1px solid var(--border);">
+                                        <span id="color-value" style="color: var(--text-light); font-size: 14px;">#667eea</span>
+                                    </div>
                                 </div>
-                            </div>
-                            
-                            <div class="form-group">
-                                <label class="form-label">Secondary Color</label>
-                                <div style="display: flex; gap: 12px; margin-top: 8px; align-items: center;">
-                                    <input type="color" id="secondary-color" class="form-input" value="#ec4899" style="width: 60px; height: 40px; cursor: pointer; border-radius: 8px; border: 1px solid var(--border);">
-                                    <span id="secondary-color-value" style="color: var(--text-light); font-size: 14px;">#ec4899</span>
+                                
+                                <div class="form-group">
+                                    <label class="form-label">Secondary Color</label>
+                                    <div style="display: flex; gap: 12px; margin-top: 8px; align-items: center;">
+                                        <input type="color" id="secondary-color" class="form-input" value="#ec4899" style="width: 60px; height: 40px; cursor: pointer; border-radius: 8px; border: 1px solid var(--border);">
+                                        <span id="secondary-color-value" style="color: var(--text-light); font-size: 14px;">#ec4899</span>
+                                    </div>
                                 </div>
-                            </div>
-                            
+                                
+                                <div class="form-group">
+                                    <label class="form-label">Background Color</label>
+                                    <div style="display: flex; gap: 12px; margin-top: 8px; align-items: center;">
+                                        <input type="color" id="bg-color" class="form-input" value="#f8fafc" style="width: 60px; height: 40px; cursor: pointer; border-radius: 8px; border: 1px solid var(--border);">
+                                        <span id="bg-color-value" style="color: var(--text-light); font-size: 14px;">#f8fafc</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label class="form-label">Text Color</label>
+                                    <div style="display: flex; gap: 12px; margin-top: 8px; align-items: center;">
+                                        <input type="color" id="text-color" class="form-input" value="#1a202c" style="width: 60px; height: 40px; cursor: pointer; border-radius: 8px; border: 1px solid var(--border);">
+                                        <span id="text-color-value" style="color: var(--text-light); font-size: 14px;">#1a202c</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label class="form-label">Border Color</label>
+                                    <div style="display: flex; gap: 12px; margin-top: 8px; align-items: center;">
+                                        <input type="color" id="border-color" class="form-input" value="#e2e8f0" style="width: 60px; height: 40px; cursor: pointer; border-radius: 8px; border: 1px solid var(--border);">
+                                        <span id="border-color-value" style="color: var(--text-light); font-size: 14px;">#e2e8f0</span>
+                                    </div>
+                                </div>
 
-                            
-                            <div class="form-group">
-                                <label class="form-label">Background Color</label>
-                                <div style="display: flex; gap: 12px; margin-top: 8px; align-items: center;">
-                                    <input type="color" id="bg-color" class="form-input" value="#f8fafc" style="width: 60px; height: 40px; cursor: pointer; border-radius: 8px; border: 1px solid var(--border);">
-                                    <span id="bg-color-value" style="color: var(--text-light); font-size: 14px;">#f8fafc</span>
+                                <div class="form-group">
+                                    <label class="form-label">Surface Color</label>
+                                    <div style="display: flex; gap: 12px; margin-top: 8px; align-items: center;">
+                                        <input type="color" id="surface-color" class="form-input" value="#ffffff" style="width: 60px; height: 40px; cursor: pointer; border-radius: 8px; border: 1px solid var(--border);">
+                                        <span id="surface-color-value" style="color: var(--text-light); font-size: 14px;">#ffffff</span>
+                                    </div>
                                 </div>
-                            </div>
-                            
-                            <div class="form-group">
-                                <label class="form-label">Text Color</label>
-                                <div style="display: flex; gap: 12px; margin-top: 8px; align-items: center;">
-                                    <input type="color" id="text-color" class="form-input" value="#1a202c" style="width: 60px; height: 40px; cursor: pointer; border-radius: 8px; border: 1px solid var(--border);">
-                                    <span id="text-color-value" style="color: var(--text-light); font-size: 14px;">#1a202c</span>
-                                </div>
-                            </div>
-                            
-                            <div class="form-group">
-                                <label class="form-label">Border Color</label>
-                                <div style="display: flex; gap: 12px; margin-top: 8px; align-items: center;">
-                                    <input type="color" id="border-color" class="form-input" value="#e2e8f0" style="width: 60px; height: 40px; cursor: pointer; border-radius: 8px; border: 1px solid var(--border);">
-                                    <span id="border-color-value" style="color: var(--text-light); font-size: 14px;">#e2e8f0</span>
-                                </div>
-                            </div>
 
-                            <div class="form-group">
-                                <label class="form-label">Surface Color</label>
-                                <div style="display: flex; gap: 12px; margin-top: 8px; align-items: center;">
-                                    <input type="color" id="surface-color" class="form-input" value="#ffffff" style="width: 60px; height: 40px; cursor: pointer; border-radius: 8px; border: 1px solid var(--border);">
-                                    <span id="surface-color-value" style="color: var(--text-light); font-size: 14px;">#ffffff</span>
+                                <div class="form-group">
+                                    <label class="form-label">Active Menu Gradient Start</label>
+                                    <div style="display: flex; gap: 12px; margin-top: 8px; align-items: center;">
+                                        <input type="color" id="active-menu-gradient-start" class="form-input" value="#22c55e" style="width: 60px; height: 40px; cursor: pointer; border-radius: 8px; border: 1px solid var(--border);">
+                                        <span id="active-menu-gradient-start-value" style="color: var(--text-light); font-size: 14px;">#22c55e</span>
+                                    </div>
                                 </div>
-                            </div>
-
-                            <div class="form-group">
-                                <label class="form-label">Active Menu Gradient Start</label>
-                                <div style="display: flex; gap: 12px; margin-top: 8px; align-items: center;">
-                                    <input type="color" id="active-menu-gradient-start" class="form-input" value="#22c55e" style="width: 60px; height: 40px; cursor: pointer; border-radius: 8px; border: 1px solid var(--border);">
-                                    <span id="active-menu-gradient-start-value" style="color: var(--text-light); font-size: 14px;">#22c55e</span>
+                                <div class="form-group">
+                                    <label class="form-label">Active Menu Gradient End</label>
+                                    <div style="display: flex; gap: 12px; margin-top: 8px; align-items: center;">
+                                        <input type="color" id="active-menu-gradient-end" class="form-input" value="#16a34a" style="width: 60px; height: 40px; cursor: pointer; border-radius: 8px; border: 1px solid var(--border);">
+                                        <span id="active-menu-gradient-end-value" style="color: var(--text-light); font-size: 14px;">#16a34a</span>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label">Active Menu Gradient End</label>
-                                <div style="display: flex; gap: 12px; margin-top: 8px; align-items: center;">
-                                    <input type="color" id="active-menu-gradient-end" class="form-input" value="#16a34a" style="width: 60px; height: 40px; cursor: pointer; border-radius: 8px; border: 1px solid var(--border);">
-                                    <span id="active-menu-gradient-end-value" style="color: var(--text-light); font-size: 14px;">#16a34a</span>
-                                </div>
-                            </div>
-                            </div>
                             </div>
                         </div>
 
