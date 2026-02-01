@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Talent Manager - مدير الموديلز والفنانين</title>
-    <link rel="icon" id="favicon" type="image/png" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%236366f1' width='100' height='100'/><text x='50' y='65' font-size='60' font-weight='bold' fill='white' text-anchor='middle'>T</text></svg>">
+    <link rel="icon" id="favicon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><defs><linearGradient id='g' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' style='stop-color:%236366f1'/><stop offset='100%' style='stop-color:%23ec4899'/></linearGradient></defs><rect fill='url(%23g)' width='100' height='100' rx='20'/><circle cx='50' cy='35' r='12' fill='white'/><path d='M 35 55 Q 50 65 65 55' stroke='white' stroke-width='3' fill='none' stroke-linecap='round'/></svg>">
     <link rel="apple-touch-icon" id="apple-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'><rect fill='%236366f1' width='180' height='180'/><text x='90' y='120' font-size='100' font-weight='bold' fill='white' text-anchor='middle'>T</text></svg>">
     <style>
         * {
@@ -604,7 +604,10 @@
         <div class="sidebar">
             <div class="sidebar-header">
 
-                <div class="sidebar-title">Talent Manager</div>
+                <div class="sidebar-title" style="display: flex; align-items: center; gap: 10px;">
+                    <div id="sidebar-logo" style="width: 32px; height: 32px; background: linear-gradient(135deg, #6366f1 0%, #ec4899 100%); border-radius: 6px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 16px;">T</div>
+                    <span>Talent Manager</span>
+                </div>
             </div>
             <div class="nav-item active" onclick="showTab('talents-tab')">الموديلز</div>
             <div class="nav-item" onclick="showTab('projects-tab')">المشاريع</div>
