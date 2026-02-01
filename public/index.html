@@ -1489,6 +1489,30 @@
 
     <script>
         // Category Management - Initialize first
+        // Load talentMediaItems from localStorage on page load
+        function loadTalentMediaItems() {
+            const stored = localStorage.getItem('talentMediaItems');
+            if (stored) {
+                try {
+                    talentMediaItems = JSON.parse(stored);
+                    console.log('Loaded talentMediaItems from localStorage:', Object.keys(talentMediaItems).length, 'talents');
+                } catch (e) {
+                    console.error('Error loading talentMediaItems:', e);
+                    talentMediaItems = {};
+                }
+            }
+        }
+        
+        // Save talentMediaItems to localStorage
+        function saveTalentMediaItems() {
+            try {
+                localStorage.setItem('talentMediaItems', JSON.stringify(talentMediaItems));
+                console.log('Saved talentMediaItems to localStorage');
+            } catch (e) {
+                console.error('Error saving talentMediaItems:', e);
+            }
+        }
+        
         let categories = JSON.parse(localStorage.getItem('categories') || '["Actors", "Influencers", "Models", "Extras"]');
         
         let talents = [
@@ -1517,6 +1541,7 @@
                 console.error('Error loading projects:', e);
             }
         }
+        
         let currentTalentPhotos = {};
         let currentDetailTalentIndex = null;
         let editingTalentIndex = null;
@@ -1528,6 +1553,9 @@
         let currentMediaItems = [];
         let currentPrimaryMediaIndex = 0;
         let db = null;
+        
+        // Load talentMediaItems from localStorage after initialization
+        loadTalentMediaItems();
         
         // Initialize IndexedDB for persistent image storage
         function initIndexedDB() {
@@ -1913,11 +1941,13 @@
                 
                 // Use media gallery if available, otherwise use old photos
                 if (mediaItems.length > 0) {
-                    const firstMedia = mediaItems[0];
-                    if (firstMedia.type === 'image') {
-                        photoDisplay = `<img src="${firstMedia.src}" alt="Photo" style="width: 100%; height: 100%; object-fit: cover;">`;
+                    // Use primary image if available, otherwise use first media item
+                    const primaryIndex = talent.primaryMediaIndex || 0;
+                    const primaryMedia = mediaItems[primaryIndex] || mediaItems[0];
+                    if (primaryMedia.type === 'image') {
+                        photoDisplay = `<img src="${primaryMedia.src}" alt="Photo" style="width: 100%; height: 100%; object-fit: cover;">`;
                     } else {
-                        photoDisplay = `<video src="${firstMedia.src}" style="width: 100%; height: 100%; object-fit: cover;"></video><div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: white; font-size: 32px; text-shadow: 0 2px 4px rgba(0,0,0,0.5);">▶</div>`;
+                        photoDisplay = `<video src="${primaryMedia.src}" style="width: 100%; height: 100%; object-fit: cover;"></video><div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: white; font-size: 32px; text-shadow: 0 2px 4px rgba(0,0,0,0.5);">▶</div>`;
                     }
                 } else if (photos.length > 0) {
                     photoDisplay = `<img src="${photos[0]}" alt="Photo" style="width: 100%; height: 100%; object-fit: cover;">`;
@@ -2081,7 +2111,7 @@
             if (editingTalentIndex !== null) {
                 const talentId = talents[editingTalentIndex].id;
                 newTalentId = talentId;
-                talents[editingTalentIndex] = { ...talents[editingTalentIndex], name, category, price, gender, birthdate, age, phone, instagram, tiktok, height, weight, chest, waist, hips, shoe, hair, eyes, skills };
+                talents[editingTalentIndex] = { ...talents[editingTalentIndex], name, category, price, gender, birthdate, age, phone, instagram, tiktok, height, weight, chest, waist, hips, shoe, hair, eyes, skills, primaryMediaIndex: currentPrimaryMediaIndex };
                 if (currentMediaItems.length > 0) {
                     talentMediaItems[talentId] = [...currentMediaItems];
                 }
@@ -2090,7 +2120,7 @@
                 }
             } else {
                 newTalentId = Date.now();
-                const newTalent = { id: newTalentId, name, category, price, gender, birthdate, age, phone, instagram, tiktok, height, weight, chest, waist, hips, shoe, hair, eyes, skills };
+                const newTalent = { id: newTalentId, name, category, price, gender, birthdate, age, phone, instagram, tiktok, height, weight, chest, waist, hips, shoe, hair, eyes, skills, primaryMediaIndex: currentPrimaryMediaIndex };
                 talents.push(newTalent);
                 if (currentMediaItems.length > 0) {
                     talentMediaItems[newTalentId] = [...currentMediaItems];
@@ -2099,6 +2129,7 @@
 
             localStorage.setItem('talents', JSON.stringify(talents));
             localStorage.setItem('talentPhotos', JSON.stringify(currentTalentPhotos));
+            saveTalentMediaItems();
             // Save images to IndexedDB for persistent storage
             if (currentMediaItems.length > 0) {
                 currentMediaItems.forEach(item => {
@@ -2165,11 +2196,16 @@
         function displayDetailMedia() {
             if (currentDetailTalentIndex === null) return;
             const talentId = talents[currentDetailTalentIndex].id || currentDetailTalentIndex;
+            const talent = talents[currentDetailTalentIndex];
             const mediaItems = talentMediaItems[talentId] || [];
             const mediaDisplay = document.getElementById('detail-media-display');
             if (mediaItems.length === 0) return;
-            const media = mediaItems[detailMediaIndex];
+            // Use primary image index if available
+            const primaryIndex = talent.primaryMediaIndex || 0;
+            const currentIndex = detailMediaIndex >= mediaItems.length ? primaryIndex : detailMediaIndex;
+            const media = mediaItems[currentIndex];
             mediaDisplay.innerHTML = '';
+            detailMediaIndex = currentIndex;
             if (media.type === 'image') {
                 const img = document.createElement('img');
                 img.src = media.src;
@@ -2210,7 +2246,8 @@
             document.getElementById('detail-phone').textContent = talent.phone;
 
             // Display media from talentMediaItems
-            detailMediaIndex = 0;
+            // Use primary image index if available
+            detailMediaIndex = talent.primaryMediaIndex || 0;
             displayDetailMedia();
             renderDetailMediaGallery();
             
