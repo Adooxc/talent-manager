@@ -889,7 +889,11 @@
 
                         <!-- Branding Settings -->
                         <div class="settings-card" style="background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin-bottom: 20px;">
-                            <div class="settings-card-title" style="font-size: 18px; margin-bottom: 20px; color: var(--primary); font-weight: 600;">Branding</div>
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                                <div class="settings-card-title" style="font-size: 18px; color: var(--primary); font-weight: 600;">Branding</div>
+                                <button id="branding-toggle" onclick="toggleSection('branding')" style="background: var(--primary); color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: 600;">−</button>
+                            </div>
+                            <div id="branding-content">
                             
                             <div class="form-group">
                                 <label class="form-label">App Name (Sidebar)</label>
@@ -910,7 +914,11 @@
 
                         <!-- Menu Customization -->
                         <div class="settings-card" style="background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin-bottom: 20px;">
-                            <div class="settings-card-title" style="font-size: 18px; margin-bottom: 20px; color: var(--primary); font-weight: 600;">Menu Names</div>
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                                <div class="settings-card-title" style="font-size: 18px; color: var(--primary); font-weight: 600;">Menu Names</div>
+                                <button id="menu-toggle" onclick="toggleSection('menu')" style="background: var(--primary); color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: 600;">−</button>
+                            </div>
+                            <div id="menu-content">
                             
                             <div class="form-group">
                                 <label class="form-label">Talents Menu Name</label>
@@ -930,7 +938,11 @@
 
                         <!-- Categories Management -->
                         <div class="settings-card" style="background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin-bottom: 20px;">
-                            <div class="settings-card-title" style="font-size: 18px; margin-bottom: 20px; color: var(--primary); font-weight: 600;">Categories</div>
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                                <div class="settings-card-title" style="font-size: 18px; color: var(--primary); font-weight: 600;">Categories</div>
+                                <button id="categories-toggle" onclick="toggleSection('categories')" style="background: var(--primary); color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: 600;">−</button>
+                            </div>
+                            <div id="categories-content">
                             
                             <div style="margin-bottom: 16px;">
                                 <div style="display: flex; gap: 8px; margin-bottom: 12px;">
@@ -946,7 +958,11 @@
 
                         <!-- Financial Settings -->
                         <div class="settings-card" style="background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin-bottom: 20px;">
-                            <div class="settings-card-title" style="font-size: 18px; margin-bottom: 20px; color: var(--primary); font-weight: 600;">Financial Settings</div>
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                                <div class="settings-card-title" style="font-size: 18px; color: var(--primary); font-weight: 600;">Financial Settings</div>
+                                <button id="financial-toggle" onclick="toggleSection('financial')" style="background: var(--primary); color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: 600;">−</button>
+                            </div>
+                            <div id="financial-content">
                             
                             <div class="form-group">
                                 <label class="form-label">Profit Margin (%)</label>
@@ -956,7 +972,11 @@
 
                         <!-- Data Management -->
                         <div class="settings-card" style="background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin-bottom: 20px;">
-                            <div class="settings-card-title" style="font-size: 18px; margin-bottom: 20px; color: var(--primary); font-weight: 600;">Data Management</div>
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                                <div class="settings-card-title" style="font-size: 18px; color: var(--primary); font-weight: 600;">Data Management</div>
+                                <button id="data-toggle" onclick="toggleSection('data')" style="background: var(--primary); color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: 600;">−</button>
+                            </div>
+                            <div id="data-content">
                             
                             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px;">
                                 <button class="btn" style="background: var(--primary); color: white; padding: 10px 16px; border: none; border-radius: 8px; cursor: pointer; font-weight: 500;" onclick="exportData()">Export Data</button>
@@ -2193,28 +2213,33 @@
             }
         }
 
-        function toggleAppearance() {
-            const content = document.getElementById('appearance-content');
-            const button = document.getElementById('appearance-toggle');
+        function toggleSection(section) {
+            const content = document.getElementById(section + '-content');
+            const button = document.getElementById(section + '-toggle');
             if (content.style.display === 'none') {
                 content.style.display = 'block';
                 button.textContent = '−';
-                localStorage.setItem('appearanceExpanded', 'true');
+                localStorage.setItem(section + 'Expanded', 'true');
             } else {
                 content.style.display = 'none';
                 button.textContent = '+';
-                localStorage.setItem('appearanceExpanded', 'false');
+                localStorage.setItem(section + 'Expanded', 'false');
             }
         }
 
         function restoreAppearanceState() {
-            const isExpanded = localStorage.getItem('appearanceExpanded') !== 'false';
-            const content = document.getElementById('appearance-content');
-            const button = document.getElementById('appearance-toggle');
-            if (!isExpanded) {
-                content.style.display = 'none';
-                button.textContent = '+';
-            }
+            const sections = ['appearance', 'branding', 'menu', 'categories', 'financial', 'data'];
+            sections.forEach(section => {
+                const isExpanded = localStorage.getItem(section + 'Expanded') !== 'false';
+                const content = document.getElementById(section + '-content');
+                const button = document.getElementById(section + '-toggle');
+                if (content && button) {
+                    if (!isExpanded) {
+                        content.style.display = 'none';
+                        button.textContent = '+';
+                    }
+                }
+            });
         }
 
         
