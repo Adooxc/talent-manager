@@ -1417,7 +1417,7 @@
 
         function openAddTalentModal() {
             editingTalentIndex = null;
-            document.getElementById('modal-title').textContent = 'Add New Model';
+            // Clear form fields
             document.getElementById('talent-name').value = '';
             document.getElementById('talent-category').value = '';
             document.getElementById('talent-price').value = '';
@@ -1427,7 +1427,18 @@
             document.getElementById('talent-phone').value = '';
             document.getElementById('talent-instagram').value = '';
             document.getElementById('talent-tiktok').value = '';
-            document.getElementById('talent-modal').classList.add('active');
+            document.getElementById('talent-height').value = '';
+            document.getElementById('talent-weight').value = '';
+            document.getElementById('talent-chest').value = '';
+            document.getElementById('talent-waist').value = '';
+            document.getElementById('talent-hips').value = '';
+            document.getElementById('talent-shoe').value = '';
+            document.getElementById('talent-hair').value = '';
+            document.getElementById('talent-eyes').value = '';
+            document.getElementById('talent-skills').value = '';
+            document.getElementById('talent-photo').value = '';
+            // Navigate to add talent page
+            showTab('add-talent-page');
         }
 
         function editTalent(event, index) {
