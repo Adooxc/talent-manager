@@ -2618,9 +2618,17 @@
             }
             
             localStorage.setItem('projects', JSON.stringify(projects));
-            closeProjectModal();
-            renderProjects();
-            renderStats();
+            
+            // Redirect to new page after creating project
+            if (editIndex === null) {
+                setTimeout(() => {
+                    window.location.reload();
+                }, 300);
+            } else {
+                closeProjectForm();
+                renderProjects();
+                renderStats();
+            }
         }
 
         function closeProjectModal() {
