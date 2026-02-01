@@ -883,6 +883,20 @@
         let draggedPhotoIndex = null;
 
         function showTab(tabId) {
+            // Close talent detail view if open
+            const detailView = document.getElementById('talent-detail');
+            if (detailView && detailView.classList.contains('active')) {
+                detailView.classList.remove('active');
+                currentDetailTalentIndex = null;
+            }
+            
+            // Close edit modal if open
+            const editModal = document.getElementById('talent-modal');
+            if (editModal && editModal.classList.contains('active')) {
+                editModal.classList.remove('active');
+                editingTalentIndex = null;
+            }
+            
             document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
             document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
             document.getElementById(tabId).classList.add('active');
@@ -1070,6 +1084,7 @@
 
         function closeTalentModal() {
             document.getElementById('talent-modal').classList.remove('active');
+            editingTalentIndex = null;
         }
 
         function showTalentDetail(index) {
@@ -1124,7 +1139,9 @@
 
         function setupPhotoUpload() {
             const uploadArea = document.getElementById('photo-upload-area');
-            uploadArea.onclick = () => document.getElementById('photo-input').click();
+            if (uploadArea) {
+                uploadArea.onclick = () => document.getElementById('photo-input').click();
+            }
         }
 
         function handlePhotoDrop(event) {
