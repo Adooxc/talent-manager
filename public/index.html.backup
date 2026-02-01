@@ -1004,8 +1004,7 @@
     <!-- Project Modal -->
     <div id="project-modal" class="modal">
         <div class="modal-content" style="max-height: 90vh; overflow-y: auto;">
-            <div class="modal-header" id="project-modal-title">إنشاء مشروع جديد</div>
-            <input type="hidden" id="editing-project-index" value="">
+            <div class="modal-header">إنشاء مشروع جديد</div>
             <div class="form-group">
                 <label class="form-label">اسم المشروع</label>
                 <input type="text" id="project-name" class="form-input">
@@ -1056,7 +1055,7 @@
                 <div style="font-size: 24px; font-weight: 700; color: var(--primary);" id="project-total">KD 0</div>
             </div>
             <div class="form-actions">
-                <button class="btn btn-primary" id="save-project-btn" onclick="saveProject()">إنشاء</button>
+                <button class="btn btn-primary" onclick="saveProject()">إنشاء</button>
                 <button class="btn btn-secondary" onclick="closeProjectModal()">إلغاء</button>
             </div>
         </div>
@@ -1064,31 +1063,12 @@
 
     <script>
         let talents = [
-            { id: 1, name: 'أحمد علي', category: 'ممثلين', price: 7000, gender: 'ذكر', age: 25, phone: '501234567', instagram: 'ahmed_ali', tiktok: 'ahmed_ali', height: '180', weight: '75', chest: '95', waist: '82', hips: '92', shoe: '42', hair: 'بني', eyes: 'بني', skills: 'تمثيل، رقص', rating: 4.5, isFavorite: false, projects: [] },
-            { id: 2, name: 'فاطمة محمد', category: 'عارضين', price: 8000, gender: 'أنثى', age: 22, phone: '502345678', instagram: 'fatima_m', tiktok: 'fatima_m', height: '175', weight: '62', chest: '88', waist: '65', hips: '90', shoe: '38', hair: 'أسود', eyes: 'أسود', skills: 'عرض أزياء، تصوير', rating: 5, isFavorite: true, projects: [] },
-            { id: 3, name: 'محمود حسن', category: 'كومبارس', price: 3000, gender: 'ذكر', age: 30, phone: '503456789', instagram: 'mahmoud_h', tiktok: 'mahmoud_h', height: '178', weight: '80', chest: '100', waist: '85', hips: '95', shoe: '43', hair: 'أسود', eyes: 'بني', skills: 'تمثيل، كومبارس', rating: 3.5, isFavorite: false, projects: [] }
+            { id: 1, name: 'أحمد علي', category: 'ممثلين', price: 7000, gender: 'ذكر', age: 25, phone: '501234567', instagram: 'ahmed_ali', tiktok: 'ahmed_ali', height: '180', weight: '75', chest: '95', waist: '82', hips: '92', shoe: '42', hair: 'بني', eyes: 'بني', skills: 'تمثيل، رقص', rating: 4.5, favorite: false, projects: [] },
+            { id: 2, name: 'فاطمة محمد', category: 'عارضين', price: 8000, gender: 'أنثى', age: 22, phone: '502345678', instagram: 'fatima_m', tiktok: 'fatima_m', height: '175', weight: '62', chest: '88', waist: '65', hips: '90', shoe: '38', hair: 'أسود', eyes: 'أسود', skills: 'عرض أزياء، تصوير', rating: 5, favorite: true, projects: [] },
+            { id: 3, name: 'محمود حسن', category: 'كومبارس', price: 3000, gender: 'ذكر', age: 30, phone: '503456789', instagram: 'mahmoud_h', tiktok: 'mahmoud_h', height: '178', weight: '80', chest: '100', waist: '85', hips: '95', shoe: '43', hair: 'أسود', eyes: 'بني', skills: 'تمثيل، كومبارس', rating: 3.5, favorite: false, projects: [] }
         ];
 
         let projects = [];
-        
-        // Load talents and projects from localStorage
-        const savedTalents = localStorage.getItem('talents');
-        if (savedTalents) {
-            try {
-                talents = JSON.parse(savedTalents);
-            } catch (e) {
-                console.error('Error loading talents:', e);
-            }
-        }
-        
-        const savedProjects = localStorage.getItem('projects');
-        if (savedProjects) {
-            try {
-                projects = JSON.parse(savedProjects);
-            } catch (e) {
-                console.error('Error loading projects:', e);
-            }
-        }
         let currentTalentPhotos = {};
         let currentDetailTalentIndex = null;
         let editingTalentIndex = null;
@@ -1354,11 +1334,9 @@
         }
 
         function toggleFavoriteFromCard(index) {
-            event.stopPropagation();
             talents[index].isFavorite = !talents[index].isFavorite;
             localStorage.setItem('talents', JSON.stringify(talents));
             renderTalents();
-            renderStats();
         }
 
         function toggleFavorite() {
@@ -1367,7 +1345,6 @@
                 localStorage.setItem('talents', JSON.stringify(talents));
                 updateFavoriteButton();
                 renderTalents();
-                renderStats();
             }
         }
 
@@ -1388,14 +1365,13 @@
                 localStorage.setItem('talents', JSON.stringify(talents));
                 updateRatingDisplay();
                 renderTalents();
-                renderStats();
             }
         }
 
         function updateRatingDisplay() {
             const rating = talents[currentDetailTalentIndex].rating || 0;
             const starsHtml = Array.from({length: 5}, (_, i) => 
-                `<span style="cursor: pointer; font-size: 20px; margin: 0 4px; user-select: none;" onclick="event.stopPropagation(); setRating(${i + 1})">${i < rating ? '⭐' : '☆'}</span>`
+                `<span style="cursor: pointer; font-size: 20px; margin: 0 4px;" onclick="setRating(${i + 1})">${i < rating ? '⭐' : '☆'}</span>`
             ).join('');
             document.getElementById('rating-stars').innerHTML = starsHtml;
         }
@@ -1588,19 +1564,6 @@
         function openCreateProjectModal() {
             selectedProjectTalents = [];
             document.getElementById('project-name').value = '';
-            document.getElementById('project-executing-company').value = '';
-            document.getElementById('project-producing-company').value = '';
-            document.getElementById('project-director').value = '';
-            document.getElementById('project-start-date').value = '';
-            document.getElementById('project-end-date').value = '';
-            document.getElementById('project-fitting-date').value = '';
-            document.getElementById('project-casting-date').value = '';
-            document.getElementById('project-notes').value = '';
-            document.getElementById('project-whatsapp-group').value = '';
-            document.getElementById('project-modal-title').textContent = 'إنشاء مشروع جديد';
-            document.getElementById('save-project-btn').textContent = 'إنشاء';
-            document.getElementById('save-project-btn').onclick = () => saveProject();
-            document.getElementById('editing-project-index').value = '';
             renderTalentSelector();
             document.getElementById('project-modal').classList.add('active');
         }
@@ -1628,7 +1591,7 @@
             document.getElementById('project-total').textContent = `KD ${total}`;
         }
 
-        function saveProject(editIndex = null) {
+        function saveProject() {
             const name = document.getElementById('project-name').value;
             const executingCompany = document.getElementById('project-executing-company').value;
             const producingCompany = document.getElementById('project-producing-company').value;
@@ -1650,8 +1613,8 @@
                 total += talents[index].price;
             });
 
-            const projectData = {
-                id: editIndex !== null ? projects[editIndex].id : Date.now(),
+            projects.push({
+                id: Date.now(),
                 name,
                 executingCompany,
                 producingCompany,
@@ -1664,28 +1627,15 @@
                 whatsappGroup,
                 talents: selectedProjectTalents.map(i => talents[i].name),
                 total
-            };
-
-            if (editIndex !== null) {
-                projects[editIndex] = projectData;
-            } else {
-                projects.push(projectData);
-            }
-            
+            });
             localStorage.setItem('projects', JSON.stringify(projects));
+
             closeProjectModal();
             renderProjects();
-            renderStats();
         }
 
         function closeProjectModal() {
             document.getElementById('project-modal').classList.remove('active');
-            // Reset modal to create mode
-            document.getElementById('project-modal-title').textContent = 'إنشاء مشروع جديد';
-            document.getElementById('save-project-btn').textContent = 'إنشاء';
-            document.getElementById('save-project-btn').onclick = () => saveProject();
-            document.getElementById('editing-project-index').value = '';
-            selectedProjectTalents = [];
         }
 
         function renderProjects() {
@@ -1703,10 +1653,7 @@
                             <div style="color: var(--text-light); font-size: 14px; margin-bottom: 8px;">الموديلز: ${project.talents.join(', ')}</div>
                             <div style="font-size: 18px; font-weight: 700; color: var(--primary);">KD ${project.total}</div>
                         </div>
-                        <div style="display: flex; gap: 8px;">
-                            <button class="btn btn-primary btn-small" onclick="editProject(${index})">تعديل</button>
-                            <button class="btn btn-danger btn-small" onclick="deleteProject(${index})">حذف</button>
-                        </div>
+                        <button class="btn btn-danger btn-small" onclick="deleteProject(${index})">حذف</button>
                     </div>
                 </div>
             `).join('');
@@ -1715,52 +1662,8 @@
         function deleteProject(index) {
             if (confirm('هل تريد حذف هذا المشروع؟')) {
                 projects.splice(index, 1);
-                localStorage.setItem('projects', JSON.stringify(projects));
                 renderProjects();
-                renderStats();
             }
-        }
-        
-        function editProject(index) {
-            const project = projects[index];
-            selectedProjectTalents = [];
-            
-            // Find indices of talents in this project
-            project.talents.forEach(talentName => {
-                const talentIndex = talents.findIndex(t => t.name === talentName);
-                if (talentIndex !== -1) {
-                    selectedProjectTalents.push(talentIndex);
-                }
-            });
-            
-            document.getElementById('project-name').value = project.name;
-            document.getElementById('project-executing-company').value = project.executingCompany || '';
-            document.getElementById('project-producing-company').value = project.producingCompany || '';
-            document.getElementById('project-director').value = project.director || '';
-            document.getElementById('project-start-date').value = project.startDate || '';
-            document.getElementById('project-end-date').value = project.endDate || '';
-            document.getElementById('project-fitting-date').value = project.fittingDate || '';
-            document.getElementById('project-casting-date').value = project.castingDate || '';
-            document.getElementById('project-notes').value = project.notes || '';
-            document.getElementById('project-whatsapp-group').value = project.whatsappGroup || '';
-            
-            renderTalentSelector();
-            
-            // Check the selected talents
-            selectedProjectTalents.forEach(index => {
-                const checkbox = document.getElementById(`talent-check-${index}`);
-                if (checkbox) checkbox.checked = true;
-            });
-            
-            updateProjectTotal();
-            
-            // Update modal title and button
-            document.getElementById('project-modal-title').textContent = 'تعديل المشروع';
-            document.getElementById('save-project-btn').textContent = 'حفظ التعديلات';
-            document.getElementById('save-project-btn').onclick = () => saveProject(index);
-            
-            document.getElementById('project-modal').classList.add('active');
-            document.getElementById('editing-project-index').value = index;
         }
 
         function renderStats() {
@@ -1826,15 +1729,25 @@
 
         function saveSettings() {
             const settings = {
-                profitMargin: document.getElementById('profit-margin').value
+                profitMargin: document.getElementById('profit-margin').value,
+                companyName: document.getElementById('company-name').value,
+                defaultPhone: document.getElementById('default-phone').value,
+                companyEmail: document.getElementById('company-email').value
             };
             localStorage.setItem('settings', JSON.stringify(settings));
         }
 
         function loadSettings() {
             const settings = JSON.parse(localStorage.getItem('settings') || '{}');
-            const profitMarginEl = document.getElementById('profit-margin');
-            if (profitMarginEl) profitMarginEl.value = settings.profitMargin || 20;
+            document.getElementById('profit-margin').value = settings.profitMargin || 20;
+            document.getElementById('company-name').value = settings.companyName || '';
+            document.getElementById('default-phone').value = settings.defaultPhone || '';
+            document.getElementById('company-email').value = settings.companyEmail || '';
+
+            if (localStorage.getItem('darkMode') === 'true') {
+                document.body.classList.add('dark-mode');
+                document.getElementById('dark-mode').checked = true;
+            }
         }
 
         function clearAllData() {
@@ -1854,22 +1767,11 @@
         // Apply theme on page load
         const savedTheme = localStorage.getItem('theme') || 'light';
         setTheme(savedTheme);
-        // Set the correct radio button
-        const themeRadios = document.querySelectorAll('input[name="theme"]');
-        themeRadios.forEach(radio => {
-            radio.checked = radio.value === savedTheme;
-        });
-        
         const savedColor = localStorage.getItem('primaryColor') || '#667eea';
         document.documentElement.style.setProperty('--primary', savedColor);
-        const colorInput = document.getElementById('primary-color');
-        if (colorInput) colorInput.value = savedColor;
-        document.getElementById('color-value').textContent = savedColor;
-        
         const savedCardSize = localStorage.getItem('cardSize') || '100';
         document.getElementById('card-size').value = savedCardSize;
         updateCardSize();
-        
         const savedPhotos = localStorage.getItem('talentPhotos');
         if (savedPhotos) {
             try {
@@ -1878,11 +1780,7 @@
                 currentTalentPhotos = {};
             }
         }
-        
         renderTalents();
-        renderStats();
-        loadMenuNames();
-        setLastUpdateDate();
     
         function setTheme(theme) {
             localStorage.setItem('theme', theme);
@@ -1901,12 +1799,14 @@
         }
 
         function exportData() {
-            const profitMarginEl = document.getElementById('profit-margin');
             const data = {
                 talents: talents,
                 projects: projects,
                 settings: {
-                    profitMargin: profitMarginEl ? profitMarginEl.value : '20'
+                    companyName: document.getElementById('company-name').value,
+                    companyEmail: document.getElementById('company-email').value,
+                    defaultPhone: document.getElementById('default-phone').value,
+                    profitMargin: document.getElementById('profit-margin').value
                 }
             };
             const json = JSON.stringify(data, null, 2);
@@ -1935,7 +1835,6 @@
                         localStorage.setItem('projects', JSON.stringify(projects));
                         alert('تم استيراد البيانات بنجاح');
                         renderTalents();
-                        renderStats();
                     } catch (err) {
                         alert('خطأ في قراءة الملف');
                     }
@@ -1948,32 +1847,50 @@
         function backupData() {
             exportData();
         }
-        
-        function saveMenuNames() {
-            const menuNames = {
-                talents: document.getElementById('talents-menu-name').value,
-                projects: document.getElementById('projects-menu-name').value,
-                dashboard: document.getElementById('dashboard-menu-name').value
+
+        function saveSettings() {
+            const settings = {
+                companyName: document.getElementById('company-name').value,
+                companyEmail: document.getElementById('company-email').value,
+                defaultPhone: document.getElementById('default-phone').value,
+                companyAddress: document.getElementById('company-address').value,
+                profitMargin: document.getElementById('profit-margin').value,
+
             };
-            localStorage.setItem('menuNames', JSON.stringify(menuNames));
-        }
-        
-        function loadMenuNames() {
-            const menuNames = JSON.parse(localStorage.getItem('menuNames') || '{}');
-            if (menuNames.talents) document.getElementById('talents-menu-name').value = menuNames.talents;
-            if (menuNames.projects) document.getElementById('projects-menu-name').value = menuNames.projects;
-            if (menuNames.dashboard) document.getElementById('dashboard-menu-name').value = menuNames.dashboard;
+            localStorage.setItem('appSettings', JSON.stringify(settings));
+            alert('تم حفظ الإعدادات');
         }
 
-        // Load last update date
-        function setLastUpdateDate() {
+        function loadSettings() {
+            const settings = JSON.parse(localStorage.getItem('appSettings') || '{}');
+            if (settings.companyName) document.getElementById('company-name').value = settings.companyName;
+            if (settings.companyEmail) document.getElementById('company-email').value = settings.companyEmail;
+            if (settings.defaultPhone) document.getElementById('default-phone').value = settings.defaultPhone;
+            if (settings.companyAddress) document.getElementById('company-address').value = settings.companyAddress;
+            if (settings.profitMargin) document.getElementById('profit-margin').value = settings.profitMargin;
+
+            
+            const theme = localStorage.getItem('theme') || 'light';
+            const themeRadio = document.querySelector('input[name="theme"][value="' + theme + '"]');
+            if (themeRadio) themeRadio.checked = true;
+            
+            const color = localStorage.getItem('primaryColor') || '#667eea';
+            document.getElementById('primary-color').value = color;
+            document.getElementById('color-value').textContent = color;
+            document.documentElement.style.setProperty('--primary', color);
+            
             const today = new Date().toLocaleDateString('ar-SA');
-            const lastUpdateEl = document.getElementById('last-update');
-            if (lastUpdateEl) lastUpdateEl.textContent = today;
+            document.getElementById('last-update').textContent = today;
         }
 
         loadSettings();
         
+        // Apply theme on page load
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        setTheme(savedTheme);
+        const savedColor = localStorage.getItem('primaryColor') || '#667eea';
+        document.documentElement.style.setProperty('--primary', savedColor);
+
         let currentMonth = new Date().getMonth();
         let currentYear = new Date().getFullYear();
         
