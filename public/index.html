@@ -733,20 +733,11 @@
                                 <button class="btn btn-primary" id="detail-whatsapp" onclick="openWhatsAppFromDetail()">💬 WhatsApp</button>
                                 <button class="btn btn-secondary" id="detail-instagram" onclick="openSocialFromDetail('instagram')">📷 Instagram</button>
                                 <button class="btn btn-secondary" id="detail-tiktok" onclick="openSocialFromDetail('tiktok')">🎵 TikTok</button>
-                                <button class="btn btn-secondary" id="detail-twitter" onclick="openSocialFromDetail('twitter')">𝕏 Twitter</button>
-                                <button class="btn btn-secondary" id="detail-facebook" onclick="openSocialFromDetail('facebook')">f Facebook</button>
                             </div>
                         </div>
                     </div>
 
-                    <div class="settings-card">
-                        <div class="settings-card-title">📸 معرض الصور</div>
-                        <div class="photo-upload-area" id="photo-upload-area" ondrop="handlePhotoDrop(event)" ondragover="event.preventDefault()">
-                            📤 اسحب الصور هنا أو اضغط للاختيار
-                        </div>
-                        <input type="file" id="photo-input" multiple accept="image/*" onchange="handlePhotoSelect()" style="display: none;">
-                        <div class="photos-grid" id="photos-grid"></div>
-                    </div>
+
                 </div>
             </div>
         </div>
@@ -799,12 +790,9 @@
                 <input type="text" id="talent-tiktok" class="form-input" placeholder="اسم المستخدم">
             </div>
             <div class="form-group">
-                <label class="form-label">Twitter</label>
-                <input type="text" id="talent-twitter" class="form-input" placeholder="اسم المستخدم">
-            </div>
-            <div class="form-group">
-                <label class="form-label">Facebook</label>
-                <input type="text" id="talent-facebook" class="form-input" placeholder="معرف الحساب">
+                <label class="form-label">📸 الصورة</label>
+                <input type="file" id="talent-photo" class="form-input" accept="image/*">
+                <small style="color: var(--text-light); margin-top: 4px; display: block;">اختر صورة للموديل</small>
             </div>
             <div class="form-actions">
                 <button class="btn btn-primary" onclick="saveTalent()">حفظ</button>
