@@ -3768,6 +3768,9 @@
                     if (p.startDate && p.endDate) {
                         const startDate = new Date(p.startDate);
                         const endDate = new Date(p.endDate);
+                        // Normalize dates to midnight to avoid timezone issues
+                        startDate.setHours(0, 0, 0, 0);
+                        endDate.setHours(23, 59, 59, 999);
                         if (dateObj >= startDate && dateObj <= endDate) {
                             projectsInRange.push(p);
                         }
