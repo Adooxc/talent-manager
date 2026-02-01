@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="en" dir="ltr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Talent Manager - مدير الموديلز والفنانين</title>
+    <title>Talent Manager</title>
     <link rel="icon" id="favicon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><defs><linearGradient id='g' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' style='stop-color:%236366f1'/><stop offset='100%' style='stop-color:%23ec4899'/></linearGradient></defs><rect fill='url(%23g)' width='100' height='100' rx='20'/><circle cx='50' cy='35' r='12' fill='white'/><path d='M 35 55 Q 50 65 65 55' stroke='white' stroke-width='3' fill='none' stroke-linecap='round'/></svg>">
     <link rel="apple-touch-icon" id="apple-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'><rect fill='%236366f1' width='180' height='180'/><text x='90' y='120' font-size='100' font-weight='bold' fill='white' text-anchor='middle'>T</text></svg>">
     <style>
@@ -75,10 +75,6 @@
         }
         
         .sidebar-toggle {
-            position: fixed;
-            left: 20px;
-            top: 20px;
-            z-index: 1000;
             background: var(--primary);
             color: white;
             border: none;
@@ -634,7 +630,6 @@
     </style>
 </head>
 <body>
-    <button class="sidebar-toggle" onclick="toggleSidebar()" id="sidebar-toggle-btn">☰</button>
     <div class="container">
         <div class="sidebar" id="sidebar">
             <div class="sidebar-header">
@@ -644,10 +639,10 @@
                     <span>Talent Manager</span>
                 </div>
             </div>
-            <div class="nav-item active" onclick="showTab('talents-tab')">الموديلز</div>
-            <div class="nav-item" onclick="showTab('projects-tab')">المشاريع</div>
-            <div class="nav-item" onclick="showTab('stats-tab')">لوحة التحكم</div>
-            <div class="nav-item" onclick="showTab('settings-tab')">الإعدادات</div>
+            <div class="nav-item active" onclick="showTab('talents-tab')">Talents</div>
+            <div class="nav-item" onclick="showTab('projects-tab')">Projects</div>
+            <div class="nav-item" onclick="showTab('stats-tab')">Dashboard</div>
+            <div class="nav-item" onclick="showTab('settings-tab')">Settings</div>
         </div>
 
         <div class="main-content">
@@ -655,9 +650,10 @@
             <div id="notifications-container" style="position: fixed; top: 20px; right: 20px; z-index: 1000; max-width: 400px;"></div>
             
             <div class="header">
+                <button class="sidebar-toggle" onclick="toggleSidebar()" id="sidebar-toggle-btn" style="position: static; margin-right: 16px;">☰</button>
                 <div class="header-title" id="page-title">Talent Manager</div>
                 <div class="header-actions" id="header-actions">
-                    <button class="btn btn-primary" onclick="openAddTalentModal()" id="add-btn" style="display: none;">+ إضافة موديل</button>
+                    <button class="btn btn-primary" onclick="openAddTalentModal()" id="add-btn" style="display: none;">+ Add Talent</button>
                 </div>
             </div>
 
@@ -665,17 +661,17 @@
                 <!-- Talents Tab -->
                 <div id="talents-tab" class="tab-content active">
                     <div class="search-box">
-                        <input type="text" id="search" placeholder="ابحث عن موديل..." onkeyup="renderTalents()">
+                        <input type="text" id="search" placeholder="Search talents..." onkeyup="renderTalents()">
                         <select id="category" onchange="renderTalents()">
-                            <option value="">جميع الفئات</option>
-                            <option value="ممثلين">ممثلين</option>
-                            <option value="مؤثرين">مؤثرين</option>
-                            <option value="عارضين">عارضين</option>
-                            <option value="كومبارس">كومبارس</option>
+                            <option value="">All Categories</option>
+                            <option value="ممثلين">Actors</option>
+                            <option value="مؤثرين">Influencers</option>
+                            <option value="عارضين">Models</option>
+                            <option value="كومبارس">Extras</option>
                         </select>
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 12px;">
-                            <button class="btn btn-primary" onclick="toggleAdvancedSearch()" style="width: 100%;">بحث متقدم</button>
-                            <button class="btn" id="selection-mode-btn" onclick="toggleSelectionMode()" style="width: 100%; background: var(--surface-alt); color: var(--text); border: 1px solid var(--border);">تحديد</button>
+                            <button class="btn btn-primary" onclick="toggleAdvancedSearch()" style="width: 100%;">Advanced Search</button>
+                            <button class="btn" id="selection-mode-btn" onclick="toggleSelectionMode()" style="width: 100%; background: var(--surface-alt); color: var(--text); border: 1px solid var(--border);">Select</button>
                         </div>
                     </div>
                     
@@ -683,40 +679,40 @@
                     <div id="advanced-search" style="display: none; background: var(--surface-alt); border-radius: 12px; padding: 20px; margin-bottom: 20px; border: 1px solid var(--border);">
                         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px;">
                             <div class="form-group">
-                                <label class="form-label">السعر من (KD)</label>
-                                <input type="number" id="price-min" class="form-input" placeholder="الحد الأدنى" onchange="renderTalents()" oninput="renderTalents()">
+                                <label class="form-label">Price From (KD)</label>
+                                <input type="number" id="price-min" class="form-input" placeholder="Min" onchange="renderTalents()" oninput="renderTalents()">
                             </div>
                             <div class="form-group">
-                                <label class="form-label">السعر إلى (KD)</label>
-                                <input type="number" id="price-max" class="form-input" placeholder="الحد الأقصى" onchange="renderTalents()" oninput="renderTalents()">
+                                <label class="form-label">Price To (KD)</label>
+                                <input type="number" id="price-max" class="form-input" placeholder="Max" onchange="renderTalents()" oninput="renderTalents()">
                             </div>
                             <div class="form-group">
-                                <label class="form-label">العمر من (سنة)</label>
-                                <input type="number" id="age-min" class="form-input" placeholder="الحد الأدنى" onchange="renderTalents()" oninput="renderTalents()">
+                                <label class="form-label">Age From (years)</label>
+                                <input type="number" id="age-min" class="form-input" placeholder="Min" onchange="renderTalents()" oninput="renderTalents()">
                             </div>
                             <div class="form-group">
-                                <label class="form-label">العمر إلى (سنة)</label>
-                                <input type="number" id="age-max" class="form-input" placeholder="الحد الأقصى" onchange="renderTalents()" oninput="renderTalents()">
+                                <label class="form-label">Age To (years)</label>
+                                <input type="number" id="age-max" class="form-input" placeholder="Max" onchange="renderTalents()" oninput="renderTalents()">
                             </div>
                             <div class="form-group">
-                                <label class="form-label">الجنس</label>
+                                <label class="form-label">Gender</label>
                                 <select id="gender-filter" class="form-input" onchange="renderTalents()">
-                                    <option value="">الكل</option>
-                                    <option value="ذكر">ذكر</option>
-                                    <option value="أنثى">أنثى</option>
+                                    <option value="">All</option>
+                                    <option value="ذكر">Male</option>
+                                    <option value="أنثى">Female</option>
                                 </select>
                             </div>
 
                             <div class="form-group">
-                                <label class="form-label">المفضلة</label>
+                                <label class="form-label">Favorites</label>
                                 <select id="favorite-filter" class="form-input" onchange="renderTalents()">
-                                    <option value="">الكل</option>
-                                    <option value="true">المفضلة فقط</option>
-                                    <option value="false">غير المفضلة</option>
+                                    <option value="">All</option>
+                                    <option value="true">Favorites Only</option>
+                                    <option value="false">Not Favorites</option>
                                 </select>
                             </div>
                             <div class="form-group">
-                                <label class="form-label">حجم البطاقات</label>
+                                <label class="form-label">Card Size</label>
                                 <div style="display: flex; align-items: center; gap: 8px;">
                                     <input type="range" id="card-size" min="50" max="100" value="100" style="flex: 1; cursor: pointer;" oninput="updateCardSize()">
                                     <span id="card-size-label" style="min-width: 50px; text-align: center; color: var(--primary); font-weight: 600;">100%</span>
@@ -724,8 +720,8 @@
                             </div>
                         </div>
                         <div style="display: flex; gap: 12px; margin-top: 16px;">
-                            <button class="btn btn-primary" onclick="renderTalents()" style="flex: 1;">بحث</button>
-                            <button class="btn btn-secondary" onclick="clearAdvancedFilters()" style="flex: 1;">إعادة تعيين</button>
+                            <button class="btn btn-primary" onclick="renderTalents()" style="flex: 1;">Search</button>
+                            <button class="btn btn-secondary" onclick="clearAdvancedFilters()" style="flex: 1;">Reset</button>
                         </div>
                     </div>
                     
@@ -735,7 +731,7 @@
                 <!-- Projects Tab -->
                 <div id="projects-tab" class="tab-content">
                     <div style="margin-bottom: 24px;">
-                        <button class="btn btn-primary" onclick="openCreateProjectModal()">+ إنشاء مشروع</button>
+                        <button class="btn btn-primary" onclick="openCreateProjectModal()">+ Create Project</button>
                     </div>
                     
                     <!-- Calendar View -->
@@ -755,50 +751,50 @@
                 <!-- Stats Tab -->
                 <div id="stats-tab" class="tab-content">
                     <div style="padding: 20px;">
-                        <h1 style="margin-bottom: 30px; font-size: 28px; color: var(--text);">لوحة التحكم</h1>
+                        <h1 style="margin-bottom: 30px; font-size: 28px; color: var(--text);">Dashboard</h1>
                         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 40px;">
                             <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; border-radius: 12px;">
-                                <div style="font-size: 13px; opacity: 0.9; margin-bottom: 10px;">إجمالي الموديلز</div>
+                                <div style="font-size: 13px; opacity: 0.9; margin-bottom: 10px;">Total Talents</div>
                                 <div style="font-size: 40px; font-weight: bold;" id="dash-total-talents">0</div>
                             </div>
                             <div style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; padding: 30px; border-radius: 12px;">
-                                <div style="font-size: 13px; opacity: 0.9; margin-bottom: 10px;">إجمالي المشاريع</div>
+                                <div style="font-size: 13px; opacity: 0.9; margin-bottom: 10px;">Total Projects</div>
                                 <div style="font-size: 40px; font-weight: bold;" id="dash-total-projects">0</div>
                             </div>
                             <div style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white; padding: 30px; border-radius: 12px;">
-                                <div style="font-size: 13px; opacity: 0.9; margin-bottom: 10px;">المفضلة</div>
+                                <div style="font-size: 13px; opacity: 0.9; margin-bottom: 10px;">Favorites</div>
                                 <div style="font-size: 40px; font-weight: bold;" id="dash-total-favorites">0</div>
                             </div>
                             <div style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); color: white; padding: 30px; border-radius: 12px;">
-                                <div style="font-size: 13px; opacity: 0.9; margin-bottom: 10px;">متوسط الأعمار</div>
+                                <div style="font-size: 13px; opacity: 0.9; margin-bottom: 10px;">Average Age</div>
                                 <div style="font-size: 40px; font-weight: bold;" id="dash-avg-age">0</div>
                             </div>
                         </div>
                         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 40px;">
                             <div style="background: var(--surface); border-radius: 12px; padding: 25px; border: 1px solid var(--border);">
-                                <div style="font-size: 13px; color: var(--text-light); margin-bottom: 10px;">الذكور</div>
+                                <div style="font-size: 13px; color: var(--text-light); margin-bottom: 10px;">Male</div>
                                 <div style="font-size: 36px; font-weight: bold; color: #3b82f6;" id="dash-male-count">0</div>
                             </div>
                             <div style="background: var(--surface); border-radius: 12px; padding: 25px; border: 1px solid var(--border);">
-                                <div style="font-size: 13px; color: var(--text-light); margin-bottom: 10px;">الإناث</div>
+                                <div style="font-size: 13px; color: var(--text-light); margin-bottom: 10px;">Female</div>
                                 <div style="font-size: 36px; font-weight: bold; color: #ec4899;" id="dash-female-count">0</div>
                             </div>
                             <div style="background: var(--surface); border-radius: 12px; padding: 25px; border: 1px solid var(--border);">
-                                <div style="font-size: 13px; color: var(--text-light); margin-bottom: 10px;">متوسط السعر</div>
+                                <div style="font-size: 13px; color: var(--text-light); margin-bottom: 10px;">Average Price</div>
                                 <div style="font-size: 36px; font-weight: bold; color: #10b981;" id="dash-avg-price">0 KD</div>
                             </div>
                         </div>
                         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;">
                             <div style="background: var(--surface); border-radius: 12px; padding: 25px; border: 1px solid var(--border);">
-                                <div style="font-size: 13px; color: var(--text-light); margin-bottom: 10px;">مشاريع مكتملة</div>
+                                <div style="font-size: 13px; color: var(--text-light); margin-bottom: 10px;">Completed Projects</div>
                                 <div style="font-size: 36px; font-weight: bold; color: #10b981;" id="dash-completed-projects">0</div>
                             </div>
                             <div style="background: var(--surface); border-radius: 12px; padding: 25px; border: 1px solid var(--border);">
-                                <div style="font-size: 13px; color: var(--text-light); margin-bottom: 10px;">مشاريع جارية</div>
+                                <div style="font-size: 13px; color: var(--text-light); margin-bottom: 10px;">Ongoing Projects</div>
                                 <div style="font-size: 36px; font-weight: bold; color: #f59e0b;" id="dash-ongoing-projects">0</div>
                             </div>
                             <div style="background: var(--surface); border-radius: 12px; padding: 25px; border: 1px solid var(--border);">
-                                <div style="font-size: 13px; color: var(--text-light); margin-bottom: 10px;">مشاريع قادمة</div>
+                                <div style="font-size: 13px; color: var(--text-light); margin-bottom: 10px;">Upcoming Projects</div>
                                 <div style="font-size: 36px; font-weight: bold; color: #3b82f6;" id="dash-upcoming-projects">0</div>
                             </div>
                         </div>
@@ -1833,36 +1829,33 @@
             const totalTalents = talents.length;
             const totalProjects = projects.length;
             const totalFavorites = talents.filter(t => t.isFavorite).length;
-            const activeTalents = talents.filter(t => projects.some(p => p.talents && p.talents.includes(t.id || talents.indexOf(t)))).length;
             const avgPrice = totalTalents > 0 ? Math.round(talents.reduce((sum, t) => sum + (t.price || 0), 0) / totalTalents) : 0;
-            const categories = new Set(talents.map(t => t.category)).size;
             const completedProjects = projects.filter(p => p.endDate && new Date(p.endDate) < new Date()).length;
             const ongoingProjects = projects.filter(p => !p.endDate || new Date(p.endDate) >= new Date()).length;
-
-            document.getElementById('total-talents').textContent = totalTalents;
-            document.getElementById('total-projects').textContent = totalProjects;
-            document.getElementById('total-favorites').textContent = totalFavorites;
-            document.getElementById('active-talents').textContent = activeTalents;
-            document.getElementById('avg-price').textContent = avgPrice + ' KD';
-            document.getElementById('total-categories').textContent = categories;
-            document.getElementById('completed-projects').textContent = completedProjects;
-            document.getElementById('ongoing-projects').textContent = ongoingProjects;
 
             const maleCount = talents.filter(t => t.gender === 'ذكر').length;
             const femaleCount = talents.filter(t => t.gender === 'أنثى').length;
             const avgAge = totalTalents > 0 ? Math.round(talents.reduce((sum, t) => sum + (t.age || 0), 0) / totalTalents) : 0;
-            const upcomingProjects = projects.filter(p => new Date(p.startDate) > new Date()).length;
+            const upcomingProjects = projects.filter(p => p.startDate && new Date(p.startDate) > new Date()).length;
 
-            document.getElementById('dash-total-talents').textContent = totalTalents;
-            document.getElementById('dash-total-projects').textContent = totalProjects;
-            document.getElementById('dash-total-favorites').textContent = totalFavorites;
-            document.getElementById('dash-avg-age').textContent = avgAge;
-            document.getElementById('dash-male-count').textContent = maleCount;
-            document.getElementById('dash-female-count').textContent = femaleCount;
-            document.getElementById('dash-avg-price').textContent = avgPrice + ' KD';
-            document.getElementById('dash-completed-projects').textContent = completedProjects;
-            document.getElementById('dash-ongoing-projects').textContent = ongoingProjects;
-            document.getElementById('dash-upcoming-projects').textContent = upcomingProjects;
+            // Update dashboard elements with null checks
+            const dashElements = {
+                'dash-total-talents': totalTalents,
+                'dash-total-projects': totalProjects,
+                'dash-total-favorites': totalFavorites,
+                'dash-avg-age': avgAge,
+                'dash-male-count': maleCount,
+                'dash-female-count': femaleCount,
+                'dash-avg-price': avgPrice + ' KD',
+                'dash-completed-projects': completedProjects,
+                'dash-ongoing-projects': ongoingProjects,
+                'dash-upcoming-projects': upcomingProjects
+            };
+            
+            Object.entries(dashElements).forEach(([id, value]) => {
+                const element = document.getElementById(id);
+                if (element) element.textContent = value;
+            });
         }
         
         function renderCalendar() {
