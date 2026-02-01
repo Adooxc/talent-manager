@@ -666,17 +666,7 @@
                                     <option value="أنثى">أنثى</option>
                                 </select>
                             </div>
-                            <div class="form-group">
-                                <label class="form-label">التقييم الأدنى</label>
-                                <select id="rating-filter" class="form-input" onchange="renderTalents()">
-                                    <option value="">الكل</option>
-                                    <option value="5">5 نجوم</option>
-                                    <option value="4">4 نجوم وأعلى</option>
-                                    <option value="3">3 نجوم وأعلى</option>
-                                    <option value="2">نجمتان وأعلى</option>
-                                    <option value="1">نجمة واحدة وأعلى</option>
-                                </select>
-                            </div>
+
                             <div class="form-group">
                                 <label class="form-label">المفضلة</label>
                                 <select id="favorite-filter" class="form-input" onchange="renderTalents()">
@@ -733,8 +723,30 @@
                             <div style="font-size: 32px; font-weight: bold;" id="total-favorites">0</div>
                         </div>
                         <div class="stats-card" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); color: white; padding: 24px; border-radius: 12px; box-shadow: var(--shadow-lg);">
-                            <div style="font-size: 14px; opacity: 0.9; margin-bottom: 8px;">متوسط التقييم</div>
-                            <div style="font-size: 32px; font-weight: bold;" id="avg-rating">0</div>
+                            <div style="font-size: 14px; opacity: 0.9; margin-bottom: 8px;">الموديلز النشطة</div>
+                            <div style="font-size: 32px; font-weight: bold;" id="active-talents">0</div>
+                        </div>
+                    </div>
+                    
+                    <div style="background: var(--surface); border-radius: 12px; padding: 20px; border: 1px solid var(--border); margin-bottom: 20px;">
+                        <h2 style="margin-bottom: 16px; color: var(--text);">إحصائيات إضافية</h2>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px;">
+                            <div style="background: var(--surface-alt); padding: 16px; border-radius: 8px;">
+                                <div style="font-size: 12px; color: var(--muted); margin-bottom: 8px;">متوسط سعر الموديل</div>
+                                <div style="font-size: 24px; font-weight: bold; color: var(--primary);" id="avg-price">0 KD</div>
+                            </div>
+                            <div style="background: var(--surface-alt); padding: 16px; border-radius: 8px;">
+                                <div style="font-size: 12px; color: var(--muted); margin-bottom: 8px;">إجمالي الفئات</div>
+                                <div style="font-size: 24px; font-weight: bold; color: var(--primary);" id="total-categories">0</div>
+                            </div>
+                            <div style="background: var(--surface-alt); padding: 16px; border-radius: 8px;">
+                                <div style="font-size: 12px; color: var(--muted); margin-bottom: 8px;">المشاريع المكتملة</div>
+                                <div style="font-size: 24px; font-weight: bold; color: var(--primary);" id="completed-projects">0</div>
+                            </div>
+                            <div style="background: var(--surface-alt); padding: 16px; border-radius: 8px;">
+                                <div style="font-size: 12px; color: var(--muted); margin-bottom: 8px;">المشاريع الجارية</div>
+                                <div style="font-size: 24px; font-weight: bold; color: var(--primary);" id="ongoing-projects">0</div>
+                            </div>
                         </div>
                     </div>
                     <div style="background: var(--surface); border-radius: 12px; padding: 20px; border: 1px solid var(--border); margin-top: 20px;">
@@ -785,6 +797,27 @@
                                 <input type="number" id="profit-margin" class="form-input" value="20" min="0" max="100" onchange="saveSettings()">
                             </div>
 
+                        </div>
+
+                        <!-- Branding Settings -->
+                        <div class="settings-card" style="background: linear-gradient(135deg, rgba(240, 147, 251, 0.1), rgba(245, 87, 108, 0.1)); border-left: 4px solid #f093fb;">
+                            <div class="settings-card-title" style="font-size: 18px; margin-bottom: 20px;">العلامة التجارية</div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">عنوان الموقع</label>
+                                <input type="text" id="web-title" class="form-input" value="Talent Manager" onchange="saveWebTitle()">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">تحميل الشعار</label>
+                                <div style="display: flex; gap: 12px; align-items: center; margin-top: 8px;">
+                                    <input type="file" id="logo-upload" accept="image/*" style="display: none;" onchange="handleLogoUpload()">
+                                    <button class="btn" style="background: linear-gradient(135deg, #f093fb, #f5576c);" onclick="document.getElementById('logo-upload').click()">اختر الشعار</button>
+                                    <div id="logo-preview" style="width: 60px; height: 60px; border-radius: 8px; background: var(--surface-alt); display: flex; align-items: center; justify-content: center; overflow: hidden;">
+                                        <span id="logo-preview-content" style="font-size: 32px;">📷</span>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
 
                         <!-- Menu Customization -->
@@ -870,12 +903,7 @@
                                     <div class="detail-info-label">رقم الهاتف</div>
                                     <div class="detail-info-value" id="detail-phone" style="cursor: pointer; color: var(--primary); text-decoration: underline;" onclick="openWhatsAppFromPhone()">-</div>
                                 </div>
-                                <div class="detail-info-item">
-                                    <div class="detail-info-label">التقييم</div>
-                                    <div class="detail-info-value" id="detail-rating" style="display: flex; align-items: center; gap: 8px;">
-                                        <div id="rating-stars" style="font-size: 20px; letter-spacing: 4px;">-</div>
-                                    </div>
-                                </div>
+
                                 <div class="detail-info-item">
                                     <div class="detail-info-label">المفضلة</div>
                                     <div class="detail-info-value" id="detail-favorite">
@@ -1347,7 +1375,6 @@
             document.getElementById('talent-detail').classList.add('active');
             document.getElementById('talents-tab').classList.remove('active');
 
-            updateRatingDisplay();
             updateFavoriteButton();
             renderPhotos();
             setupPhotoUpload();
@@ -1382,23 +1409,7 @@
             }
         }
 
-        function setRating(stars) {
-            if (currentDetailTalentIndex !== null) {
-                talents[currentDetailTalentIndex].rating = stars;
-                localStorage.setItem('talents', JSON.stringify(talents));
-                updateRatingDisplay();
-                renderTalents();
-                renderStats();
-            }
-        }
 
-        function updateRatingDisplay() {
-            const rating = talents[currentDetailTalentIndex].rating || 0;
-            const starsHtml = Array.from({length: 5}, (_, i) => 
-                `<span style="cursor: pointer; font-size: 20px; margin: 0 4px; user-select: none;" onclick="event.stopPropagation(); setRating(${i + 1})">${i < rating ? '⭐' : '☆'}</span>`
-            ).join('');
-            document.getElementById('rating-stars').innerHTML = starsHtml;
-        }
 
         function backToTalents() {
             document.getElementById('talent-detail').classList.remove('active');
@@ -1766,13 +1777,21 @@
         function renderStats() {
             const totalTalents = talents.length;
             const totalProjects = projects.length;
-            const totalFavorites = talents.filter(t => t.favorite).length;
-            const avgRating = totalTalents > 0 ? (talents.reduce((sum, t) => sum + (t.rating || 0), 0) / totalTalents).toFixed(1) : 0;
+            const totalFavorites = talents.filter(t => t.isFavorite).length;
+            const activeTalents = talents.filter(t => projects.some(p => p.talents && p.talents.includes(t.id || talents.indexOf(t)))).length;
+            const avgPrice = totalTalents > 0 ? Math.round(talents.reduce((sum, t) => sum + (t.price || 0), 0) / totalTalents) : 0;
+            const categories = new Set(talents.map(t => t.category)).size;
+            const completedProjects = projects.filter(p => p.endDate && new Date(p.endDate) < new Date()).length;
+            const ongoingProjects = projects.filter(p => !p.endDate || new Date(p.endDate) >= new Date()).length;
 
             document.getElementById('total-talents').textContent = totalTalents;
             document.getElementById('total-projects').textContent = totalProjects;
             document.getElementById('total-favorites').textContent = totalFavorites;
-            document.getElementById('avg-rating').textContent = avgRating;
+            document.getElementById('active-talents').textContent = activeTalents;
+            document.getElementById('avg-price').textContent = avgPrice + ' KD';
+            document.getElementById('total-categories').textContent = categories;
+            document.getElementById('completed-projects').textContent = completedProjects;
+            document.getElementById('ongoing-projects').textContent = ongoingProjects;
 
             document.getElementById('stats-grid').innerHTML = `
                 <div class="stat-card" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 24px; border-radius: 12px; box-shadow: var(--shadow-lg);">
@@ -1787,10 +1806,7 @@
                     <div style="font-size: 14px; opacity: 0.9; margin-bottom: 8px;">الموديلز المفضلة</div>
                     <div style="font-size: 32px; font-weight: bold;">${totalFavorites}</div>
                 </div>
-                <div class="stat-card" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); color: white; padding: 24px; border-radius: 12px; box-shadow: var(--shadow-lg);">
-                    <div style="font-size: 14px; opacity: 0.9; margin-bottom: 8px;">متوسط التقييم</div>
-                    <div style="font-size: 32px; font-weight: bold;">${avgRating} ⭐</div>
-                </div>
+
             `;
             
             renderCalendar();
@@ -1803,7 +1819,7 @@
             const projectsByDate = {};
             projects.forEach(project => {
                 if (project.startDate) {
-                    const date = new Date(project.startDate).toLocaleDateString('ar-SA');
+                    const date = new Date(project.startDate).toLocaleDateString('en-US');
                     if (!projectsByDate[date]) projectsByDate[date] = [];
                     projectsByDate[date].push(project);
                 }
@@ -1812,11 +1828,11 @@
             const html = Object.entries(projectsByDate).map(([date, prjs]) => `
                 <div style="background: var(--surface-alt); padding: 12px; border-radius: 8px; border: 1px solid var(--border);">
                     <div style="font-weight: 600; color: var(--primary); margin-bottom: 8px;">${date}</div>
-                    <div style="font-size: 12px; color: var(--muted);">${prjs.length} مشروع</div>
+                    <div style="font-size: 12px; color: var(--muted);">${prjs.length} project</div>
                 </div>
             `).join('');
             
-            calendarView.innerHTML = html || '<div style="grid-column: 1/-1; text-align: center; color: var(--muted); padding: 20px;">لا توجد مشاريع مجدولة</div>';
+            calendarView.innerHTML = html || '<div style="grid-column: 1/-1; text-align: center; color: var(--muted); padding: 20px;">No scheduled projects</div>';
         }
 
         function toggleDarkMode() {
@@ -1835,6 +1851,37 @@
             const settings = JSON.parse(localStorage.getItem('settings') || '{}');
             const profitMarginEl = document.getElementById('profit-margin');
             if (profitMarginEl) profitMarginEl.value = settings.profitMargin || 20;
+            
+            const savedTitle = localStorage.getItem('webTitle') || 'Talent Manager';
+            const webTitleEl = document.getElementById('web-title');
+            if (webTitleEl) webTitleEl.value = savedTitle;
+            document.title = savedTitle;
+            
+            const savedLogo = localStorage.getItem('appLogo');
+            if (savedLogo) {
+                const logoContent = document.getElementById('logo-preview-content');
+                logoContent.innerHTML = '<img src="' + savedLogo + '" style="width: 100%; height: 100%; object-fit: cover;">';
+            }
+        }
+
+        function saveWebTitle() {
+            const title = document.getElementById('web-title').value || 'Talent Manager';
+            localStorage.setItem('webTitle', title);
+            document.title = title;
+        }
+        
+        function handleLogoUpload() {
+            const file = document.getElementById('logo-upload').files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const logoData = e.target.result;
+                    localStorage.setItem('appLogo', logoData);
+                    const logoContent = document.getElementById('logo-preview-content');
+                    logoContent.innerHTML = '<img src="' + logoData + '" style="width: 100%; height: 100%; object-fit: cover;">';
+                };
+                reader.readAsDataURL(file);
+            }
         }
 
         function clearAllData() {
@@ -1978,8 +2025,8 @@
         let currentYear = new Date().getFullYear();
         
         function renderCalendarGrid() {
-            const monthNames = ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو', 'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'];
-            const dayNames = ['ح', 'ن', 'ث', 'ع', 'خ', 'ج', 'س'];
+            const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+            const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
             
             document.getElementById('calendar-header').innerHTML = dayNames.map(d => `<div style="text-align: center; padding: 8px; font-weight: bold; color: var(--primary);">${d}</div>`).join('');
             
@@ -1992,11 +2039,12 @@
             }
             
             for (let day = 1; day <= daysInMonth; day++) {
-                const dateStr = new Date(currentYear, currentMonth, day).toLocaleDateString('ar-SA');
-                const projectsOnDay = projects.filter(p => p.startDate && new Date(p.startDate).toLocaleDateString('ar-SA') === dateStr);
+                const dateObj = new Date(currentYear, currentMonth, day);
+                const dateStr = dateObj.toLocaleDateString('en-US');
+                const projectsOnDay = projects.filter(p => p.startDate && new Date(p.startDate).toLocaleDateString('en-US') === dateStr);
                 const hasProject = projectsOnDay.length > 0;
                 
-                html += `<div style="padding: 8px; border-radius: 8px; text-align: center; background: ${hasProject ? 'var(--primary)' : 'var(--surface-alt)'}; color: ${hasProject ? 'white' : 'var(--text)'}; cursor: pointer; font-weight: 500;">${day}${hasProject ? '<div style="font-size: 10px; margin-top: 2px;">' + projectsOnDay.length + ' مشروع</div>' : ''}</div>`;
+                html += `<div style="padding: 8px; border-radius: 8px; text-align: center; background: ${hasProject ? 'var(--primary)' : 'var(--surface-alt)'}; color: ${hasProject ? 'white' : 'var(--text)'}; cursor: pointer; font-weight: 500;">${day}${hasProject ? '<div style="font-size: 10px; margin-top: 2px;">' + projectsOnDay.length + ' project</div>' : ''}</div>`;
             }
             
             document.getElementById('calendar-grid').innerHTML = html;
