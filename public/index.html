@@ -828,14 +828,35 @@
                     
                     <!-- Create Project Page -->
 
-                    <!-- Inline Project Form -->
-                    <div id="project-form-container" style="display: none; background: var(--surface); border-radius: 12px; padding: 24px; margin-bottom: 24px; border: 1px solid var(--border); position: relative; z-index: 100;">
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                            <h2 id="project-form-title" style="color: var(--foreground); margin: 0; font-size: 20px; font-weight: 600;">Create New Project</h2>
-                            <button onclick="closeProjectForm()" style="background: var(--error); color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: 600;">Cancel</button>
-                        </div>
-                        <div style="max-height: 70vh; overflow-y: auto;">
-                            <div id="inline-project-form"></div>
+                    <!-- Project Edit Page (Full Screen) -->
+                    <div id="project-form-container" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: var(--surface); z-index: 500; overflow-y: auto;">
+                        <div style="max-width: 1400px; margin: 0 auto; padding: 24px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+                                <h2 id="project-form-title" style="color: var(--text); margin: 0; font-size: 28px; font-weight: 700;">Edit Project</h2>
+                                <button onclick="closeProjectForm()" style="background: var(--danger); color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 14px;">✕ Cancel</button>
+                            </div>
+                            
+                            <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 30px;">
+                                <!-- Main Form -->
+                                <div>
+                                    <div id="inline-project-form"></div>
+                                </div>
+                                
+                                <!-- Talents Panel -->
+                                <div style="background: var(--surface-alt); border-radius: 12px; padding: 20px; border: 1px solid var(--border);">
+                                    <h3 style="margin: 0 0 20px 0; font-size: 18px; font-weight: 700; color: var(--text);">Manage Talents</h3>
+                                    
+                                    <div style="margin-bottom: 20px;">
+                                        <input type="text" id="talent-search-edit" placeholder="Search talents..." style="width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 8px; background: var(--surface); color: var(--text); font-size: 14px;">
+                                    </div>
+                                    
+                                    <div id="project-talents-list" style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px;"></div>
+                                    
+                                    <div id="talents-selector" style="max-height: 500px; overflow-y: auto; border: 1px solid var(--border); border-radius: 8px; padding: 12px;"></div>
+                                    
+                                    <button onclick="showAddTalentModal()" style="width: 100%; margin-top: 16px; background: var(--primary); color: white; border: none; padding: 12px; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 14px;">+ Add New Talent</button>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     
@@ -3115,7 +3136,7 @@
             renderProjectsList(projects);
         }
         
-        function renderProjectsList(projectsToRender) {
+                function renderProjectsList(projectsToRender) {
             const list = document.getElementById('projects-list');
             if (projectsToRender.length === 0) {
                 list.innerHTML = '<div class="empty-state"><div class="empty-state-icon">📭</div><div class="empty-state-title">No Projects</div></div>';
@@ -3124,17 +3145,37 @@
 
             list.innerHTML = projectsToRender.map((project, index) => {
                 const actualIndex = projects.indexOf(project);
-                return `
-                <div class="settings-card" style="cursor: pointer; transition: all 0.3s ease;" onclick="viewProjectDetails(${actualIndex})" onmouseover="this.style.boxShadow='var(--shadow-lg)'" onmouseout="this.style.boxShadow='var(--shadow-sm)'">
-                    <div style="display: flex; justify-content: space-between; align-items: start;">
-                        <div style="flex: 1;">
-                            <div class="settings-card-title">${project.name}</div>
-                            <div style="color: var(--text-light); font-size: 14px; margin-bottom: 8px;">Models: ${project.talents.length} talents</div>
-                            <div style="font-size: 18px; font-weight: 700; color: var(--primary);">KD ${project.total}</div>
+                const statusColors = {'Planning': '#3b82f6', 'In Progress': '#f59e0b', 'Completed': '#10b981', 'On Hold': '#ef4444'};
+                const statusColor = statusColors[project.status] || '#6b7280';
+                const startDate = project.startDate ? new Date(project.startDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : 'N/A';
+                const endDate = project.endDate ? new Date(project.endDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : 'N/A';
+                
+                const talentTags = project.talents.slice(0, 3).map(talentName => {
+                    const talent = talents.find(t => t.name === talentName);
+                    return talent ? `<span style="background: var(--surface-alt); padding: 4px 10px; border-radius: 6px; font-size: 12px; color: var(--text-light);">${talent.name}</span>` : '';
+                }).join('');
+                
+                const moreCount = project.talents.length > 3 ? `<span style="background: var(--surface-alt); padding: 4px 10px; border-radius: 6px; font-size: 12px; color: var(--text-light);">+${project.talents.length - 3} more</span>` : '';
+                
+                return `<div style="background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px; cursor: pointer; transition: all 0.3s ease; display: grid; grid-template-columns: 1fr auto; gap: 20px; align-items: start;" onclick="viewProjectDetails(${actualIndex})" onmouseover="this.style.boxShadow='var(--shadow-lg)'; this.style.transform='translateY(-2px)'" onmouseout="this.style.boxShadow='var(--shadow-sm)'; this.style.transform='translateY(0)'">
+                    <div>
+                        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
+                            <h3 style="margin: 0; font-size: 18px; font-weight: 700; color: var(--text);">${project.name}</h3>
+                            <span style="background: ${statusColor}; color: white; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600;">${project.status || 'Planning'}</span>
                         </div>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin-bottom: 12px;">
+                            <div><div style="font-size: 12px; color: var(--text-light); text-transform: uppercase; margin-bottom: 4px;">Duration</div><div style="font-size: 14px; font-weight: 600;">${startDate} - ${endDate}</div></div>
+                            <div><div style="font-size: 12px; color: var(--text-light); text-transform: uppercase; margin-bottom: 4px;">Talents</div><div style="font-size: 14px; font-weight: 600;">${project.talents.length} assigned</div></div>
+                            <div><div style="font-size: 12px; color: var(--text-light); text-transform: uppercase; margin-bottom: 4px;">Company</div><div style="font-size: 14px; font-weight: 600;">${project.executingCompany || 'N/A'}</div></div>
+                        </div>
+                        <div style="display: flex; gap: 8px; flex-wrap: wrap;">${talentTags}${moreCount}</div>
                     </div>
-                </div>
-            `;
+                    <div style="text-align: right;">
+                        <div style="font-size: 12px; color: var(--text-light); text-transform: uppercase; margin-bottom: 4px;">Total Cost</div>
+                        <div style="font-size: 24px; font-weight: 700; color: var(--primary);">KD ${project.total}</div>
+                        <div style="font-size: 12px; color: var(--text-light); margin-top: 8px;">Budget: KD ${project.budget || '0'}</div>
+                    </div>
+                </div>`;
             }).join('');
         }
 
@@ -4364,6 +4405,78 @@
         // Media items are stored in memory only during the session
         // They are NOT saved to localStorage to avoid quota issues
         // talentMediaItems is initialized as an empty object at the top of the script
+        
+        // Render talents selector in edit form
+        function renderTalentsSelector() {
+            const selector = document.getElementById('talents-selector');
+            if (!selector) return;
+            const searchInput = document.getElementById('talent-search-edit');
+            const currentProjectTalents = selectedProjectTalents || [];
+            
+            let searchTerm = '';
+            if (searchInput) {
+                searchTerm = searchInput.value.toLowerCase();
+            }
+            
+            const filteredTalents = talents.filter(talent => 
+                talent.name.toLowerCase().includes(searchTerm)
+            );
+            
+            selector.innerHTML = filteredTalents.map((talent) => {
+                const isSelected = currentProjectTalents.includes(talent.name);
+                const talentIndex = talents.indexOf(talent);
+                return `<div style="display: flex; align-items: center; padding: 12px; border-bottom: 1px solid var(--border); cursor: pointer; transition: all 0.2s ease;" onclick="toggleTalentInEdit(${talentIndex})" onmouseover="this.style.backgroundColor='var(--surface-alt)'" onmouseout="this.style.backgroundColor='transparent'">
+                    <div style="width: 40px; height: 40px; background: ${isSelected ? 'var(--primary)' : 'var(--border)'}; border-radius: 6px; display: flex; align-items: center; justify-content: center; margin-right: 12px; transition: all 0.2s ease;">
+                        ${isSelected ? '<span style="color: white; font-weight: 700;">✓</span>' : ''}
+                    </div>
+                    <div style="flex: 1;">
+                        <div style="font-weight: 600; color: var(--text);">${talent.name}</div>
+                        <div style="font-size: 12px; color: var(--text-light);">${talent.category} • KD ${talent.price}</div>
+                    </div>
+                    <div style="font-weight: 700; color: var(--primary);">KD ${talent.price}</div>
+                </div>`;
+            }).join('');
+        }
+        
+        // Toggle talent selection in edit form
+        function toggleTalentInEdit(talentIndex) {
+            if (!selectedProjectTalents) selectedProjectTalents = [];
+            const talentName = talents[talentIndex].name;
+            
+            if (selectedProjectTalents.includes(talentName)) {
+                selectedProjectTalents = selectedProjectTalents.filter(t => t !== talentName);
+            } else {
+                selectedProjectTalents.push(talentName);
+            }
+            
+            calculateProjectTotal();
+            renderTalentsSelector();
+            updateProjectFormTalents();
+        }
+        
+        // Update talents display in form
+        function updateProjectFormTalents() {
+            const talentsList = document.getElementById('project-talents-list');
+            if (!talentsList) return;
+            
+            talentsList.innerHTML = (selectedProjectTalents || []).map((talentName) => {
+                return `<div style="display: flex; align-items: center; gap: 8px; padding: 8px 12px; background: var(--primary); color: white; border-radius: 6px; font-size: 14px; font-weight: 600;">${talentName}<button onclick="removeTalentFromEdit('${talentName}')" style="background: rgba(255,255,255,0.3); border: none; color: white; padding: 2px 6px; border-radius: 3px; cursor: pointer; font-size: 12px;">✕</button></div>`;
+            }).join('');
+        }
+        
+        // Remove talent from edit form
+        function removeTalentFromEdit(talentName) {
+            selectedProjectTalents = selectedProjectTalents.filter(t => t !== talentName);
+            calculateProjectTotal();
+            renderTalentsSelector();
+            updateProjectFormTalents();
+        }
+        
+        // Show add talent modal
+        function showAddTalentModal() {
+            document.getElementById('talent-form-container').style.display = 'block';
+            document.getElementById('project-form-container').style.display = 'none';
+        }
 </script>
 </body>
 </html>

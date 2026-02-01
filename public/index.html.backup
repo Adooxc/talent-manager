@@ -796,8 +796,17 @@
 
                 <!-- Projects Tab -->
                 <div id="projects-tab" class="tab-content">
-                    <div style="margin-bottom: 24px;">
+                    <div style="margin-bottom: 24px; display: flex; gap: 12px; flex-wrap: wrap; align-items: center;">
                         <button class="btn btn-primary" onclick="openCreateProjectModal()">+ Create Project</button>
+                        <input type="text" id="projects-search" placeholder="Search projects..." class="form-input" style="flex: 1; min-width: 200px;" onkeyup="filterProjects()">
+                        <select id="projects-status-filter" class="form-input" style="min-width: 150px;" onchange="filterProjects()">
+                            <option value="">All Status</option>
+                            <option value="Planning">Planning</option>
+                            <option value="In Progress">In Progress</option>
+                            <option value="Completed">Completed</option>
+                            <option value="On Hold">On Hold</option>
+                            <option value="Cancelled">Cancelled</option>
+                        </select>
                     </div>
                     
                     <!-- Calendar View -->
@@ -814,6 +823,116 @@
                             </div>
                             <div id="calendar-header" style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; margin-bottom: 12px;"></div>
                             <div id="calendar-grid" style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px;"></div>
+                        </div>
+                    </div>
+                    
+                    <!-- Create Project Page -->
+
+                    <!-- Project Edit Page (Full Screen) -->
+                    <div id="project-form-container" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: var(--surface); z-index: 500; overflow-y: auto;">
+                        <div style="max-width: 1200px; margin: 0 auto; padding: 24px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                                <h2 id="project-form-title" style="color: var(--text); margin: 0; font-size: 24px; font-weight: 600;">Edit Project</h2>
+                                <button onclick="closeProjectForm()" style="background: var(--danger); color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: 600;">Cancel</button>
+                            </div>
+                            <div id="inline-project-form"></div>
+                        </div>
+                    </div>
+                    
+                    <!-- Project Details Page -->
+                    <div id="project-details-page" style="display: none; background: var(--surface); border-radius: 12px; padding: 24px; border: 1px solid var(--border);">
+                        <button onclick="closeProjectDetails()" style="background: var(--primary); color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: 600; margin-bottom: 20px;">← Back to Projects</button>
+                        
+                        <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 30px;">
+                            <!-- Main Content -->
+                            <div>
+                                <!-- Project Header -->
+                                <div style="margin-bottom: 30px; border-bottom: 2px solid var(--border); padding-bottom: 20px;">
+                                    <h1 id="detail-project-name" style="color: var(--text); font-size: 28px; font-weight: 700; margin-bottom: 10px;">Project Name</h1>
+                                    <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+                                        <span id="detail-project-status" style="background: var(--primary); color: white; padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 600;">Status</span>
+                                        <span id="detail-project-color" style="width: 24px; height: 24px; border-radius: 50%; border: 2px solid var(--border);"></span>
+                                    </div>
+                                </div>
+                                
+                                <!-- Project Info Grid -->
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 30px;">
+                                    <div style="background: var(--surface-alt); padding: 16px; border-radius: 8px;">
+                                        <div style="color: var(--text-light); font-size: 12px; font-weight: 600; margin-bottom: 6px; text-transform: uppercase;">Executing Company</div>
+                                        <div id="detail-executing-company" style="color: var(--text); font-size: 14px; font-weight: 500;">-</div>
+                                    </div>
+                                    <div style="background: var(--surface-alt); padding: 16px; border-radius: 8px;">
+                                        <div style="color: var(--text-light); font-size: 12px; font-weight: 600; margin-bottom: 6px; text-transform: uppercase;">Producing Company</div>
+                                        <div id="detail-producing-company" style="color: var(--text); font-size: 14px; font-weight: 500;">-</div>
+                                    </div>
+                                    <div style="background: var(--surface-alt); padding: 16px; border-radius: 8px;">
+                                        <div style="color: var(--text-light); font-size: 12px; font-weight: 600; margin-bottom: 6px; text-transform: uppercase;">Director</div>
+                                        <div id="detail-director" style="color: var(--text); font-size: 14px; font-weight: 500;">-</div>
+                                    </div>
+                                    <div style="background: var(--surface-alt); padding: 16px; border-radius: 8px;">
+                                        <div style="color: var(--text-light); font-size: 12px; font-weight: 600; margin-bottom: 6px; text-transform: uppercase;">WhatsApp Group</div>
+                                        <a id="detail-whatsapp-link" href="#" style="color: var(--primary); font-size: 14px; font-weight: 500; text-decoration: none;">Join Group</a>
+                                    </div>
+                                </div>
+                                
+                                <!-- Dates Section -->
+                                <div style="background: var(--surface-alt); padding: 20px; border-radius: 8px; margin-bottom: 30px;">
+                                    <h3 style="color: var(--text); font-size: 16px; font-weight: 600; margin-bottom: 16px;">Project Timeline</h3>
+                                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px;">
+                                        <div>
+                                            <div style="color: var(--text-light); font-size: 12px; font-weight: 600; margin-bottom: 6px; text-transform: uppercase;">Start Date</div>
+                                            <div id="detail-start-date" style="color: var(--text); font-size: 14px; font-weight: 500;">-</div>
+                                        </div>
+                                        <div>
+                                            <div style="color: var(--text-light); font-size: 12px; font-weight: 600; margin-bottom: 6px; text-transform: uppercase;">End Date</div>
+                                            <div id="detail-end-date" style="color: var(--text); font-size: 14px; font-weight: 500;">-</div>
+                                        </div>
+                                        <div>
+                                            <div style="color: var(--text-light); font-size: 12px; font-weight: 600; margin-bottom: 6px; text-transform: uppercase;">Fitting Date</div>
+                                            <div id="detail-fitting-date" style="color: var(--text); font-size: 14px; font-weight: 500;">-</div>
+                                        </div>
+                                        <div>
+                                            <div style="color: var(--text-light); font-size: 12px; font-weight: 600; margin-bottom: 6px; text-transform: uppercase;">Casting Date</div>
+                                            <div id="detail-casting-date" style="color: var(--text); font-size: 14px; font-weight: 500;">-</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Notes Section -->
+                                <div style="background: var(--surface-alt); padding: 20px; border-radius: 8px; margin-bottom: 30px;">
+                                    <h3 style="color: var(--text); font-size: 16px; font-weight: 600; margin-bottom: 12px;">Notes</h3>
+                                    <p id="detail-notes" style="color: var(--text); font-size: 14px; line-height: 1.6; margin: 0;">-</p>
+                                </div>
+                                
+                                <!-- Talents Section -->
+                                <div>
+                                    <h3 style="color: var(--text); font-size: 16px; font-weight: 600; margin-bottom: 16px;">Assigned Talents</h3>
+                                    <div id="detail-talents-list" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 16px;"></div>
+                                </div>
+                            </div>
+                            
+                            <!-- Sidebar -->
+                            <div>
+                                <!-- Budget Section -->
+                                <div style="background: linear-gradient(135deg, var(--primary), var(--primary-light)); color: white; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+                                    <div style="font-size: 12px; opacity: 0.9; margin-bottom: 8px; text-transform: uppercase; font-weight: 600;">Total Budget</div>
+                                    <div id="detail-budget" style="font-size: 32px; font-weight: 700; margin-bottom: 12px;">KD 0</div>
+                                    <div style="font-size: 12px; opacity: 0.9;">Allocated for this project</div>
+                                </div>
+                                
+                                <!-- Total Cost Section -->
+                                <div style="background: var(--surface-alt); padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+                                    <div style="font-size: 12px; color: var(--text-light); font-weight: 600; margin-bottom: 8px; text-transform: uppercase;">Total Talent Cost</div>
+                                    <div id="detail-total-cost" style="font-size: 28px; color: var(--primary); font-weight: 700; margin-bottom: 12px;">KD 0</div>
+                                    <div style="font-size: 12px; color: var(--text-light);">Sum of all selected talents</div>
+                                </div>
+                                
+                                <!-- Actions -->
+                                <div style="display: flex; flex-direction: column; gap: 12px;">
+                                    <button onclick="editCurrentProject()" style="background: var(--primary); color: white; border: none; padding: 12px 16px; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 14px;">Edit Project</button>
+                                    <button onclick="deleteCurrentProject()" style="background: var(--danger); color: white; border: none; padding: 12px 16px; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 14px;">Delete Project</button>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     
@@ -868,6 +987,30 @@
                             <div style="background: var(--surface); border-radius: 12px; padding: 25px; border: 1px solid var(--border);">
                                 <div style="font-size: 13px; color: var(--text-light); margin-bottom: 10px;">Upcoming Projects</div>
                                 <div style="font-size: 36px; font-weight: bold; color: var(--active-menu-gradient-start);" id="dash-upcoming-projects">0</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Create Project Page -->
+                <div id="create-project-page" class="tab-content">
+                    <div style="background: linear-gradient(180deg, var(--background) 0%, var(--surface) 100%); min-height: 100vh; padding: 40px 20px;">
+                        <div style="max-width: 900px; margin: 0 auto;">
+                            <!-- Header -->
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px;">
+                                <h1 style="color: var(--foreground); font-size: 32px; font-weight: 800; margin: 0;">Create New Project</h1>
+                                <button onclick="showTab('projects-tab')" style="background: var(--error); color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 14px;">✕ Close</button>
+                            </div>
+
+                            <!-- Main Card Container -->
+                            <div style="background: var(--surface); border-radius: 16px; padding: 32px; border: 1px solid var(--border); box-shadow: 0 4px 20px rgba(0,0,0,0.1);">
+                                <div id="create-project-form"></div>
+                            </div>
+
+                            <!-- Selected Talents Preview -->
+                            <div id="selected-talents-preview" style="margin-top: 30px; background: var(--surface); border-radius: 16px; padding: 24px; border: 1px solid var(--border);">
+                                <h3 style="color: var(--foreground); margin: 0 0 20px 0; font-size: 18px; font-weight: 600;">Selected Models</h3>
+                                <p style="color: var(--muted); text-align: center; padding: 20px;">No talents selected</p>
                             </div>
                         </div>
                     </div>
@@ -1187,7 +1330,9 @@
                         <span style="color: white; font-size: 16px; opacity: 0.8;">📸 No media selected</span>
                     </div>
                 </div>
-                <div id="edit-media-thumbnails" style="display: flex; gap: 10px; overflow-x: auto; padding: 12px 0; margin-bottom: 16px; min-height: 90px; scroll-behavior: smooth;"></div>
+                <!-- Grid Gallery (Instagram Style) -->
+                <div id="edit-media-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 12px; margin-bottom: 20px; max-height: 300px; overflow-y: auto; padding: 12px; background: rgba(0,0,0,0.1); border-radius: 8px;"></div>
+                <div id="edit-media-thumbnails" style="display: none;"></div>
                 <div style="display: flex; gap: 12px;">
                     <label style="flex: 1; cursor: pointer;">
                         <input type="file" id="edit-talent-photo" multiple accept="image/*" style="display: none;">
@@ -1239,6 +1384,73 @@
         </div>
     </div>
 </div>
+                <!-- Project Detail Page -->
+                <div id="project-detail" class="detail-page">
+                    <div class="detail-header">
+                        <div>
+                            <h1 class="detail-title" id="project-detail-name"></h1>
+                            <div class="talent-category" id="project-detail-status"></div>
+                        </div>
+                        <div style="display: flex; gap: 12px;">
+                            <button class="btn btn-secondary" onclick="backToProjects()">Back</button>
+                        </div>
+                    </div>
+                    <div style="display: flex; gap: 32px; margin-bottom: 32px;">
+                        <div style="flex: 1;">
+                            <div class="detail-info">
+                                <div class="detail-info-item">
+                                    <div class="detail-info-label">Executing Company</div>
+                                    <div class="detail-info-value" id="project-detail-executing-company">-</div>
+                                </div>
+                                <div class="detail-info-item">
+                                    <div class="detail-info-label">Producing Company</div>
+                                    <div class="detail-info-value" id="project-detail-producing-company">-</div>
+                                </div>
+                                <div class="detail-info-item">
+                                    <div class="detail-info-label">Director</div>
+                                    <div class="detail-info-value" id="project-detail-director">-</div>
+                                </div>
+                                <div class="detail-info-item">
+                                    <div class="detail-info-label">Total Budget</div>
+                                    <div class="detail-info-value" id="project-detail-budget">-</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div style="flex: 1;">
+                            <div class="detail-info">
+                                <div class="detail-info-item">
+                                    <div class="detail-info-label">Start Date</div>
+                                    <div class="detail-info-value" id="project-detail-start-date">-</div>
+                                </div>
+                                <div class="detail-info-item">
+                                    <div class="detail-info-label">End Date</div>
+                                    <div class="detail-info-value" id="project-detail-end-date">-</div>
+                                </div>
+                                <div class="detail-info-item">
+                                    <div class="detail-info-label">Fitting Date</div>
+                                    <div class="detail-info-value" id="project-detail-fitting-date">-</div>
+                                </div>
+                                <div class="detail-info-item">
+                                    <div class="detail-info-label">Casting Date</div>
+                                    <div class="detail-info-value" id="project-detail-casting-date">-</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="background: var(--surface); border-radius: 12px; padding: 20px; border: 1px solid var(--border); margin-bottom: 24px;">
+                        <h2 style="margin-bottom: 16px; color: var(--text);">Notes</h2>
+                        <p id="project-detail-notes" style="color: var(--text); line-height: 1.6; margin: 0;">-</p>
+                    </div>
+                    <div style="background: var(--surface); border-radius: 12px; padding: 20px; border: 1px solid var(--border);">
+                        <h2 style="margin-bottom: 16px; color: var(--text);">Assigned Talents</h2>
+                        <div id="project-detail-talents" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 16px;"></div>
+                        <div id="project-no-talents" style="text-align: center; color: var(--muted); padding: 20px;">No talents assigned</div>
+                    </div>
+                    <div style="margin-top: 24px; display: flex; gap: 12px;">
+                        <button class="btn btn-primary" onclick="editProjectFromDetail()">Edit Project</button>
+                        <button class="btn btn-danger" onclick="deleteProjectFromDetail()">Delete Project</button>
+                    </div>
+                </div>
                 <div id="talent-detail" class="detail-page">
                     <div class="detail-header">
                         <div>
@@ -1253,10 +1465,24 @@
 
                     <div style="display: flex; gap: 32px; margin-bottom: 32px;">
                         <div>
-                            <div class="detail-image" id="detail-media-container" style="width: 300px; height: 300px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: white; font-size: 14px; overflow: hidden;">
+                            <!-- Main Media Display -->
+                            <div class="detail-image" id="detail-media-container" style="width: 300px; height: 300px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: white; font-size: 14px; overflow: hidden; position: relative;">
                                 <div id="detail-media-display" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;">📸 No media</div>
+                                <!-- Navigation arrows -->
+                                <button id="detail-media-prev" style="position: absolute; left: 8px; top: 50%; transform: translateY(-50%); background: rgba(0,0,0,0.5); color: white; border: none; width: 36px; height: 36px; border-radius: 50%; cursor: pointer; font-size: 18px; display: none;">‹</button>
+                                <button id="detail-media-next" style="position: absolute; right: 8px; top: 50%; transform: translateY(-50%); background: rgba(0,0,0,0.5); color: white; border: none; width: 36px; height: 36px; border-radius: 50%; cursor: pointer; font-size: 18px; display: none;">›</button>
+                                <!-- Media counter -->
+                                <div id="detail-media-counter" style="position: absolute; bottom: 8px; right: 8px; background: rgba(0,0,0,0.6); color: white; padding: 4px 8px; border-radius: 4px; font-size: 12px; display: none;"></div>
                             </div>
-                            <div id="detail-media-thumbnails" style="display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap;"></div>
+                            <!-- Instagram-style grid gallery -->
+                            <!-- Instagram-style Media Gallery -->
+                            <div id="detail-media-gallery-container" style="margin-top: 20px;">
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                                    <h3 style="margin: 0; color: white; font-size: 14px; font-weight: 600;">MEDIA GALLERY</h3>
+                                    <span id="detail-media-count" style="color: var(--muted); font-size: 12px;"></span>
+                                </div>
+                                <div id="detail-media-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); gap: 12px; padding: 12px; background: rgba(0,0,0,0.2); border-radius: 12px; border: 1px solid var(--border); max-height: 250px; overflow-y: auto;"></div>
+                            </div>
                         </div>
                         <div style="flex: 1;">
                             <div class="detail-info">
@@ -1448,6 +1674,27 @@
                 <input type="date" id="project-casting-date" class="form-input">
             </div>
             <div class="form-group">
+                <label class="form-label">Project Color</label>
+                <input type="color" id="project-color" class="form-input" value="#0a7ea4" style="height: 50px; cursor: pointer;">
+                <small style="color: var(--text-light); margin-top: 4px; display: block;">Select a color to identify this project in the calendar</small>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                <div class="form-group">
+                    <label class="form-label">Budget (KD)</label>
+                    <input type="number" id="project-budget" class="form-input" placeholder="Project budget">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Status</label>
+                    <select id="project-status" class="form-input">
+                        <option value="Planning">Planning</option>
+                        <option value="In Progress">In Progress</option>
+                        <option value="Completed">Completed</option>
+                        <option value="On Hold">On Hold</option>
+                        <option value="Cancelled">Cancelled</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
                 <label class="form-label">Notes</label>
                 <textarea id="project-notes" class="form-input" placeholder="Additional notes about the project" style="min-height: 60px; resize: vertical;"></textarea>
             </div>
@@ -1473,6 +1720,30 @@
 
     <script>
         // Category Management - Initialize first
+        // Load talentMediaItems from localStorage on page load
+        function loadTalentMediaItems() {
+            const stored = localStorage.getItem('talentMediaItems');
+            if (stored) {
+                try {
+                    talentMediaItems = JSON.parse(stored);
+                    console.log('Loaded talentMediaItems from localStorage:', Object.keys(talentMediaItems).length, 'talents');
+                } catch (e) {
+                    console.error('Error loading talentMediaItems:', e);
+                    talentMediaItems = {};
+                }
+            }
+        }
+        
+        // Save talentMediaItems to localStorage
+        function saveTalentMediaItems() {
+            try {
+                localStorage.setItem('talentMediaItems', JSON.stringify(talentMediaItems));
+                console.log('Saved talentMediaItems to localStorage');
+            } catch (e) {
+                console.error('Error saving talentMediaItems:', e);
+            }
+        }
+        
         let categories = JSON.parse(localStorage.getItem('categories') || '["Actors", "Influencers", "Models", "Extras"]');
         
         let talents = [
@@ -1501,33 +1772,135 @@
                 console.error('Error loading projects:', e);
             }
         }
+        
         let currentTalentPhotos = {};
         let currentDetailTalentIndex = null;
         let editingTalentIndex = null;
         let selectedProjectTalents = [];
         let draggedPhotoIndex = null;
         
-        // Media Gallery Management
-        let talentMediaItems = {}; // Store media for each talent
-        let currentMediaItems = []; // Current media being added
+        // Media Gallery Management with IndexedDB
+        let talentMediaItems = {};
+        let currentMediaItems = [];
         let currentPrimaryMediaIndex = 0;
+        let db = null;
         
-        // Load media items from localStorage on initialization
-        function loadMediaItemsFromStorage() {
-            const savedMediaItems = localStorage.getItem('talentMediaItems');
-            if (savedMediaItems) {
-                try {
-                    talentMediaItems = JSON.parse(savedMediaItems);
-                } catch (e) {
-                    console.error('Error loading media items:', e);
-                    talentMediaItems = {};
+        // Load talentMediaItems from localStorage after initialization
+        loadTalentMediaItems();
+        
+        // Initialize IndexedDB for persistent image storage
+        function initIndexedDB() {
+            return new Promise((resolve, reject) => {
+                const request = indexedDB.open('TalentManagerDB', 1);
+                request.onerror = () => resolve(null);
+                request.onsuccess = () => {
+                    db = request.result;
+                    resolve(db);
+                };
+                request.onupgradeneeded = (event) => {
+                    const database = event.target.result;
+                    if (!database.objectStoreNames.contains('talentImages')) {
+                        database.createObjectStore('talentImages', { keyPath: 'id', autoIncrement: true });
+                    }
+                };
+            });
+        }
+        
+        // Save image to IndexedDB
+        function saveImageToIndexedDB(talentId, imageData) {
+            return new Promise((resolve) => {
+                if (!db) { resolve(null); return; }
+                const transaction = db.transaction(['talentImages'], 'readwrite');
+                const store = transaction.objectStore('talentImages');
+                const data = { talentId: talentId, imageData: imageData, timestamp: Date.now() };
+                const request = store.add(data);
+                request.onsuccess = () => resolve(request.result);
+                request.onerror = () => resolve(null);
+            });
+        }
+        
+        // Load images from IndexedDB for a talent
+        function loadImagesFromIndexedDB(talentId) {
+            return new Promise((resolve) => {
+                if (!db) { 
+                    console.log('DB not initialized, initializing now...');
+                    initIndexedDB().then(() => {
+                        if (!db) { resolve([]); return; }
+                        const transaction = db.transaction(['talentImages'], 'readonly');
+                        const store = transaction.objectStore('talentImages');
+                        const request = store.getAll();
+                        request.onsuccess = () => {
+                            const images = request.result.filter(item => item.talentId === talentId);
+                            console.log('Loaded images for talent', talentId, ':', images.length);
+                            resolve(images);
+                        };
+                        request.onerror = () => resolve([]);
+                    });
+                    return;
                 }
+                const transaction = db.transaction(['talentImages'], 'readonly');
+                const store = transaction.objectStore('talentImages');
+                const request = store.getAll();
+                request.onsuccess = () => {
+                    const images = request.result.filter(item => item.talentId === talentId);
+                    console.log('Loaded images for talent', talentId, ':', images.length);
+                    resolve(images);
+                };
+                request.onerror = () => {
+                    console.error('Error loading images from IndexedDB');
+                    resolve([]);
+                };
+            });
+        }
+        
+        // Load media items from IndexedDB on initialization
+        async function loadMediaItemsFromStorage() {
+            try {
+                await initIndexedDB();
+            } catch (e) {
+                console.error('Error initializing media storage:', e);
             }
         }
         
-        // Load on page load
         loadMediaItemsFromStorage();
         
+        // Compress image for Add Talent page
+        function compressImageForAdd(file, maxWidth, maxHeight, quality) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const img = new Image();
+                    img.onload = function() {
+                        const canvas = document.createElement('canvas');
+                        let width = img.width;
+                        let height = img.height;
+                        
+                        if (width > maxWidth) {
+                            height = (height * maxWidth) / width;
+                            width = maxWidth;
+                        }
+                        if (height > maxHeight) {
+                            width = (width * maxHeight) / height;
+                            height = maxHeight;
+                        }
+                        
+                        canvas.width = width;
+                        canvas.height = height;
+                        
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, width, height);
+                        
+                        const compressedDataUrl = canvas.toDataURL('image/jpeg', quality);
+                        resolve(compressedDataUrl);
+                    };
+                    img.onerror = reject;
+                    img.src = e.target.result;
+                };
+                reader.onerror = reject;
+                reader.readAsDataURL(file);
+            });
+        }
+
         function addMediaToTalent(event, type) {
             event.preventDefault();
             event.stopPropagation();
@@ -1538,26 +1911,47 @@
             const totalFiles = files.length;
             
             for (let file of files) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    currentMediaItems.push({
-                        type: type,
-                        src: e.target.result,
-                        name: file.name
+                if (type === 'image') {
+                    // Compress images to max 400x400 with 60% quality
+                    compressImageForAdd(file, 400, 400, 0.6).then(compressedSrc => {
+                        currentMediaItems.push({
+                            type: type,
+                            src: compressedSrc,
+                            name: file.name
+                        });
+                        filesProcessed++;
+                        if (filesProcessed === totalFiles) {
+                            renderMediaGallery();
+                        }
+                    }).catch(err => {
+                        console.error('Error compressing image:', err);
+                        filesProcessed++;
+                        if (filesProcessed === totalFiles) {
+                            renderMediaGallery();
+                        }
                     });
-                    filesProcessed++;
-                    if (filesProcessed === totalFiles) {
-                        renderMediaGallery();
-                    }
-                };
-                reader.onerror = function() {
-                    console.error('Error reading file:', file.name);
-                    filesProcessed++;
-                    if (filesProcessed === totalFiles) {
-                        renderMediaGallery();
-                    }
-                };
-                reader.readAsDataURL(file);
+                } else {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        currentMediaItems.push({
+                            type: type,
+                            src: e.target.result,
+                            name: file.name
+                        });
+                        filesProcessed++;
+                        if (filesProcessed === totalFiles) {
+                            renderMediaGallery();
+                        }
+                    };
+                    reader.onerror = function() {
+                        console.error('Error reading file:', file.name);
+                        filesProcessed++;
+                        if (filesProcessed === totalFiles) {
+                            renderMediaGallery();
+                        }
+                    };
+                    reader.readAsDataURL(file);
+                }
             }
             
             event.target.value = '';
@@ -1719,7 +2113,9 @@
             document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
             document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
             document.getElementById(tabId).classList.add('active');
-            event.target.classList.add('active');
+            if (event && event.target) {
+                event.target.classList.add('active');
+            }
 
             const defaultTitles = {
                 'talents-tab': 'Talents',
@@ -1778,11 +2174,13 @@
                 
                 // Use media gallery if available, otherwise use old photos
                 if (mediaItems.length > 0) {
-                    const firstMedia = mediaItems[0];
-                    if (firstMedia.type === 'image') {
-                        photoDisplay = `<img src="${firstMedia.src}" alt="Photo" style="width: 100%; height: 100%; object-fit: cover;">`;
+                    // Use primary image if available, otherwise use first media item
+                    const primaryIndex = talent.primaryMediaIndex || 0;
+                    const primaryMedia = mediaItems[primaryIndex] || mediaItems[0];
+                    if (primaryMedia.type === 'image') {
+                        photoDisplay = `<img src="${primaryMedia.src}" alt="Photo" style="width: 100%; height: 100%; object-fit: cover;">`;
                     } else {
-                        photoDisplay = `<video src="${firstMedia.src}" style="width: 100%; height: 100%; object-fit: cover;"></video><div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: white; font-size: 32px; text-shadow: 0 2px 4px rgba(0,0,0,0.5);">▶</div>`;
+                        photoDisplay = `<video src="${primaryMedia.src}" style="width: 100%; height: 100%; object-fit: cover;"></video><div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: white; font-size: 32px; text-shadow: 0 2px 4px rgba(0,0,0,0.5);">▶</div>`;
                     }
                 } else if (photos.length > 0) {
                     photoDisplay = `<img src="${photos[0]}" alt="Photo" style="width: 100%; height: 100%; object-fit: cover;">`;
@@ -1802,10 +2200,7 @@
                             <div class="talent-meta">
                                 <span>${talent.gender} • ${talent.age} years</span>
                             </div>
-                            <div class="talent-actions" onclick="event.stopPropagation()">
-                                <button class="btn btn-primary btn-small" onclick="editTalent(event, ${actualIndex})">Edit</button>
-                                <button class="btn btn-danger btn-small" onclick="deleteTalent(event, ${actualIndex})">Delete</button>
-                            </div>
+
                         </div>
                     </div>
                 `;
@@ -1946,7 +2341,7 @@
             if (editingTalentIndex !== null) {
                 const talentId = talents[editingTalentIndex].id;
                 newTalentId = talentId;
-                talents[editingTalentIndex] = { ...talents[editingTalentIndex], name, category, price, gender, birthdate, age, phone, instagram, tiktok, height, weight, chest, waist, hips, shoe, hair, eyes, skills };
+                talents[editingTalentIndex] = { ...talents[editingTalentIndex], name, category, price, gender, birthdate, age, phone, instagram, tiktok, height, weight, chest, waist, hips, shoe, hair, eyes, skills, primaryMediaIndex: currentPrimaryMediaIndex };
                 if (currentMediaItems.length > 0) {
                     talentMediaItems[talentId] = [...currentMediaItems];
                 }
@@ -1955,7 +2350,7 @@
                 }
             } else {
                 newTalentId = Date.now();
-                const newTalent = { id: newTalentId, name, category, price, gender, birthdate, age, phone, instagram, tiktok, height, weight, chest, waist, hips, shoe, hair, eyes, skills };
+                const newTalent = { id: newTalentId, name, category, price, gender, birthdate, age, phone, instagram, tiktok, height, weight, chest, waist, hips, shoe, hair, eyes, skills, primaryMediaIndex: currentPrimaryMediaIndex };
                 talents.push(newTalent);
                 if (currentMediaItems.length > 0) {
                     talentMediaItems[newTalentId] = [...currentMediaItems];
@@ -1964,7 +2359,15 @@
 
             localStorage.setItem('talents', JSON.stringify(talents));
             localStorage.setItem('talentPhotos', JSON.stringify(currentTalentPhotos));
-            localStorage.setItem('talentMediaItems', JSON.stringify(talentMediaItems));
+            saveTalentMediaItems();
+            // Save images to IndexedDB for persistent storage
+            if (currentMediaItems.length > 0) {
+                currentMediaItems.forEach(item => {
+                    if (item.type === 'image') {
+                        saveImageToIndexedDB(newTalentId, item.src);
+                    }
+                });
+            }
             
             // Reset media
             currentMediaItems = [];
@@ -1996,6 +2399,69 @@
             editingTalentIndex = null;
         }
 
+        let detailMediaIndex = 0;
+        function renderDetailMediaGallery() {
+            if (currentDetailTalentIndex === null) return;
+            const talentId = talents[currentDetailTalentIndex].id || currentDetailTalentIndex;
+            const mediaItems = talentMediaItems[talentId] || [];
+            const grid = document.getElementById('detail-media-grid');
+            grid.innerHTML = '';
+            if (mediaItems.length === 0) return;
+            mediaItems.forEach((item, index) => {
+                const gridItem = document.createElement('div');
+                gridItem.style.cssText = 'position: relative; width: 100%; aspect-ratio: 1; border-radius: 6px; cursor: pointer; border: ' + (index === detailMediaIndex ? '3px solid var(--primary)' : '2px solid var(--border)') + '; overflow: hidden;';
+                if (item.type === 'image') {
+                    gridItem.innerHTML = '<img src="' + item.src + '" style="width: 100%; height: 100%; object-fit: cover;">';
+                } else {
+                    gridItem.innerHTML = '<video src="' + item.src + '" style="width: 100%; height: 100%; object-fit: cover;"></video>';
+                }
+                gridItem.onclick = function() {
+                    detailMediaIndex = index;
+                    renderDetailMediaGallery();
+                    displayDetailMedia();
+                };
+                grid.appendChild(gridItem);
+            });
+        }
+        function displayDetailMedia() {
+            if (currentDetailTalentIndex === null) return;
+            const talentId = talents[currentDetailTalentIndex].id || currentDetailTalentIndex;
+            const talent = talents[currentDetailTalentIndex];
+            const mediaItems = talentMediaItems[talentId] || [];
+            const mediaDisplay = document.getElementById('detail-media-display');
+            if (mediaItems.length === 0) return;
+            // Use primary image index if available
+            const primaryIndex = talent.primaryMediaIndex || 0;
+            const currentIndex = detailMediaIndex >= mediaItems.length ? primaryIndex : detailMediaIndex;
+            const media = mediaItems[currentIndex];
+            mediaDisplay.innerHTML = '';
+            detailMediaIndex = currentIndex;
+            if (media.type === 'image') {
+                const img = document.createElement('img');
+                img.src = media.src;
+                img.style.cssText = 'width: 100%; height: 100%; object-fit: cover;';
+                mediaDisplay.appendChild(img);
+            }
+        }
+        function nextDetailMedia() {
+            if (currentDetailTalentIndex === null) return;
+            const talentId = talents[currentDetailTalentIndex].id || currentDetailTalentIndex;
+            const mediaItems = talentMediaItems[talentId] || [];
+            if (mediaItems.length === 0) return;
+            detailMediaIndex = (detailMediaIndex + 1) % mediaItems.length;
+            renderDetailMediaGallery();
+            displayDetailMedia();
+        }
+        function prevDetailMedia() {
+            if (currentDetailTalentIndex === null) return;
+            const talentId = talents[currentDetailTalentIndex].id || currentDetailTalentIndex;
+            const mediaItems = talentMediaItems[talentId] || [];
+            if (mediaItems.length === 0) return;
+            detailMediaIndex = (detailMediaIndex - 1 + mediaItems.length) % mediaItems.length;
+            renderDetailMediaGallery();
+            displayDetailMedia();
+        }
+
         function showTalentDetail(index) {
             currentDetailTalentIndex = index;
             const talent = talents[index];
@@ -2010,22 +2476,26 @@
             document.getElementById('detail-phone').textContent = talent.phone;
 
             // Display media from talentMediaItems
-            const mediaDisplay = document.getElementById('detail-media-display');
-            const mediaItems = talentMediaItems[talentId] || [];
+            // Use primary image index if available
+            detailMediaIndex = talent.primaryMediaIndex || 0;
+            displayDetailMedia();
+            renderDetailMediaGallery();
             
-            if (mediaItems.length > 0) {
-                const primaryMedia = mediaItems[0];
-                if (primaryMedia.type === 'image') {
-                    mediaDisplay.innerHTML = '<img src="' + primaryMedia.src + '" alt="Media" style="width: 100%; height: 100%; object-fit: cover;">';
-                } else {
-                    mediaDisplay.innerHTML = '<video src="' + primaryMedia.src + '" style="width: 100%; height: 100%; object-fit: cover;" controls></video>';
-                }
+            // Setup navigation buttons
+            document.getElementById('detail-media-prev').onclick = prevDetailMedia;
+            document.getElementById('detail-media-next').onclick = nextDetailMedia;
+
+            // Hide project detail page if coming from project
+            if (previousPageType === 'project-edit') {
+                document.getElementById('project-form-container').style.display = 'none';
+            } else if (previousPageType === 'project') {
+                document.getElementById('project-detail').classList.remove('active');
             } else {
-                mediaDisplay.innerHTML = '📸 No media';
+                document.getElementById('talents-tab').classList.remove('active');
             }
 
             document.getElementById('talent-detail').classList.add('active');
-            document.getElementById('talents-tab').classList.remove('active');
+            document.getElementById('talent-detail').style.display = 'block';
 
             updateFavoriteButton();
             renderPhotos();
@@ -2063,10 +2533,35 @@
 
 
 
+        let previousPageType = null;
+        
         function backToTalents() {
             document.getElementById('talent-detail').classList.remove('active');
-            document.getElementById('talents-tab').classList.add('active');
+            document.getElementById('talent-detail').style.display = 'none';
+            if (previousPageType === 'project-edit') {
+                document.getElementById('project-form-container').style.display = 'block';
+                previousPageType = null;
+            } else if (previousPageType === 'project') {
+                document.getElementById('project-detail').classList.add('active');
+                previousPageType = null;
+            } else {
+                document.getElementById('talents-tab').classList.add('active');
+            }
             currentDetailTalentIndex = null;
+        }
+        
+        function viewTalentDetail(index) {
+            // Store the current state
+            const projectFormContainer = document.getElementById('project-form-container');
+            const isEditingProject = projectFormContainer && projectFormContainer.style.display === 'block';
+            
+            if (isEditingProject) {
+                previousPageType = 'project-edit';
+            } else {
+                document.getElementById('project-detail').classList.remove('active');
+                previousPageType = 'project';
+            }
+            showTalentDetail(index);
         }
 
         function renderPhotos() {
@@ -2192,6 +2687,9 @@
         function bulkAddToNewProject() {
             selectedProjectTalents = selectedTalents;
             openCreateProjectModal();
+            document.getElementById('project-color').value = '#0a7ea4';
+            document.getElementById('project-budget').value = '';
+            document.getElementById('project-status').value = 'Planning';
         }
 
         function bulkAddToExistingProject() {
@@ -2250,22 +2748,180 @@
 
         function openCreateProjectModal() {
             selectedProjectTalents = [];
-            document.getElementById('project-name').value = '';
-            document.getElementById('project-executing-company').value = '';
-            document.getElementById('project-producing-company').value = '';
-            document.getElementById('project-director').value = '';
-            document.getElementById('project-start-date').value = '';
-            document.getElementById('project-end-date').value = '';
-            document.getElementById('project-fitting-date').value = '';
-            document.getElementById('project-casting-date').value = '';
-            document.getElementById('project-notes').value = '';
-            document.getElementById('project-whatsapp-group').value = '';
-            document.getElementById('project-modal-title').textContent = 'Create New Project';
-            document.getElementById('save-project-btn').textContent = 'Create';
-            document.getElementById('save-project-btn').onclick = () => saveProject();
             document.getElementById('editing-project-index').value = '';
-            renderTalentSelector();
-            document.getElementById('project-modal').classList.add('active');
+            
+            // Render form directly in create-project-form
+            const formContainer = document.getElementById('create-project-form');
+            let talentSelectorHTML = talents.map((talent, index) => {
+                const primaryImage = talentMediaItems[talent.id] && talentMediaItems[talent.id][talent.primaryMediaIndex] ? talentMediaItems[talent.id][talent.primaryMediaIndex] : '';
+                const isSelected = selectedProjectTalents.includes(index);
+                return `<div data-talent-index="${index}" style="cursor: pointer; padding: 12px; border-radius: 8px; background: ${isSelected ? 'var(--primary)' : 'var(--background)'}; border: 2px solid ${isSelected ? 'var(--primary)' : 'var(--border)'}; display: flex; align-items: center; gap: 12px; transition: all 0.2s;">
+                    <div style="width: 60px; height: 60px; border-radius: 8px; background: linear-gradient(135deg, ${talent.primaryColor || '#0a7ea4'} 0%, ${talent.secondaryColor || '#0a7ea4'} 100%); flex-shrink: 0; display: flex; align-items: center; justify-content: center; color: white; font-size: 14px; font-weight: 600; overflow: hidden;">
+                        ${primaryImage ? `<img src="${primaryImage}" style="width: 100%; height: 100%; object-fit: cover;">` : `<span>${talent.name.substring(0, 1)}</span>`}
+                    </div>
+                    <div style="flex: 1;">
+                        <p style="color: ${isSelected ? 'white' : 'var(--foreground)'}; font-weight: 600; margin: 0 0 4px 0;">${talent.name}</p>
+                        <p style="color: ${isSelected ? 'rgba(255,255,255,0.8)' : 'var(--muted)'}; margin: 0; font-size: 14px;">${talent.price} KD</p>
+                    </div>
+                    <div style="width: 24px; height: 24px; border-radius: 4px; background: ${isSelected ? 'white' : 'var(--border)'}; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                        ${isSelected ? '<span style="color: var(--primary); font-weight: 600;">✓</span>' : ''}
+                    </div>
+                </div>`;
+            }).join('');
+            
+            formContainer.innerHTML = `<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;"><div class="form-group"><label class="form-label">Project Name</label><input type="text" id="project-name" class="form-input" placeholder="Project name"></div><div class="form-group"><label class="form-label">Executing Company</label><input type="text" id="project-executing-company" class="form-input" placeholder="Company name"></div><div class="form-group"><label class="form-label">Producing Company</label><input type="text" id="project-producing-company" class="form-input" placeholder="Company name"></div><div class="form-group"><label class="form-label">Director</label><input type="text" id="project-director" class="form-input" placeholder="Director name"></div><div class="form-group"><label class="form-label">Start Date</label><input type="date" id="project-start-date" class="form-input"></div><div class="form-group"><label class="form-label">End Date</label><input type="date" id="project-end-date" class="form-input"></div><div class="form-group"><label class="form-label">Fitting Date</label><input type="date" id="project-fitting-date" class="form-input"></div><div class="form-group"><label class="form-label">Casting Date</label><input type="date" id="project-casting-date" class="form-input"></div><div class="form-group"><label class="form-label">Project Color</label><input type="color" id="project-color" class="form-input" value="#0a7ea4" style="height: 50px; cursor: pointer;"></div><div class="form-group"><label class="form-label">Budget (KD)</label><input type="number" id="project-budget" class="form-input" placeholder="Project budget"></div><div class="form-group"><label class="form-label">Status</label><select id="project-status" class="form-input"><option value="Planning">Planning</option><option value="In Progress">In Progress</option><option value="Completed">Completed</option><option value="On Hold">On Hold</option><option value="Cancelled">Cancelled</option></select></div></div><div class="form-group"><label class="form-label">Notes</label><textarea id="project-notes" class="form-input" placeholder="Additional notes" style="min-height: 60px; resize: vertical;"></textarea></div><div class="form-group"><label class="form-label">WhatsApp Group Link</label><input type="text" id="project-whatsapp-group" class="form-input" placeholder="WhatsApp group link"></div><div class="form-group"><label class="form-label">Select Models</label><div id="project-talent-selector" style="border: 1px solid var(--border); border-radius: 8px; max-height: 300px; overflow-y: auto;">${talentSelectorHTML}</div></div><div class="form-group"><label class="form-label">Total Cost: <span id="project-total" style="color: var(--primary); font-weight: 600;">KD 0</span></label></div><div style="display: flex; gap: 12px; margin-top: 24px;"><button class="btn btn-primary" onclick="saveProject()">Save Project</button><button class="btn btn-secondary" onclick="backToProjectsList()">Cancel</button></div><input type="hidden" id="editing-project-index" value="">`;
+            
+            // Show create project page
+            showTab('create-project-page');
+        }
+        
+        function backToProjectsList() {
+            showTab('projects-tab');
+            selectedProjectTalents = [];
+            renderProjects();
+        }
+        
+        function closeProjectForm() {
+            document.getElementById('project-form-container').style.display = 'none';
+            selectedProjectTalents = [];
+        }
+        
+        let currentDetailProjectIndex = null;
+        
+        function showProjectDetails(projectIndex) {
+            currentDetailProjectIndex = projectIndex;
+            const project = projects[projectIndex];
+            
+            // Hide projects list and form
+            document.getElementById('projects-list').style.display = 'none';
+            document.getElementById('project-form-container').style.display = 'none';
+            document.getElementById('projects-tab').classList.remove('active');
+            
+            // Show new project detail page
+            document.getElementById('project-detail').classList.add('active');
+            
+            // Populate project info on new detail page
+            document.getElementById('project-detail-name').textContent = project.name;
+            document.getElementById('project-detail-status').textContent = project.status;
+            
+            document.getElementById('project-detail-executing-company').textContent = project.executingCompany || '-';
+            document.getElementById('project-detail-producing-company').textContent = project.producingCompany || '-';
+            document.getElementById('project-detail-director').textContent = project.director || '-';
+            document.getElementById('project-detail-budget').textContent = 'KD ' + (project.budget || 0);
+            
+            // Format dates
+            document.getElementById('project-detail-start-date').textContent = project.startDate ? new Date(project.startDate).toLocaleDateString() : '-';
+            document.getElementById('project-detail-end-date').textContent = project.endDate ? new Date(project.endDate).toLocaleDateString() : '-';
+            document.getElementById('project-detail-fitting-date').textContent = project.fittingDate ? new Date(project.fittingDate).toLocaleDateString() : '-';
+            document.getElementById('project-detail-casting-date').textContent = project.castingDate ? new Date(project.castingDate).toLocaleDateString() : '-';
+            
+            document.getElementById('project-detail-notes').textContent = project.notes || '-';
+            
+            // Calculate total talent cost
+            let totalCost = 0;
+            const talentsList = document.getElementById('project-detail-talents');
+            const noTalentsMsg = document.getElementById('project-no-talents');
+            talentsList.innerHTML = '';
+            
+            // Use talentIndices if available, otherwise try to match talent names
+            const talentIndicesToDisplay = project.talentIndices || (project.talents ? project.talents.map(name => talents.findIndex(t => t.name === name)) : []);
+            
+            if (talentIndicesToDisplay.length === 0) {
+                noTalentsMsg.style.display = 'block';
+            } else {
+                noTalentsMsg.style.display = 'none';
+            }
+            
+            talentIndicesToDisplay.forEach(talentIndex => {
+                const talent = talents[talentIndex];
+                if (talent) {
+                    totalCost += talent.price;
+                    
+                    // Create talent card
+                    const talentCard = document.createElement('div');
+                    talentCard.style.cssText = 'background: var(--surface-alt); padding: 12px; border-radius: 8px; text-align: center; border: 1px solid var(--border); cursor: pointer; transition: all 0.3s ease;';
+                    talentCard.onclick = () => viewTalentDetail(talentIndex);
+                    talentCard.onmouseover = () => talentCard.style.boxShadow = 'var(--shadow-lg)';
+                    talentCard.onmouseout = () => talentCard.style.boxShadow = 'none';
+                    talentCard.innerHTML = '<div style="width: 100%; height: 100px; background: linear-gradient(135deg, #667eea, #ec4899); border-radius: 6px; margin-bottom: 8px; display: flex; align-items: center; justify-content: center; color: white; font-weight: 600; font-size: 12px; text-align: center; padding: 8px;">' + talent.name + '</div><div style="color: var(--text); font-size: 13px; font-weight: 600; margin-bottom: 4px;">' + talent.name + '</div><div style="color: var(--primary); font-size: 14px; font-weight: 700;">' + talent.price + ' KD</div>';
+                    talentsList.appendChild(talentCard);
+                }
+            });
+            
+            // Update total cost display
+            const totalCostElement = document.querySelector('#project-detail .detail-info-item:has(#project-detail-budget) .detail-info-value');
+            if (totalCostElement) {
+                totalCostElement.textContent = 'KD ' + totalCost;
+            }
+        }
+        
+        function backToProjects() {
+            document.getElementById('project-detail').classList.remove('active');
+            document.getElementById('projects-tab').classList.add('active');
+            currentDetailProjectIndex = null;
+        }
+        
+        function editProjectFromDetail() {
+            if (currentDetailProjectIndex !== null) {
+                document.getElementById('project-detail').style.display = 'none';
+                editProject(currentDetailProjectIndex);
+            }
+        }
+        
+        function deleteProjectFromDetail() {
+            if (currentDetailProjectIndex !== null) {
+                deleteProject(currentDetailProjectIndex);
+                backToProjects();
+            }
+        }
+        
+        function closeProjectDetails() {
+            document.getElementById('project-details-page').style.display = 'none';
+            document.getElementById('projects-list').style.display = 'block';
+            currentDetailProjectIndex = null;
+            renderProjects();
+        }
+        
+        function editCurrentProject() {
+            if (currentDetailProjectIndex !== null) {
+                editProject(currentDetailProjectIndex);
+                closeProjectDetails();
+            }
+        }
+        
+        function deleteCurrentProject() {
+            if (currentDetailProjectIndex !== null && confirm('Are you sure you want to delete this project?')) {
+                projects.splice(currentDetailProjectIndex, 1);
+                localStorage.setItem('projects', JSON.stringify(projects));
+                closeProjectDetails();
+                renderProjects();
+            }
+        }
+        
+        function renderInlineProjectForm() {
+            const formContainer = document.getElementById('inline-project-form');
+            if (!formContainer) {
+                console.error('inline-project-form container not found');
+                return;
+            }
+            let talentSelectorHTML = talents.map((talent, index) => {
+                const primaryImage = talentMediaItems[talent.id] && talentMediaItems[talent.id][talent.primaryMediaIndex] ? talentMediaItems[talent.id][talent.primaryMediaIndex] : '';
+                const isSelected = selectedProjectTalents.includes(index);
+                return `<div onclick="event.stopPropagation(); viewTalentDetail(${index})" style="cursor: pointer; padding: 12px; border-radius: 8px; background: ${isSelected ? 'var(--primary)' : 'var(--background)'}; border: 2px solid ${isSelected ? 'var(--primary)' : 'var(--border)'}; display: flex; align-items: center; gap: 12px; transition: all 0.2s; hover: {background: var(--surface);}">
+                    <div style="width: 60px; height: 60px; border-radius: 8px; background: linear-gradient(135deg, ${talent.primaryColor || '#0a7ea4'} 0%, ${talent.secondaryColor || '#0a7ea4'} 100%); flex-shrink: 0; display: flex; align-items: center; justify-content: center; color: white; font-size: 14px; font-weight: 600; overflow: hidden;">
+                        ${primaryImage ? `<img src="${primaryImage}" style="width: 100%; height: 100%; object-fit: cover;">` : `<span>${talent.name.substring(0, 1)}</span>`}
+                    </div>
+                    <div style="flex: 1;">
+                        <p style="color: ${isSelected ? 'white' : 'var(--foreground)'}; font-weight: 600; margin: 0 0 4px 0;">${talent.name}</p>
+                        <p style="color: ${isSelected ? 'rgba(255,255,255,0.8)' : 'var(--muted)'}; margin: 0; font-size: 14px;">${talent.price} KD</p>
+                    </div>
+                    <div style="width: 24px; height: 24px; border-radius: 4px; background: ${isSelected ? 'white' : 'var(--border)'}; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                        ${isSelected ? '<span style="color: var(--primary); font-weight: 600;">✓</span>' : ''}
+                    </div>
+                </div>`;
+            }).join('');
+            
+            formContainer.innerHTML = `<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;"><div class="form-group"><label class="form-label">Project Name</label><input type="text" id="project-name" class="form-input" placeholder="Project name"></div><div class="form-group"><label class="form-label">Executing Company</label><input type="text" id="project-executing-company" class="form-input" placeholder="Company name"></div><div class="form-group"><label class="form-label">Producing Company</label><input type="text" id="project-producing-company" class="form-input" placeholder="Company name"></div><div class="form-group"><label class="form-label">Director</label><input type="text" id="project-director" class="form-input" placeholder="Director name"></div><div class="form-group"><label class="form-label">Start Date</label><input type="date" id="project-start-date" class="form-input"></div><div class="form-group"><label class="form-label">End Date</label><input type="date" id="project-end-date" class="form-input"></div><div class="form-group"><label class="form-label">Fitting Date</label><input type="date" id="project-fitting-date" class="form-input"></div><div class="form-group"><label class="form-label">Casting Date</label><input type="date" id="project-casting-date" class="form-input"></div><div class="form-group"><label class="form-label">Project Color</label><input type="color" id="project-color" class="form-input" value="#0a7ea4" style="height: 50px; cursor: pointer;"></div><div class="form-group"><label class="form-label">Budget (KD)</label><input type="number" id="project-budget" class="form-input" placeholder="Project budget"></div><div class="form-group"><label class="form-label">Status</label><select id="project-status" class="form-input"><option value="Planning">Planning</option><option value="In Progress">In Progress</option><option value="Completed">Completed</option><option value="On Hold">On Hold</option><option value="Cancelled">Cancelled</option></select></div></div><div class="form-group"><label class="form-label">Notes</label><textarea id="project-notes" class="form-input" placeholder="Additional notes" style="min-height: 60px; resize: vertical;"></textarea></div><div class="form-group"><label class="form-label">WhatsApp Group Link</label><input type="text" id="project-whatsapp-group" class="form-input" placeholder="WhatsApp group link"></div><div class="form-group"><label class="form-label">Select Models</label><div style="border: 1px solid var(--border); border-radius: 8px; max-height: 300px; overflow-y: auto;">${talentSelectorHTML}</div></div><div class="form-group"><label class="form-label">Total Cost: <span id="project-total" style="color: var(--primary); font-weight: 600;">KD 0</span></label></div><div style="display: flex; gap: 12px; margin-top: 24px;"><button class="btn btn-primary" onclick="saveProject()">Save Project</button><button class="btn btn-secondary" onclick="closeProjectForm()">Cancel</button></div><input type="hidden" id="editing-project-index" value="">`;
         }
 
         function renderTalentSelector() {
@@ -2280,15 +2936,91 @@
 
         function updateProjectTotal() {
             let total = 0;
-            selectedProjectTalents = [];
-            talents.forEach((talent, index) => {
-                const checkbox = document.getElementById(`talent-check-${index}`);
-                if (checkbox && checkbox.checked) {
-                    total += talent.price;
-                    selectedProjectTalents.push(index);
+            // Calculate total from selectedProjectTalents (not from checkboxes)
+            selectedProjectTalents.forEach(index => {
+                if (talents[index]) {
+                    total += talents[index].price;
                 }
             });
-            document.getElementById('project-total').textContent = `KD ${total}`;
+            const totalElement = document.getElementById('project-total');
+            if (totalElement) {
+                totalElement.textContent = `KD ${total}`;
+            }
+            // Update selected talents preview
+            updateSelectedTalentsPreview();
+        }
+
+        function toggleProjectTalent(index) {
+            if (selectedProjectTalents.includes(index)) {
+                selectedProjectTalents = selectedProjectTalents.filter(i => i !== index);
+            } else {
+                selectedProjectTalents.push(index);
+            }
+            updateProjectTalentUI();
+            updateProjectTotal();
+        }
+        
+        function updateProjectTalentUI() {
+            // Update only the talent selector HTML without resetting selectedProjectTalents
+            const talentSelectorContainer = document.getElementById('project-talent-selector');
+            if (!talentSelectorContainer) return;
+            
+            let talentSelectorHTML = talents.map((talent, index) => {
+                const primaryImage = talentMediaItems[talent.id] && talentMediaItems[talent.id][talent.primaryMediaIndex] ? talentMediaItems[talent.id][talent.primaryMediaIndex] : '';
+                const isSelected = selectedProjectTalents.includes(index);
+                return `<div data-talent-index="${index}" style="cursor: pointer; padding: 12px; border-radius: 8px; background: ${isSelected ? 'var(--primary)' : 'var(--background)'}; border: 2px solid ${isSelected ? 'var(--primary)' : 'var(--border)'}; display: flex; align-items: center; gap: 12px; transition: all 0.2s;">
+                    <div style="width: 60px; height: 60px; border-radius: 8px; background: linear-gradient(135deg, ${talent.primaryColor || '#0a7ea4'} 0%, ${talent.secondaryColor || '#0a7ea4'} 100%); flex-shrink: 0; display: flex; align-items: center; justify-content: center; color: white; font-size: 14px; font-weight: 600; overflow: hidden;">
+                        ${primaryImage ? `<img src="${primaryImage}" style="width: 100%; height: 100%; object-fit: cover;">` : `<span>${talent.name.substring(0, 1)}</span>`}
+                    </div>
+                    <div style="flex: 1;">
+                        <p style="color: ${isSelected ? 'white' : 'var(--foreground)'}; font-weight: 600; margin: 0 0 4px 0;">${talent.name}</p>
+                        <p style="color: ${isSelected ? 'rgba(255,255,255,0.8)' : 'var(--muted)'}; margin: 0; font-size: 14px;">${talent.price} KD</p>
+                    </div>
+                    <div style="width: 24px; height: 24px; border-radius: 4px; background: ${isSelected ? 'white' : 'var(--border)'}; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                        ${isSelected ? '<span style="color: var(--primary); font-weight: 600;">✓</span>' : ''}
+                    </div>
+                </div>`;
+            }).join('');
+            
+            talentSelectorContainer.innerHTML = talentSelectorHTML;
+            
+            // Add click handlers using addEventListener
+            talentSelectorContainer.querySelectorAll('[data-talent-index]').forEach(card => {
+                card.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const index = parseInt(card.getAttribute('data-talent-index'));
+                    toggleProjectTalent(index);
+                });
+            });
+        }
+
+        function updateSelectedTalentsPreview() {
+            const previewContainer = document.getElementById('selected-talents-preview');
+            if (!previewContainer) return;
+            
+            if (selectedProjectTalents.length === 0) {
+                previewContainer.innerHTML = '<p style="color: var(--muted); text-align: center; padding: 20px;">No talents selected</p>';
+                return;
+            }
+            
+            const talentCards = selectedProjectTalents.map(index => {
+                const talent = talents[index];
+                const primaryImage = talentMediaItems[talent.id] && talentMediaItems[talent.id][talent.primaryMediaIndex] ? talentMediaItems[talent.id][talent.primaryMediaIndex] : '';
+                const age = talent.age ? `${talent.age} years` : 'N/A';
+                return `
+                    <div style="background: var(--surface); border-radius: 12px; overflow: hidden; border: 1px solid var(--border); text-align: center; transition: transform 0.2s;">
+                        <div style="width: 100%; height: 120px; background: linear-gradient(135deg, ${talent.primaryColor || '#0a7ea4'} 0%, ${talent.secondaryColor || '#0a7ea4'} 100%); overflow: hidden; display: flex; align-items: center; justify-content: center;">
+                            ${primaryImage ? `<img src="${primaryImage}" style="width: 100%; height: 100%; object-fit: cover;">` : `<div style="color: white; font-size: 12px; font-weight: 600;">${talent.name.substring(0, 1)}</div>`}
+                        </div>
+                        <div style="padding: 12px;">
+                            <p style="color: var(--foreground); font-weight: 600; margin: 0 0 4px 0; font-size: 14px;">${talent.name}</p>
+                            <p style="color: var(--muted); margin: 0; font-size: 12px;">${age}</p>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            
+            previewContainer.innerHTML = `<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 12px;">${talentCards}</div>`;
         }
 
         function saveProject(editIndex = null) {
@@ -2302,6 +3034,9 @@
             const castingDate = document.getElementById('project-casting-date').value;
             const notes = document.getElementById('project-notes').value;
             const whatsappGroup = document.getElementById('project-whatsapp-group').value;
+            const color = document.getElementById('project-color').value;
+            const budget = parseFloat(document.getElementById('project-budget').value) || 0;
+            const status = document.getElementById('project-status').value;
             
             if (!name || selectedProjectTalents.length === 0) {
                 alert('يرجى إدخال Project Name واختيار موديلز');
@@ -2325,6 +3060,10 @@
                 castingDate,
                 notes,
                 whatsappGroup,
+                color,
+                budget,
+                status,
+                talentIndices: selectedProjectTalents,
                 talents: selectedProjectTalents.map(i => talents[i].name),
                 total
             };
@@ -2336,9 +3075,17 @@
             }
             
             localStorage.setItem('projects', JSON.stringify(projects));
-            closeProjectModal();
-            renderProjects();
-            renderStats();
+            
+            // Redirect to new page after creating project
+            if (editIndex === null) {
+                setTimeout(() => {
+                    window.location.reload();
+                }, 300);
+            } else {
+                closeProjectForm();
+                renderProjects();
+                renderStats();
+            }
         }
 
         function closeProjectModal() {
@@ -2351,31 +3098,51 @@
             selectedProjectTalents = [];
         }
 
+        function filterProjects() {
+            const searchTerm = document.getElementById('projects-search').value.toLowerCase();
+            const statusFilter = document.getElementById('projects-status-filter').value;
+            
+            const filtered = projects.filter(p => {
+                const matchesSearch = p.name.toLowerCase().includes(searchTerm);
+                const matchesStatus = !statusFilter || p.status === statusFilter;
+                return matchesSearch && matchesStatus;
+            });
+            
+            renderProjectsList(filtered);
+        }
+        
         function renderProjects() {
+            renderProjectsList(projects);
+        }
+        
+        function renderProjectsList(projectsToRender) {
             const list = document.getElementById('projects-list');
-            if (projects.length === 0) {
+            if (projectsToRender.length === 0) {
                 list.innerHTML = '<div class="empty-state"><div class="empty-state-icon">📭</div><div class="empty-state-title">No Projects</div></div>';
                 return;
             }
 
-            list.innerHTML = projects.map((project, index) => `
-                <div class="settings-card" style="cursor: pointer; transition: all 0.3s ease;" onclick="viewProjectDetails(${index})" onmouseover="this.style.boxShadow='var(--shadow-lg)'" onmouseout="this.style.boxShadow='var(--shadow-sm)'">
+            list.innerHTML = projectsToRender.map((project, index) => {
+                const actualIndex = projects.indexOf(project);
+                return `
+                <div class="settings-card" style="cursor: pointer; transition: all 0.3s ease;" onclick="viewProjectDetails(${actualIndex})" onmouseover="this.style.boxShadow='var(--shadow-lg)'" onmouseout="this.style.boxShadow='var(--shadow-sm)'">
                     <div style="display: flex; justify-content: space-between; align-items: start;">
                         <div style="flex: 1;">
                             <div class="settings-card-title">${project.name}</div>
                             <div style="color: var(--text-light); font-size: 14px; margin-bottom: 8px;">Models: ${project.talents.length} talents</div>
                             <div style="font-size: 18px; font-weight: 700; color: var(--primary);">KD ${project.total}</div>
                         </div>
-                        <div style="display: flex; gap: 8px;" onclick="event.stopPropagation();">
-                            <button class="btn btn-primary btn-small" onclick="editProject(${index})">Edit</button>
-                            <button class="btn btn-danger btn-small" onclick="deleteProject(${index})">Delete</button>
-                        </div>
                     </div>
                 </div>
-            `).join('');
+            `;
+            }).join('');
         }
 
         function viewProjectDetails(index) {
+            showProjectDetails(index);
+        }
+        
+        function oldViewProjectDetails(index) {
             const project = projects[index];
             if (!project) return;
             
@@ -2511,7 +3278,6 @@
             const project = projects[index];
             selectedProjectTalents = [];
             
-            // Find indices of talents in this project
             project.talents.forEach(talentName => {
                 const talentIndex = talents.findIndex(t => t.name === talentName);
                 if (talentIndex !== -1) {
@@ -2519,34 +3285,35 @@
                 }
             });
             
-            document.getElementById('project-name').value = project.name;
-            document.getElementById('project-executing-company').value = project.executingCompany || '';
-            document.getElementById('project-producing-company').value = project.producingCompany || '';
-            document.getElementById('project-director').value = project.director || '';
-            document.getElementById('project-start-date').value = project.startDate || '';
-            document.getElementById('project-end-date').value = project.endDate || '';
-            document.getElementById('project-fitting-date').value = project.fittingDate || '';
-            document.getElementById('project-casting-date').value = project.castingDate || '';
-            document.getElementById('project-notes').value = project.notes || '';
-            document.getElementById('project-whatsapp-group').value = project.whatsappGroup || '';
-            
-            renderTalentSelector();
-            
-            // Check the selected talents
-            selectedProjectTalents.forEach(index => {
-                const checkbox = document.getElementById(`talent-check-${index}`);
-                if (checkbox) checkbox.checked = true;
-            });
-            
-            updateProjectTotal();
-            
-            // Update modal title and button
-            document.getElementById('project-modal-title').textContent = 'Edit المشروع';
-            document.getElementById('save-project-btn').textContent = 'Save الEditات';
-            document.getElementById('save-project-btn').onclick = () => saveProject(index);
-            
-            document.getElementById('project-modal').classList.add('active');
+            document.getElementById('project-form-title').textContent = 'Edit Project';
             document.getElementById('editing-project-index').value = index;
+            renderInlineProjectForm();
+            
+            setTimeout(() => {
+                document.getElementById('project-name').value = project.name;
+                document.getElementById('project-executing-company').value = project.executingCompany || '';
+                document.getElementById('project-producing-company').value = project.producingCompany || '';
+                document.getElementById('project-director').value = project.director || '';
+                document.getElementById('project-start-date').value = project.startDate || '';
+                document.getElementById('project-end-date').value = project.endDate || '';
+                document.getElementById('project-fitting-date').value = project.fittingDate || '';
+                document.getElementById('project-casting-date').value = project.castingDate || '';
+                document.getElementById('project-notes').value = project.notes || '';
+                document.getElementById('project-whatsapp-group').value = project.whatsappGroup || '';
+                document.getElementById('project-color').value = project.color || '#0a7ea4';
+                document.getElementById('project-budget').value = project.budget || '';
+                document.getElementById('project-status').value = project.status || 'Planning';
+                
+                selectedProjectTalents.forEach(talentIndex => {
+                    const checkbox = document.getElementById(`talent-check-${talentIndex}`);
+                    if (checkbox) checkbox.checked = true;
+                });
+                
+                updateProjectTotal();
+            }, 100);
+            
+            document.getElementById('project-form-container').style.display = 'block';
+            document.getElementById('project-form-container').scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
 
         function renderStats() {
@@ -3112,21 +3879,104 @@
             for (let day = 1; day <= daysInMonth; day++) {
                 const dateObj = new Date(currentYear, currentMonth, day);
                 const dateStr = dateObj.toLocaleDateString('en-US');
-                const projectsOnDay = projects.filter(p => p.startDate && new Date(p.startDate).toLocaleDateString('en-US') === dateStr);
-                const hasProject = projectsOnDay.length > 0;
+                
+                let projectsInRange = [];
+                let fittingProjects = [];
+                let castingProjects = [];
+                
+                projects.forEach(p => {
+                    if (p.startDate && p.endDate) {
+                        const startDate = new Date(p.startDate);
+                        const endDate = new Date(p.endDate);
+                        // Normalize dates to midnight to avoid timezone issues
+                        startDate.setHours(0, 0, 0, 0);
+                        endDate.setHours(23, 59, 59, 999);
+                        if (dateObj >= startDate && dateObj <= endDate) {
+                            projectsInRange.push(p);
+                        }
+                    }
+                    if (p.fittingDate && new Date(p.fittingDate).toLocaleDateString('en-US') === dateStr) {
+                        fittingProjects.push(p);
+                    }
+                    if (p.castingDate && new Date(p.castingDate).toLocaleDateString('en-US') === dateStr) {
+                        castingProjects.push(p);
+                    }
+                });
                 
                 const isToday = new Date().toLocaleDateString('en-US') === dateStr;
-                const bgColor = (isToday || hasProject) ? 'var(--primary)' : 'transparent';
-                const textColor = (isToday || hasProject) ? 'white' : 'var(--text)';
-                html += `<div style="padding: 12px 4px; border-radius: 8px; text-align: center; background: ${bgColor}; color: ${textColor}; cursor: pointer; font-weight: 500; min-height: 50px; display: flex; flex-direction: column; justify-content: center;">${day}${hasProject ? '<div style="font-size: 9px; margin-top: 2px;">' + projectsOnDay.length + ' event</div>' : ''}</div>`;
+                let bgColor = 'transparent';
+                let textColor = 'var(--text)';
+                let label = '';
+                let labelColor = 'white';
+                
+                if (isToday && projectsInRange.length === 0 && fittingProjects.length === 0 && castingProjects.length === 0) {
+                    bgColor = 'var(--primary)';
+                    textColor = 'white';
+                } else if (projectsInRange.length > 0) {
+                    bgColor = projectsInRange[0].color || 'var(--primary)';
+                    textColor = 'white';
+                } else if (fittingProjects.length > 0) {
+                    bgColor = fittingProjects[0].color || 'var(--primary)';
+                    textColor = 'white';
+                    label = 'Fitting';
+                    labelColor = fittingProjects[0].color || 'var(--primary)';
+                } else if (castingProjects.length > 0) {
+                    bgColor = castingProjects[0].color || 'var(--primary)';
+                    textColor = 'white';
+                    label = 'Casting';
+                    labelColor = castingProjects[0].color || 'var(--primary)';
+                }
+                
+                let projectsHTML = '';
+                if (label) {
+                    projectsHTML = `<div style="font-size: 10px; font-weight: 600; margin-top: 2px; color: white;">${label}</div>`;
+                }
+                
+                html += `<div style="padding: 12px 4px; border-radius: 8px; text-align: center; background: ${bgColor}; color: ${textColor}; cursor: pointer; font-weight: 500; min-height: 50px; display: flex; flex-direction: column; justify-content: center; border: 2px solid ${(projectsInRange.length > 0 || fittingProjects.length > 0 || castingProjects.length > 0) ? bgColor : 'var(--border)'};">${day}${projectsHTML}</div>`;
             }
             
             document.getElementById('calendar-grid').innerHTML = html;
+            
+            // Add click handlers to calendar days
+            const calendarDays = document.querySelectorAll('#calendar-grid > div');
+            calendarDays.forEach((day, index) => {
+                const dayNum = index - firstDay + 1;
+                if (dayNum > 0 && dayNum <= daysInMonth) {
+                    const dateObj = new Date(currentYear, currentMonth, dayNum);
+                    const dateStr = dateObj.toLocaleDateString('en-US');
+                    const projectsOnDay = projects.filter(p => p.startDate && new Date(p.startDate).toLocaleDateString('en-US') === dateStr);
+                    if (projectsOnDay.length > 0) {
+                        day.style.cursor = 'pointer';
+                        day.onclick = () => {
+                            showProjectsOnDay(dateStr, projectsOnDay);
+                        };
+                    }
+                }
+            });
             
             const monthYear = document.getElementById('calendar-month');
             if (monthYear) {
                 monthYear.textContent = monthNames[currentMonth] + ' ' + currentYear;
             }
+        }
+        
+        function showProjectsOnDay(dateStr, projectsOnDay) {
+            const modal = document.createElement('div');
+            modal.style.cssText = 'position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 1000;';
+            
+            let projectsHTML = '';
+            projectsOnDay.forEach((p, i) => {
+                const projIndex = projects.indexOf(p);
+                projectsHTML += `<div style="background: var(--surface); border-left: 4px solid ${p.color || 'var(--primary)'}; padding: 16px; border-radius: 8px; margin-bottom: 12px; cursor: pointer;" onclick="editProject(${projIndex})">
+                    <div style="font-weight: 600; color: var(--foreground); margin-bottom: 4px;">${p.name}</div>
+                    <div style="font-size: 12px; color: var(--text-light); margin-bottom: 4px;">${p.executingCompany || 'No company'}</div>
+                    <div style="font-size: 12px; color: var(--text-light);">Status: <span style="background: ${p.color || 'var(--primary)'}; color: white; padding: 2px 8px; border-radius: 4px;">${p.status || 'Planning'}</span></div>
+                </div>`;
+            });
+            
+            modal.innerHTML = `<div style="background: var(--background); border-radius: 12px; padding: 24px; max-width: 500px; max-height: 80vh; overflow-y: auto; box-shadow: 0 10px 40px rgba(0,0,0,0.3);"><div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;"><h2 style="color: var(--foreground); margin: 0; font-size: 18px;">Projects on ${dateStr}</h2><button onclick="this.closest('div').parentElement.remove()" style="background: var(--error); color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: 600;">Close</button></div><div>${projectsHTML}</div></div>`;
+            
+            document.body.appendChild(modal);
         }
         
         function previousMonth() {
@@ -3148,115 +3998,278 @@
         }
 
         // Edit media items
-        let editMediaItems = [];
+        let editMediaItems = new Map(); // Use Map to prevent duplicates by src
         let editPrimaryMediaIndex = 0;
+
+        // Compress image to reduce size for localStorage
+        function compressImage(file, maxWidth, maxHeight, quality) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const img = new Image();
+                    img.onload = function() {
+                        const canvas = document.createElement('canvas');
+                        let width = img.width;
+                        let height = img.height;
+                        
+                        // Calculate new dimensions
+                        if (width > maxWidth) {
+                            height = (height * maxWidth) / width;
+                            width = maxWidth;
+                        }
+                        if (height > maxHeight) {
+                            width = (width * maxHeight) / height;
+                            height = maxHeight;
+                        }
+                        
+                        canvas.width = width;
+                        canvas.height = height;
+                        
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, width, height);
+                        
+                        // Convert to compressed JPEG
+                        const compressedDataUrl = canvas.toDataURL('image/jpeg', quality);
+                        resolve(compressedDataUrl);
+                    };
+                    img.onerror = reject;
+                    img.src = e.target.result;
+                };
+                reader.onerror = reject;
+                reader.readAsDataURL(file);
+            });
+        }
 
         function addEditMedia(event, type) {
             const files = event.target.files;
             for (let file of files) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    editMediaItems.push({
-                        type: type,
-                        src: e.target.result,
-                        name: file.name
+                if (type === 'image') {
+                    compressImage(file, 400, 400, 0.6).then(compressedSrc => {
+                        // Use src as key to prevent duplicates
+                        editMediaItems.set(compressedSrc, {
+                            type: type,
+                            src: compressedSrc,
+                            name: file.name
+                        });
+                        renderEditMediaGallery();
+                    }).catch(err => {
+                        console.error('Error compressing image:', err);
                     });
-                    renderEditMediaGallery();
-                };
-                reader.readAsDataURL(file);
+                } else {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        // Use src as key to prevent duplicates
+                        editMediaItems.set(e.target.result, {
+                            type: type,
+                            src: e.target.result,
+                            name: file.name
+                        });
+                        renderEditMediaGallery();
+                    };
+                    reader.readAsDataURL(file);
+                }
             }
         }
 
         function renderEditMediaGallery() {
-            const thumbnailsContainer = document.getElementById('edit-media-thumbnails');
+            const gridContainer = document.getElementById('edit-media-grid');
             const mainMedia = document.getElementById('edit-main-media');
-            thumbnailsContainer.innerHTML = '';
-            if (editMediaItems.length === 0) {
+            const infoDiv = document.getElementById('edit-media-info');
+            
+            if (!gridContainer) return; // Grid not ready yet
+            gridContainer.innerHTML = '';
+            
+            // Convert Map to Array for easier iteration
+            const items = Array.from(editMediaItems.values());
+            
+            if (items.length === 0) {
                 mainMedia.innerHTML = '<span style="color: white; font-size: 16px; opacity: 0.8;">📸 No media selected</span>';
+                if (infoDiv) infoDiv.textContent = '0 media items';
                 return;
             }
-            const primary = editMediaItems[editPrimaryMediaIndex];
+            
+            // Ensure editPrimaryMediaIndex is valid
+            if (editPrimaryMediaIndex >= items.length) {
+                editPrimaryMediaIndex = 0;
+            }
+            
+            const primary = items[editPrimaryMediaIndex];
             mainMedia.innerHTML = '';
-            if (primary.type === 'image') {
+            if (primary && primary.type === 'image') {
                 const img = document.createElement('img');
                 img.src = primary.src;
                 img.style.cssText = 'width: 100%; height: 100%; object-fit: cover;';
                 mainMedia.appendChild(img);
-            } else {
+            } else if (primary && primary.type === 'video') {
                 const video = document.createElement('video');
                 video.src = primary.src;
                 video.style.cssText = 'width: 100%; height: 100%; object-fit: cover;';
                 video.controls = true;
                 mainMedia.appendChild(video);
             }
-            editMediaItems.forEach((item, index) => {
-                const thumb = document.createElement('div');
-                const borderColor = index === editPrimaryMediaIndex ? 'var(--primary)' : 'var(--border)';
-                thumb.style.cssText = 'position: relative; width: 80px; height: 80px; border-radius: 8px; cursor: pointer; border: 3px solid ' + borderColor + '; flex-shrink: 0; overflow: hidden;';
+            
+            items.forEach((item, index) => {
+                const gridItem = document.createElement('div');
+                gridItem.draggable = true;
+                gridItem.dataset.index = index;
+                
+                const isPrimary = index === editPrimaryMediaIndex;
+                const borderColor = isPrimary ? '3px solid var(--primary)' : '2px solid var(--border)';
+                
+                gridItem.style.cssText = 'position: relative; width: 100%; aspect-ratio: 1; border-radius: 8px; cursor: pointer; border: ' + borderColor + '; overflow: hidden; transition: all 0.2s; background: rgba(0,0,0,0.1);';
+                
                 if (item.type === 'image') {
-                    thumb.innerHTML = '<img src="' + item.src + '" style="width: 100%; height: 100%; object-fit: cover;">';
+                    gridItem.innerHTML = '<img src="' + item.src + '" style="width: 100%; height: 100%; object-fit: cover;">';
                 } else {
-                    thumb.innerHTML = '<video src="' + item.src + '" style="width: 100%; height: 100%; object-fit: cover;"></video>';
+                    gridItem.innerHTML = '<video src="' + item.src + '" style="width: 100%; height: 100%; object-fit: cover;"></video><div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: white; font-size: 24px;">▶</div>';
                 }
+                
+                if (isPrimary) {
+                    const badge = document.createElement('div');
+                    badge.style.cssText = 'position: absolute; top: 4px; left: 4px; background: var(--primary); color: white; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 600;';
+                    badge.textContent = '⭐ PRIMARY';
+                    gridItem.appendChild(badge);
+                }
+                
                 const deleteBtn = document.createElement('button');
-                deleteBtn.style.cssText = 'position: absolute; top: -8px; right: -8px; background: var(--error); color: white; border: none; width: 24px; height: 24px; border-radius: 50%; cursor: pointer; font-size: 14px; display: flex; align-items: center; justify-content: center; padding: 0;';
-                deleteBtn.textContent = '×';
+                deleteBtn.style.cssText = 'position: absolute; top: 4px; right: 4px; background: var(--error); color: white; border: none; width: 28px; height: 28px; border-radius: 50%; cursor: pointer; font-size: 16px; display: flex; align-items: center; justify-content: center; padding: 0; opacity: 0; transition: opacity 0.2s;';
+                deleteBtn.textContent = '✕';
                 deleteBtn.onclick = function(e) {
-                    e.preventDefault();
-                    editMediaItems.splice(index, 1);
-                    if (editPrimaryMediaIndex >= editMediaItems.length) {
-                        editPrimaryMediaIndex = Math.max(0, editMediaItems.length - 1);
+                    e.stopPropagation();
+                    const key = Array.from(editMediaItems.keys())[index];
+                    editMediaItems.delete(key);
+                    const newItems = Array.from(editMediaItems.values());
+                    if (editPrimaryMediaIndex >= newItems.length) {
+                        editPrimaryMediaIndex = Math.max(0, newItems.length - 1);
                     }
                     renderEditMediaGallery();
                 };
-                thumb.appendChild(deleteBtn);
-                thumb.onclick = function() {
+                gridItem.appendChild(deleteBtn);
+                
+                gridItem.onmouseenter = function() { deleteBtn.style.opacity = '1'; };
+                gridItem.onmouseleave = function() { deleteBtn.style.opacity = '0'; };
+                
+                gridItem.onclick = function() {
                     editPrimaryMediaIndex = index;
                     renderEditMediaGallery();
                 };
-                thumbnailsContainer.appendChild(thumb);
+                
+                gridItem.ondragstart = function(e) {
+                    e.dataTransfer.effectAllowed = 'move';
+                    e.dataTransfer.setData('text/plain', index);
+                };
+                
+                gridItem.ondragover = function(e) {
+                    e.preventDefault();
+                    e.dataTransfer.dropEffect = 'move';
+                    gridItem.style.opacity = '0.7';
+                };
+                
+                gridItem.ondragleave = function(e) { gridItem.style.opacity = '1'; };
+                
+                gridItem.ondrop = function(e) {
+                    e.preventDefault();
+                    gridItem.style.opacity = '1';
+                    const fromIndex = parseInt(e.dataTransfer.getData('text/plain'));
+                    if (fromIndex !== index) {
+                        const itemsArray = Array.from(editMediaItems.entries());
+                        const [key, movedItem] = itemsArray[fromIndex];
+                        editMediaItems.delete(key);
+                        const newItemsArray = Array.from(editMediaItems.entries());
+                        if (index < newItemsArray.length) {
+                            const targetKey = newItemsArray[index][0];
+                            editMediaItems.delete(targetKey);
+                            editMediaItems.set(targetKey, newItemsArray[index][1]);
+                        }
+                        editMediaItems.set(key, movedItem);
+                        if (editPrimaryMediaIndex === fromIndex) {
+                            editPrimaryMediaIndex = index;
+                        }
+                        renderEditMediaGallery();
+                    }
+                };
+                
+                gridContainer.appendChild(gridItem);
             });
+            
+            if (infoDiv) infoDiv.textContent = items.length + ' media item' + (items.length !== 1 ? 's' : '');
         }
 
-        function updateTalent(event) {
-            event.preventDefault();
-            const editingIndex = parseInt(localStorage.getItem('editingTalentIndex'));
-            if (editingIndex === null || isNaN(editingIndex)) return;
+        function updateTalent() {
+            try {
+                const editingIndex = parseInt(localStorage.getItem('editingTalentIndex'));
+                if (editingIndex === null || isNaN(editingIndex) || !talents[editingIndex]) {
+                    alert('Error: Talent not found');
+                    return;
+                }
 
-            const talent = talents[editingIndex];
-            const talentId = talent.id || editingIndex;
-            
-            talent.name = document.getElementById('edit-talent-name').value;
-            talent.category = document.getElementById('edit-talent-category').value;
-            talent.price = parseFloat(document.getElementById('edit-talent-price').value);
-            talent.gender = document.getElementById('edit-talent-gender').value;
-            talent.birthdate = document.getElementById('edit-talent-birthdate').value;
-            talent.phone = document.getElementById('edit-talent-phone').value;
-            talent.instagram = document.getElementById('edit-talent-instagram').value;
-            talent.tiktok = document.getElementById('edit-talent-tiktok').value;
-            talent.height = parseFloat(document.getElementById('edit-talent-height').value) || 0;
-            talent.weight = parseFloat(document.getElementById('edit-talent-weight').value) || 0;
-            talent.chest = parseFloat(document.getElementById('edit-talent-chest').value) || 0;
-            talent.waist = parseFloat(document.getElementById('edit-talent-waist').value) || 0;
-            talent.hips = parseFloat(document.getElementById('edit-talent-hips').value) || 0;
-            talent.shoe = parseFloat(document.getElementById('edit-talent-shoe').value) || 0;
-            talent.hair = document.getElementById('edit-talent-hair').value;
-            talent.eyes = document.getElementById('edit-talent-eyes').value;
-            talent.skills = document.getElementById('edit-talent-skills').value;
-            talent.media = editMediaItems;
+                const talent = talents[editingIndex];
+                const talentId = talent.id || editingIndex;
+                
+                const nameValue = document.getElementById('edit-talent-name').value.trim();
+                if (!nameValue) {
+                    alert('Please enter talent name');
+                    return;
+                }
+                
+                const categoryValue = document.getElementById('edit-talent-category').value.trim();
+                if (!categoryValue) {
+                    alert('Please select a category');
+                    return;
+                }
+                
+                const priceValue = document.getElementById('edit-talent-price').value.trim();
+                if (!priceValue) {
+                    alert('Please enter price');
+                    return;
+                }
 
-            // Save media items to talentMediaItems
-            if (editMediaItems.length > 0) {
-                talentMediaItems[talentId] = [...editMediaItems];
+                talent.name = nameValue;
+                talent.category = categoryValue;
+                talent.price = parseFloat(priceValue);
+                talent.gender = document.getElementById('edit-talent-gender').value || '';
+                talent.birthdate = document.getElementById('edit-talent-birthdate').value || '';
+                talent.phone = document.getElementById('edit-talent-phone').value || '';
+                talent.instagram = document.getElementById('edit-talent-instagram').value || '';
+                talent.tiktok = document.getElementById('edit-talent-tiktok').value || '';
+                talent.height = parseFloat(document.getElementById('edit-talent-height').value) || 0;
+                talent.weight = parseFloat(document.getElementById('edit-talent-weight').value) || 0;
+                talent.chest = parseFloat(document.getElementById('edit-talent-chest').value) || 0;
+                talent.waist = parseFloat(document.getElementById('edit-talent-waist').value) || 0;
+                talent.hips = parseFloat(document.getElementById('edit-talent-hips').value) || 0;
+                talent.shoe = parseFloat(document.getElementById('edit-talent-shoe').value) || 0;
+                talent.hair = document.getElementById('edit-talent-hair').value || '';
+                talent.eyes = document.getElementById('edit-talent-eyes').value || '';
+                talent.skills = document.getElementById('edit-talent-skills').value || '';
+
+                if (editMediaItems.size > 0) {
+                    // Convert Map to array (no duplicates since Map uses src as key)
+                    const uniqueItems = Array.from(editMediaItems.values());
+                    // Store primary media index
+                    talent.primaryMediaIndex = editPrimaryMediaIndex;
+                    talentMediaItems[talentId] = [...uniqueItems];
+                    uniqueItems.forEach(item => {
+                        if (item.type === 'image') {
+                            saveImageToIndexedDB(talentId, item.src);
+                        }
+                    });
+                } else {
+                    delete talentMediaItems[talentId];
+                }
+
+                localStorage.setItem('talents', JSON.stringify(talents));
+                // Note: Images are stored in memory only (talentMediaItems) to avoid localStorage quota issues
+                localStorage.removeItem('editingTalentIndex');
+                
+                editMediaItems = new Map();
+                editPrimaryMediaIndex = 0;
+                
+                showTab('talents-tab');
+                renderTalents();
+            } catch (error) {
+                console.error('Error updating talent:', error);
+                alert('Error updating talent: ' + error.message);
             }
-
-            localStorage.setItem('talents', JSON.stringify(talents));
-            localStorage.setItem('talentMediaItems', JSON.stringify(talentMediaItems));
-            localStorage.removeItem('editingTalentIndex');
-            editMediaItems = [];
-            editPrimaryMediaIndex = 0;
-            showTab('talents-tab');
-            renderTalents();
         }
 
         // Setup edit talent page
@@ -3284,10 +4297,35 @@
                     document.getElementById('edit-talent-hair').value = talent.hair || '';
                     document.getElementById('edit-talent-eyes').value = talent.eyes || '';
                     document.getElementById('edit-talent-skills').value = talent.skills || '';
-                    // Load media from talentMediaItems instead of talent.media
-                    editMediaItems = talentMediaItems[talentId] ? [...talentMediaItems[talentId]] : [];
+                    // Load media from IndexedDB (persistent storage)
+                    editMediaItems = new Map(); // Use Map to prevent duplicates
                     editPrimaryMediaIndex = 0;
-                    renderEditMediaGallery();
+                    loadImagesFromIndexedDB(talentId).then(images => {
+                        editMediaItems = new Map(); // Clear and use Map
+                        if (images && images.length > 0) {
+                            images.forEach(img => {
+                                const item = {
+                                    type: 'image',
+                                    src: img.imageData,
+                                    name: 'Saved image'
+                                };
+                                editMediaItems.set(item.src, item);
+                            });
+                        }
+                        renderEditMediaGallery();
+                    }).catch(err => {
+                        console.log('No IndexedDB images found, using memory storage');
+                        // Use Map for deduplication
+                    editMediaItems = new Map();
+                    if (talentMediaItems[talentId]) {
+                        talentMediaItems[talentId].forEach(item => {
+                            editMediaItems.set(item.src, item);
+                        });
+                    }
+                    editPrimaryMediaIndex = talent.primaryMediaIndex || 0;
+                        renderEditMediaGallery();
+                    });
+
                 }
             }
             originalShowTab(tabName);
@@ -3323,15 +4361,9 @@
             });
         }
         
-        // Load media items from localStorage on page load
-        const savedMediaItems = localStorage.getItem('talentMediaItems');
-        if (savedMediaItems) {
-            try {
-                talentMediaItems = JSON.parse(savedMediaItems);
-            } catch (e) {
-                console.error('Error loading media items:', e);
-            }
-        }
+        // Media items are stored in memory only during the session
+        // They are NOT saved to localStorage to avoid quota issues
+        // talentMediaItems is initialized as an empty object at the top of the script
 </script>
 </body>
 </html>
