@@ -1132,6 +1132,26 @@
         </div>
 
         <div style="background: var(--surface); border-radius: 16px; padding: 32px; border: 1px solid var(--border); box-shadow: 0 4px 20px rgba(0,0,0,0.1);">
+            <div style="margin-bottom: 32px;">
+                <h2 style="color: var(--foreground); font-size: 16px; font-weight: 700; margin: 0 0 16px 0; text-transform: uppercase; letter-spacing: 0.5px; opacity: 0.8;">Media Gallery</h2>
+                <div id="edit-media-display" style="background: linear-gradient(135deg, var(--primary), #1e3a5f); border-radius: 12px; width: 100%; height: 350px; display: flex; align-items: center; justify-content: center; margin-bottom: 16px; position: relative; overflow: hidden;">
+                    <div id="edit-main-media" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;">
+                        <span style="color: white; font-size: 16px; opacity: 0.8;">📸 No media selected</span>
+                    </div>
+                </div>
+                <div id="edit-media-thumbnails" style="display: flex; gap: 10px; overflow-x: auto; padding: 12px 0; margin-bottom: 16px; min-height: 90px; scroll-behavior: smooth;"></div>
+                <div style="display: flex; gap: 12px;">
+                    <label style="flex: 1; cursor: pointer;">
+                        <input type="file" id="edit-talent-photo" multiple accept="image/*" style="display: none;">
+                        <div style="background: var(--primary); color: white; padding: 14px 20px; border-radius: 8px; text-align: center; font-weight: 600; cursor: pointer; transition: all 0.3s;">📷 Add Photos</div>
+                    </label>
+                    <label style="flex: 1; cursor: pointer;">
+                        <input type="file" id="edit-talent-video" multiple accept="video/*" style="display: none;">
+                        <div style="background: var(--primary); color: white; padding: 14px 20px; border-radius: 8px; text-align: center; font-weight: 600; cursor: pointer; transition: all 0.3s;">🎥 Add Videos</div>
+                    </label>
+                </div>
+            </div>
+            <div style="border-top: 1px solid var(--border); padding-top: 32px; margin-bottom: 32px;"></div>
             <form onsubmit="updateTalent(event)">
                 <h2 style="color: var(--foreground); font-size: 16px; font-weight: 700; margin: 0 0 20px 0; text-transform: uppercase; letter-spacing: 0.5px; opacity: 0.8;">Basic Information</h2>
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 32px;">
@@ -2829,6 +2849,148 @@
                 currentYear++;
             }
             renderCalendarGrid();
+        }
+
+        // Edit media items
+        let editMediaItems = [];
+        let editPrimaryMediaIndex = 0;
+
+        function addEditMedia(event, type) {
+            const files = event.target.files;
+            for (let file of files) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    editMediaItems.push({
+                        type: type,
+                        src: e.target.result,
+                        name: file.name
+                    });
+                    renderEditMediaGallery();
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function renderEditMediaGallery() {
+            const thumbnailsContainer = document.getElementById('edit-media-thumbnails');
+            const mainMedia = document.getElementById('edit-main-media');
+            thumbnailsContainer.innerHTML = '';
+            if (editMediaItems.length === 0) {
+                mainMedia.innerHTML = '<span style="color: white; font-size: 16px; opacity: 0.8;">📸 No media selected</span>';
+                return;
+            }
+            const primary = editMediaItems[editPrimaryMediaIndex];
+            if (primary.type === 'image') {
+                mainMedia.innerHTML = '<img src="' + primary.src + '" style="width: 100%; height: 100%; object-fit: cover;">';
+            } else {
+                mainMedia.innerHTML = '<video src="' + primary.src + '" style="width: 100%; height: 100%; object-fit: cover;" controls></video>';
+            }
+            editMediaItems.forEach((item, index) => {
+                const thumb = document.createElement('div');
+                const borderColor = index === editPrimaryMediaIndex ? 'var(--primary)' : 'var(--border)';
+                thumb.style.cssText = 'position: relative; width: 80px; height: 80px; border-radius: 8px; cursor: pointer; border: 3px solid ' + borderColor + '; flex-shrink: 0; overflow: hidden;';
+                if (item.type === 'image') {
+                    thumb.innerHTML = '<img src="' + item.src + '" style="width: 100%; height: 100%; object-fit: cover;">';
+                } else {
+                    thumb.innerHTML = '<video src="' + item.src + '" style="width: 100%; height: 100%; object-fit: cover;"></video>';
+                }
+                const deleteBtn = document.createElement('button');
+                deleteBtn.style.cssText = 'position: absolute; top: -8px; right: -8px; background: var(--error); color: white; border: none; width: 24px; height: 24px; border-radius: 50%; cursor: pointer; font-size: 14px; display: flex; align-items: center; justify-content: center; padding: 0;';
+                deleteBtn.textContent = '×';
+                deleteBtn.onclick = function(e) {
+                    e.preventDefault();
+                    editMediaItems.splice(index, 1);
+                    if (editPrimaryMediaIndex >= editMediaItems.length) {
+                        editPrimaryMediaIndex = Math.max(0, editMediaItems.length - 1);
+                    }
+                    renderEditMediaGallery();
+                };
+                thumb.appendChild(deleteBtn);
+                thumb.onclick = function() {
+                    editPrimaryMediaIndex = index;
+                    renderEditMediaGallery();
+                };
+                thumbnailsContainer.appendChild(thumb);
+            });
+        }
+
+        function updateTalent(event) {
+            event.preventDefault();
+            const editingIndex = parseInt(localStorage.getItem('editingTalentIndex'));
+            if (editingIndex === null || isNaN(editingIndex)) return;
+
+            const talent = talents[editingIndex];
+            talent.name = document.getElementById('edit-talent-name').value;
+            talent.category = document.getElementById('edit-talent-category').value;
+            talent.price = parseFloat(document.getElementById('edit-talent-price').value);
+            talent.gender = document.getElementById('edit-talent-gender').value;
+            talent.birthdate = document.getElementById('edit-talent-birthdate').value;
+            talent.phone = document.getElementById('edit-talent-phone').value;
+            talent.instagram = document.getElementById('edit-talent-instagram').value;
+            talent.tiktok = document.getElementById('edit-talent-tiktok').value;
+            talent.height = parseFloat(document.getElementById('edit-talent-height').value) || 0;
+            talent.weight = parseFloat(document.getElementById('edit-talent-weight').value) || 0;
+            talent.chest = parseFloat(document.getElementById('edit-talent-chest').value) || 0;
+            talent.waist = parseFloat(document.getElementById('edit-talent-waist').value) || 0;
+            talent.hips = parseFloat(document.getElementById('edit-talent-hips').value) || 0;
+            talent.shoe = parseFloat(document.getElementById('edit-talent-shoe').value) || 0;
+            talent.hair = document.getElementById('edit-talent-hair').value;
+            talent.eyes = document.getElementById('edit-talent-eyes').value;
+            talent.skills = document.getElementById('edit-talent-skills').value;
+            talent.media = editMediaItems;
+
+            saveTalentsToStorage();
+            localStorage.removeItem('editingTalentIndex');
+            editMediaItems = [];
+            editPrimaryMediaIndex = 0;
+            showTab('talents-tab');
+            renderTalents();
+        }
+
+        // Setup edit talent page
+        const originalShowTab = window.showTab;
+        window.showTab = function(tabName) {
+            if (tabName === 'edit-talent-page') {
+                const editingIndex = parseInt(localStorage.getItem('editingTalentIndex'));
+                if (editingIndex !== null && !isNaN(editingIndex) && talents[editingIndex]) {
+                    const talent = talents[editingIndex];
+                    document.getElementById('edit-talent-name').value = talent.name || '';
+                    document.getElementById('edit-talent-category').value = talent.category || '';
+                    document.getElementById('edit-talent-price').value = talent.price || '';
+                    document.getElementById('edit-talent-gender').value = talent.gender || '';
+                    document.getElementById('edit-talent-birthdate').value = talent.birthdate || '';
+                    document.getElementById('edit-talent-phone').value = talent.phone || '';
+                    document.getElementById('edit-talent-instagram').value = talent.instagram || '';
+                    document.getElementById('edit-talent-tiktok').value = talent.tiktok || '';
+                    document.getElementById('edit-talent-height').value = talent.height || '';
+                    document.getElementById('edit-talent-weight').value = talent.weight || '';
+                    document.getElementById('edit-talent-chest').value = talent.chest || '';
+                    document.getElementById('edit-talent-waist').value = talent.waist || '';
+                    document.getElementById('edit-talent-hips').value = talent.hips || '';
+                    document.getElementById('edit-talent-shoe').value = talent.shoe || '';
+                    document.getElementById('edit-talent-hair').value = talent.hair || '';
+                    document.getElementById('edit-talent-eyes').value = talent.eyes || '';
+                    document.getElementById('edit-talent-skills').value = talent.skills || '';
+                    editMediaItems = talent.media || [];
+                    editPrimaryMediaIndex = 0;
+                    renderEditMediaGallery();
+                }
+            }
+            originalShowTab(tabName);
+        };
+
+        // Setup edit media upload event listeners
+        const editPhotoInput = document.getElementById('edit-talent-photo');
+        const editVideoInput = document.getElementById('edit-talent-video');
+        if (editPhotoInput) {
+            editPhotoInput.addEventListener('change', function(e) {
+                addEditMedia(e, 'image');
+            });
+        }
+        if (editVideoInput) {
+            editVideoInput.addEventListener('change', function(e) {
+                addEditMedia(e, 'video');
+            });
         }
 </script>
 </body>
