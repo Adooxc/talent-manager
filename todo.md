@@ -140,3 +140,13 @@
 ## Current Issues - Web Platform
 - [x] Fix admin page not accessible from web
 - [x] Fix OAuth login opening in popup instead of main window (redirects to main window on web)
+
+
+## Current Issues - Separate Pages for Projects
+- [x] Project pages are overlapping/mixed together - need completely separate pages like talents
+- [x] Projects list page should be separate from project detail page
+- [x] Project detail page should be separate from project edit page
+- [x] Each page transition should be clean with no content overlap
+- [x] In project detail page: clicking talent card should navigate to talent detail page
+- [x] In project edit page: clicking talent card should toggle selection (remove/add from project)
+- [x] Ensure no content overlap between pages
