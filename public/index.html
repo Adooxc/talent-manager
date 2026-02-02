@@ -1816,6 +1816,55 @@
         // Load talentMediaItems from localStorage after initialization
         loadTalentMediaItems();
         
+        // Load all images from IndexedDB on page load
+        async function loadAllImagesFromIndexedDB() {
+            try {
+                await initIndexedDB();
+                if (!db) return;
+                
+                const transaction = db.transaction(['talentImages'], 'readonly');
+                const store = transaction.objectStore('talentImages');
+                const request = store.getAll();
+                
+                request.onsuccess = () => {
+                    const allImages = request.result;
+                    // Group images by talentId
+                    const imagesByTalent = {};
+                    allImages.forEach(item => {
+                        if (!imagesByTalent[item.talentId]) {
+                            imagesByTalent[item.talentId] = [];
+                        }
+                        imagesByTalent[item.talentId].push({
+                            type: 'image',
+                            src: item.imageData,
+                            name: 'Saved image'
+                        });
+                    });
+                    
+                    // Merge with existing talentMediaItems
+                    Object.keys(imagesByTalent).forEach(talentId => {
+                        if (!talentMediaItems[talentId]) {
+                            talentMediaItems[talentId] = [];
+                        }
+                        // Add IndexedDB images if not already present
+                        imagesByTalent[talentId].forEach(img => {
+                            const exists = talentMediaItems[talentId].some(item => item.src === img.src);
+                            if (!exists) {
+                                talentMediaItems[talentId].push(img);
+                            }
+                        });
+                    });
+                    
+                    console.log('Loaded all images from IndexedDB:', Object.keys(imagesByTalent).length, 'talents');
+                };
+                request.onerror = () => {
+                    console.error('Error loading images from IndexedDB on page load');
+                };
+            } catch (e) {
+                console.error('Error loading images from IndexedDB:', e);
+            }
+        }
+        
         // Initialize IndexedDB for persistent image storage
         function initIndexedDB() {
             return new Promise((resolve, reject) => {
@@ -1884,13 +1933,21 @@
         // Load media items from IndexedDB on initialization
         async function loadMediaItemsFromStorage() {
             try {
-                await initIndexedDB();
+                await loadAllImagesFromIndexedDB();
             } catch (e) {
                 console.error('Error initializing media storage:', e);
             }
         }
         
         loadMediaItemsFromStorage();
+        
+        // Also call loadAllImagesFromIndexedDB after a short delay to ensure DB is ready
+        setTimeout(() => {
+            loadAllImagesFromIndexedDB().then(() => {
+                console.log('Images reloaded after delay');
+                renderTalents();
+            });
+        }, 500);
         
         // Compress image for Add Talent page
         function compressImageForAdd(file, maxWidth, maxHeight, quality) {
