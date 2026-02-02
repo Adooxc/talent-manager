@@ -150,3 +150,25 @@
 - [x] In project detail page: clicking talent card should navigate to talent detail page
 - [x] In project edit page: clicking talent card should toggle selection (remove/add from project)
 - [x] Ensure no content overlap between pages
+
+
+## Current Issues - Project Details Page Redesign
+- [x] Redesign project details page with modern layout
+- [x] Show talent photos in project details page
+- [x] Add more data fields to project details display
+- [x] Make project details page visually appealing and modern
+
+
+## Current Bugs - Project Details Page
+- [x] Talent prices not showing in project details page
+- [x] Total talent cost not calculating correctly
+- [x] Profit margin calculation not working
+
+## Completed - Project Details Page
+- [x] Modern talent cards with photos (initials as placeholder)
+- [x] Talent names, categories, and prices displaying correctly
+- [x] Total talent cost calculation working
+- [x] Profit margin calculation and display (with percentage from settings)
+- [x] Final total price calculation (talent costs + profit margin)
+- [x] Beautiful gradient cards for profit margin and final price
+- [x] All project information displayed (companies, dates, notes, etc.)

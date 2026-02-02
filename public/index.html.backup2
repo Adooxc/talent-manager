@@ -2759,86 +2759,58 @@
             document.getElementById('projects-tab').style.display = 'none';
             document.getElementById('project-details-page').style.display = 'block';
             
-            document.getElementById('detail-project-name').textContent = project.name;
-            document.getElementById('detail-project-status').textContent = project.status;
-            document.getElementById('detail-executing-company').textContent = project.executingCompany || '-';
-            document.getElementById('detail-producing-company').textContent = project.producingCompany || '-';
-            document.getElementById('detail-director').textContent = project.director || '-';
-            document.getElementById('detail-budget').textContent = 'KD ' + (project.budget || 0);
+            // Populate project info on new detail page
+            document.getElementById('project-detail-name').textContent = project.name;
+            document.getElementById('project-detail-status').textContent = project.status;
             
-            document.getElementById('detail-start-date').textContent = project.startDate ? new Date(project.startDate).toLocaleDateString() : '-';
-            document.getElementById('detail-end-date').textContent = project.endDate ? new Date(project.endDate).toLocaleDateString() : '-';
-            document.getElementById('detail-fitting-date').textContent = project.fittingDate ? new Date(project.fittingDate).toLocaleDateString() : '-';
-            document.getElementById('detail-casting-date').textContent = project.castingDate ? new Date(project.castingDate).toLocaleDateString() : '-';
-            document.getElementById('detail-notes').textContent = project.notes || '-';
+            document.getElementById('project-detail-executing-company').textContent = project.executingCompany || '-';
+            document.getElementById('project-detail-producing-company').textContent = project.producingCompany || '-';
+            document.getElementById('project-detail-director').textContent = project.director || '-';
+            document.getElementById('project-detail-budget').textContent = 'KD ' + (project.budget || 0);
             
-            const whatsappLink = document.getElementById('detail-whatsapp-link');
-            if (project.whatsappGroup) {
-                whatsappLink.href = project.whatsappGroup;
-                whatsappLink.target = '_blank';
-            }
+            // Format dates
+            document.getElementById('project-detail-start-date').textContent = project.startDate ? new Date(project.startDate).toLocaleDateString() : '-';
+            document.getElementById('project-detail-end-date').textContent = project.endDate ? new Date(project.endDate).toLocaleDateString() : '-';
+            document.getElementById('project-detail-fitting-date').textContent = project.fittingDate ? new Date(project.fittingDate).toLocaleDateString() : '-';
+            document.getElementById('project-detail-casting-date').textContent = project.castingDate ? new Date(project.castingDate).toLocaleDateString() : '-';
             
+            document.getElementById('project-detail-notes').textContent = project.notes || '-';
+            
+            // Calculate total talent cost
             let totalCost = 0;
-            const talentsList = document.getElementById('detail-talents-list');
+            const talentsList = document.getElementById('project-detail-talents');
+            const noTalentsMsg = document.getElementById('project-no-talents');
             talentsList.innerHTML = '';
             
+            // Use talentIndices if available, otherwise try to match talent names
             const talentIndicesToDisplay = project.talentIndices || (project.talents ? project.talents.map(name => talents.findIndex(t => t.name === name)) : []);
+            
+            if (talentIndicesToDisplay.length === 0) {
+                noTalentsMsg.style.display = 'block';
+            } else {
+                noTalentsMsg.style.display = 'none';
+            }
             
             talentIndicesToDisplay.forEach(talentIndex => {
                 const talent = talents[talentIndex];
                 if (talent) {
                     totalCost += talent.price;
                     
+                    // Create talent card
                     const talentCard = document.createElement('div');
-                    talentCard.style.cssText = 'background: var(--surface-alt); border-radius: 12px; overflow: hidden; cursor: pointer; transition: all 0.3s ease; border: 1px solid var(--border);';
-                    talentCard.onmouseover = function() { this.style.transform = 'translateY(-4px)'; };
-                    talentCard.onmouseout = function() { this.style.transform = 'translateY(0)'; };
+                    talentCard.style.cssText = 'background: var(--surface-alt); padding: 12px; border-radius: 8px; text-align: center; border: 1px solid var(--border); cursor: pointer; transition: all 0.3s ease;';
                     talentCard.onclick = () => viewTalentDetail(talentIndex);
-                    
-                    const photoDiv = document.createElement('div');
-                    photoDiv.style.cssText = 'width: 100%; height: 180px; background: linear-gradient(135deg, #667eea, #ec4899); overflow: hidden;';
-                    
-                    if (talent.photos && talent.photos.length > 0) {
-                        const img = document.createElement('img');
-                        img.src = talent.photos[0];
-                        img.style.cssText = 'width: 100%; height: 100%; object-fit: cover;';
-                        photoDiv.appendChild(img);
-                    } else {
-                        photoDiv.style.cssText += 'display: flex; align-items: center; justify-content: center; color: white; font-weight: 600; font-size: 48px;';
-                        photoDiv.textContent = talent.name.charAt(0).toUpperCase();
-                    }
-                    
-                    const infoDiv = document.createElement('div');
-                    infoDiv.style.cssText = 'padding: 16px;';
-                    infoDiv.innerHTML = '<div style="color: var(--text); font-size: 16px; font-weight: 700; margin-bottom: 8px;">' + talent.name + '</div><div style="color: var(--text-light); font-size: 12px; margin-bottom: 4px;">' + (talent.category || 'N/A') + '</div><div style="color: var(--primary); font-size: 18px; font-weight: 800; margin-top: 8px;">KD ' + talent.price + '</div>';
-                    
-                    talentCard.appendChild(photoDiv);
-                    talentCard.appendChild(infoDiv);
+                    talentCard.onmouseover = () => talentCard.style.boxShadow = 'var(--shadow-lg)';
+                    talentCard.onmouseout = () => talentCard.style.boxShadow = 'none';
+                    talentCard.innerHTML = '<div style="width: 100%; height: 100px; background: linear-gradient(135deg, #667eea, #ec4899); border-radius: 6px; margin-bottom: 8px; display: flex; align-items: center; justify-content: center; color: white; font-weight: 600; font-size: 12px; text-align: center; padding: 8px;">' + talent.name + '</div><div style="color: var(--text); font-size: 13px; font-weight: 600; margin-bottom: 4px;">' + talent.name + '</div><div style="color: var(--primary); font-size: 14px; font-weight: 700;">' + talent.price + ' KD</div>';
                     talentsList.appendChild(talentCard);
                 }
             });
             
-            // Calculate profit margin
-            const profitMarginPercentage = parseFloat(document.getElementById('profit-margin')?.value || 20);
-            const profitAmount = totalCost * (profitMarginPercentage / 100);
-            const finalCost = totalCost + profitAmount;
-            
             // Update total cost display
-            document.getElementById('detail-total-cost').textContent = 'KD ' + totalCost.toFixed(2);
-            
-            // Create profit margin card
-            const budgetContainer = document.querySelector('[style*="linear-gradient(135deg, var(--primary)"]')?.parentElement;
-            if (budgetContainer) {
-                const profitDiv = document.createElement('div');
-                profitDiv.style.cssText = 'background: linear-gradient(135deg, #f59e0b, #d97706); color: white; padding: 24px; border-radius: 12px; margin-top: 20px;';
-                profitDiv.innerHTML = '<div style="font-size: 12px; opacity: 0.9; margin-bottom: 10px; text-transform: uppercase; font-weight: 700;">💰 Profit Margin (' + profitMarginPercentage + '%)</div><div style="font-size: 36px; font-weight: 800; margin-bottom: 8px;">KD ' + profitAmount.toFixed(2) + '</div><div style="font-size: 12px; opacity: 0.85;">Additional profit on talent costs</div>';
-                
-                const finalCostDiv = document.createElement('div');
-                finalCostDiv.style.cssText = 'background: linear-gradient(135deg, #8b5cf6, #7c3aed); color: white; padding: 24px; border-radius: 12px; margin-top: 20px;';
-                finalCostDiv.innerHTML = '<div style="font-size: 12px; opacity: 0.9; margin-bottom: 10px; text-transform: uppercase; font-weight: 700;">💎 Final Total Price</div><div style="font-size: 36px; font-weight: 800; margin-bottom: 8px;">KD ' + finalCost.toFixed(2) + '</div><div style="font-size: 12px; opacity: 0.85;">Talent costs + profit margin</div>';
-                
-                budgetContainer.appendChild(profitDiv);
-                budgetContainer.appendChild(finalCostDiv);
+            const totalCostElement = document.querySelector('#project-detail .detail-info-item:has(#project-detail-budget) .detail-info-value');
+            if (totalCostElement) {
+                totalCostElement.textContent = 'KD ' + totalCost;
             }
         }
         
