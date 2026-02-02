@@ -176,3 +176,15 @@
 
 ## Current Bugs - Dashboard
 - [x] Large gap/whitespace at top of Dashboard page above data cards
+
+
+## Current Bugs - Project Details Page Navigation
+- [x] Edit and Delete buttons should be at top of project details page
+- [x] Project details page not hiding when navigating to other tabs (Talents, Dashboard, Settings)
+- [x] Pages overlapping when switching tabs after viewing project details
+- [x] Calendar also appears on other tabs when navigating away from Projects tab
+
+## Current Issues - Project Edit Page
+- [x] Clicking on talent in project edit page should toggle selection (add/remove), not navigate to talent detail page
+- [x] Talent selection toggle working correctly in Select Models section
+- [x] Talent selection toggle working correctly in Manage Talents section

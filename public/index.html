@@ -863,7 +863,11 @@
 
                 <!-- Project Details Page -->
                 <div id="project-details-page" style="display: none; background: var(--surface); overflow-y: auto; padding: 24px; min-height: 100vh;">
-                        <button onclick="closeProjectDetails()" style="background: var(--primary); color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: 600; margin-bottom: 20px;">← Back to Projects</button>
+                        <div style="display: flex; gap: 12px; margin-bottom: 20px; align-items: center;">
+                            <button onclick="closeProjectDetails()" style="background: var(--primary); color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: 600;">← Back to Projects</button>
+                            <button onclick="editCurrentProject()" style="background: var(--primary); color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: 600;">Edit Project</button>
+                            <button onclick="deleteCurrentProject()" style="background: var(--danger); color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: 600;">Delete Project</button>
+                        </div>
                         
                         <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 30px;">
                             <!-- Main Content -->
@@ -948,12 +952,7 @@
                                     <div id="detail-total-cost" style="font-size: 28px; color: var(--primary); font-weight: 700; margin-bottom: 12px;">KD 0</div>
                                     <div style="font-size: 12px; color: var(--text-light);">Sum of all selected talents</div>
                                 </div>
-                                
-                                <!-- Actions -->
-                                <div style="display: flex; flex-direction: column; gap: 12px;">
-                                    <button onclick="editCurrentProject()" style="background: var(--primary); color: white; border: none; padding: 12px 16px; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 14px;">Edit Project</button>
-                                    <button onclick="deleteCurrentProject()" style="background: var(--danger); color: white; border: none; padding: 12px 16px; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 14px;">Delete Project</button>
-                                </div>
+
                             </div>
                         </div>
                     </div>
@@ -2066,6 +2065,21 @@
                 editingTalentIndex = null;
             }
             
+            // Hide all project-related elements when leaving projects tab
+            if (tabId !== 'projects-tab') {
+                const projectDetailsPage = document.getElementById('project-details-page');
+                if (projectDetailsPage) projectDetailsPage.style.display = 'none';
+                
+                const projectFormContainer = document.getElementById('project-form-container');
+                if (projectFormContainer) projectFormContainer.style.display = 'none';
+                
+                const projectsTab = document.getElementById('projects-tab');
+                if (projectsTab) projectsTab.style.display = 'none';
+                
+                const calendarContent = document.getElementById('calendar-content');
+                if (calendarContent) calendarContent.style.display = 'none';
+            }
+            
             document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
             document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
             document.getElementById(tabId).classList.add('active');
@@ -2793,7 +2807,7 @@
                     talentCard.style.cssText = 'background: var(--surface-alt); border-radius: 12px; overflow: hidden; cursor: pointer; transition: all 0.3s ease; border: 1px solid var(--border);';
                     talentCard.onmouseover = function() { this.style.transform = 'translateY(-4px)'; };
                     talentCard.onmouseout = function() { this.style.transform = 'translateY(0)'; };
-                    talentCard.onclick = () => viewTalentDetail(talentIndex);
+                    talentCard.onclick = () => removeTalentFromEdit(talentIndex);
                     
                     const photoDiv = document.createElement('div');
                     photoDiv.style.cssText = 'width: 100%; height: 180px; background: linear-gradient(135deg, #667eea, #ec4899); overflow: hidden;';
@@ -2905,7 +2919,7 @@
             let talentSelectorHTML = talents.map((talent, index) => {
                 const primaryImage = talentMediaItems[talent.id] && talentMediaItems[talent.id][talent.primaryMediaIndex] ? talentMediaItems[talent.id][talent.primaryMediaIndex] : '';
                 const isSelected = selectedProjectTalents.includes(index);
-                return `<div onclick="event.stopPropagation(); viewTalentDetail(${index})" style="cursor: pointer; padding: 12px; border-radius: 8px; background: ${isSelected ? 'var(--primary)' : 'var(--background)'}; border: 2px solid ${isSelected ? 'var(--primary)' : 'var(--border)'}; display: flex; align-items: center; gap: 12px; transition: all 0.2s; hover: {background: var(--surface);}">
+                return `<div onclick="event.stopPropagation(); toggleTalentInEdit(${index})" style="cursor: pointer; padding: 12px; border-radius: 8px; background: ${isSelected ? 'var(--primary)' : 'var(--background)'}; border: 2px solid ${isSelected ? 'var(--primary)' : 'var(--border)'}; display: flex; align-items: center; gap: 12px; transition: all 0.2s; hover: {background: var(--surface);}">
                     <div style="width: 60px; height: 60px; border-radius: 8px; background: linear-gradient(135deg, ${talent.primaryColor || '#0a7ea4'} 0%, ${talent.secondaryColor || '#0a7ea4'} 100%); flex-shrink: 0; display: flex; align-items: center; justify-content: center; color: white; font-size: 14px; font-weight: 600; overflow: hidden;">
                         ${primaryImage ? `<img src="${primaryImage}" style="width: 100%; height: 100%; object-fit: cover;">` : `<span>${talent.name.substring(0, 1)}</span>`}
                     </div>
@@ -4419,17 +4433,15 @@
         // Toggle talent selection in edit form
         function toggleTalentInEdit(talentIndex) {
             if (!selectedProjectTalents) selectedProjectTalents = [];
-            const talentName = talents[talentIndex].name;
             
-            if (selectedProjectTalents.includes(talentName)) {
-                selectedProjectTalents = selectedProjectTalents.filter(t => t !== talentName);
+            if (selectedProjectTalents.includes(talentIndex)) {
+                selectedProjectTalents = selectedProjectTalents.filter(t => t !== talentIndex);
             } else {
-                selectedProjectTalents.push(talentName);
+                selectedProjectTalents.push(talentIndex);
             }
             
-            calculateProjectTotal();
-            renderTalentsSelector();
             updateProjectFormTalents();
+            renderTalentsSelector();
         }
         
         // Update talents display in form
