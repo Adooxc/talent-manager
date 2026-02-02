@@ -962,8 +962,8 @@
 
                 <!-- Stats Tab -->
                 <div id="stats-tab" class="tab-content">
-                    <div style="padding: 20px;">
-                        <h1 style="margin-bottom: 30px; font-size: 28px; color: var(--text);">Dashboard</h1>
+                    <div style="padding: 0 20px 20px 20px;">
+                        <h1 style="margin: 0 0 20px 0; font-size: 28px; color: var(--text);">Dashboard</h1>
                         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 40px;">
                             <div style="background: linear-gradient(135deg, var(--active-menu-gradient-start), var(--active-menu-gradient-end)); color: white; padding: 30px; border-radius: 12px;">
                                 <div style="font-size: 13px; opacity: 0.9; margin-bottom: 10px;">Total</div>
@@ -2078,6 +2078,19 @@
                 
                 const calendarContent = document.getElementById('calendar-content');
                 if (calendarContent) calendarContent.style.display = 'none';
+            } else {
+                // Show projects tab and calendar when entering projects tab
+                const projectsTab = document.getElementById('projects-tab');
+                if (projectsTab) projectsTab.style.display = 'block';
+                
+                const calendarContent = document.getElementById('calendar-content');
+                if (calendarContent) calendarContent.style.display = 'block';
+                
+                const projectDetailsPage = document.getElementById('project-details-page');
+                if (projectDetailsPage) projectDetailsPage.style.display = 'none';
+                
+                const projectFormContainer = document.getElementById('project-form-container');
+                if (projectFormContainer) projectFormContainer.style.display = 'none';
             }
             
             document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));

@@ -1,0 +1,2 @@
+- [x] Fix: Project list data disappears when navigating away and returning to Projects tab
+- [ ] Fix: Dashboard data disappears when navigating away and returning to Dashboard tab
