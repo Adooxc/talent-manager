@@ -706,7 +706,7 @@
             </div>
             <div class="nav-item active" onclick="showTab('talents-tab')">Talents</div>
             <div class="nav-item" onclick="showTab('projects-tab')">Projects</div>
-            <div class="nav-item" onclick="showTab('stats-tab')">Dashboard</div>
+
             <div class="nav-item" onclick="showTab('settings-tab')">Settings</div>
         </div>
 
@@ -960,78 +960,6 @@
                     <div id="projects-list"></div>
                 </div>
 
-                <!-- Stats Tab -->
-                <div id="stats-tab" class="tab-content">
-                    <div>
-                        <h1 style="margin: 0 0 24px 0; font-size: 32px; font-weight: 700; color: var(--text);">Dashboard</h1>
-                        
-                        <!-- Key Metrics Row -->
-                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-bottom: 24px;">
-                            <div style="background: linear-gradient(135deg, var(--active-menu-gradient-start), var(--active-menu-gradient-end)); color: white; padding: 24px; border-radius: 12px; box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3);">
-                                <div style="font-size: 12px; opacity: 0.85; margin-bottom: 8px; font-weight: 500;">Total Talents</div>
-                                <div style="font-size: 36px; font-weight: 700;" id="dash-total-talents">0</div>
-                            </div>
-                            <div style="background: linear-gradient(135deg, var(--active-menu-gradient-start), var(--active-menu-gradient-end)); color: white; padding: 24px; border-radius: 12px; box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3);">
-                                <div style="font-size: 12px; opacity: 0.85; margin-bottom: 8px; font-weight: 500;">Total Projects</div>
-                                <div style="font-size: 36px; font-weight: 700;" id="dash-total-projects">0</div>
-                            </div>
-                            <div style="background: linear-gradient(135deg, var(--active-menu-gradient-start), var(--active-menu-gradient-end)); color: white; padding: 24px; border-radius: 12px; box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3);">
-                                <div style="font-size: 12px; opacity: 0.85; margin-bottom: 8px; font-weight: 500;">Total Revenue</div>
-                                <div style="font-size: 36px; font-weight: 700;" id="dash-total-revenue">0 KD</div>
-                            </div>
-                            <div style="background: linear-gradient(135deg, var(--active-menu-gradient-start), var(--active-menu-gradient-end)); color: white; padding: 24px; border-radius: 12px; box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3);">
-                                <div style="font-size: 12px; opacity: 0.85; margin-bottom: 8px; font-weight: 500;">Net Profit</div>
-                                <div style="font-size: 36px; font-weight: 700;" id="dash-net-profit">0 KD</div>
-                            </div>
-                        </div>
-
-                        <!-- Talent Demographics -->
-                        <div style="background: var(--surface); border-radius: 12px; padding: 24px; border: 1px solid var(--border); margin-bottom: 24px;">
-                            <h3 style="margin: 0 0 16px 0; font-size: 16px; font-weight: 600; color: var(--text);">Talent Demographics</h3>
-                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 16px;">
-                                <div style="text-align: center; padding: 16px; background: var(--bg); border-radius: 8px;">
-                                    <div style="font-size: 12px; color: var(--text-light); margin-bottom: 8px;">Male</div>
-                                    <div style="font-size: 32px; font-weight: 700; color: var(--active-menu-gradient-start);" id="dash-male-count">0</div>
-                                </div>
-                                <div style="text-align: center; padding: 16px; background: var(--bg); border-radius: 8px;">
-                                    <div style="font-size: 12px; color: var(--text-light); margin-bottom: 8px;">Female</div>
-                                    <div style="font-size: 32px; font-weight: 700; color: var(--active-menu-gradient-start);" id="dash-female-count">0</div>
-                                </div>
-                                <div style="text-align: center; padding: 16px; background: var(--bg); border-radius: 8px;">
-                                    <div style="font-size: 12px; color: var(--text-light); margin-bottom: 8px;">Average Age</div>
-                                    <div style="font-size: 32px; font-weight: 700; color: var(--active-menu-gradient-start);" id="dash-avg-age">0</div>
-                                </div>
-                                <div style="text-align: center; padding: 16px; background: var(--bg); border-radius: 8px;">
-                                    <div style="font-size: 12px; color: var(--text-light); margin-bottom: 8px;">Average Price</div>
-                                    <div style="font-size: 32px; font-weight: 700; color: var(--active-menu-gradient-start);" id="dash-avg-price">0 KD</div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Project Status -->
-                        <div style="background: var(--surface); border-radius: 12px; padding: 24px; border: 1px solid var(--border); margin-bottom: 24px;">
-                            <h3 style="margin: 0 0 16px 0; font-size: 16px; font-weight: 600; color: var(--text);">Project Status</h3>
-                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 16px;">
-                                <div style="text-align: center; padding: 16px; background: var(--bg); border-radius: 8px;">
-                                    <div style="font-size: 12px; color: var(--text-light); margin-bottom: 8px;">Completed</div>
-                                    <div style="font-size: 32px; font-weight: 700; color: var(--active-menu-gradient-start);" id="dash-completed-projects">0</div>
-                                </div>
-                                <div style="text-align: center; padding: 16px; background: var(--bg); border-radius: 8px;">
-                                    <div style="font-size: 12px; color: var(--text-light); margin-bottom: 8px;">Ongoing</div>
-                                    <div style="font-size: 32px; font-weight: 700; color: var(--active-menu-gradient-start);" id="dash-ongoing-projects">0</div>
-                                </div>
-                                <div style="text-align: center; padding: 16px; background: var(--bg); border-radius: 8px;">
-                                    <div style="font-size: 12px; color: var(--text-light); margin-bottom: 8px;">Upcoming</div>
-                                    <div style="font-size: 32px; font-weight: 700; color: var(--active-menu-gradient-start);" id="dash-upcoming-projects">0</div>
-                                </div>
-                                <div style="text-align: center; padding: 16px; background: var(--bg); border-radius: 8px;">
-                                    <div style="font-size: 12px; color: var(--text-light); margin-bottom: 8px;">Favorites</div>
-                                    <div style="font-size: 32px; font-weight: 700; color: var(--active-menu-gradient-start);" id="dash-total-favorites">0</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
 
                 <!-- Create Project Page -->
                 <div id="create-project-page" class="tab-content">
@@ -2147,7 +2075,7 @@
                 addBtn.style.display = 'none';
             }
 
-            if (tabId === 'stats-tab') renderStats();
+
             if (tabId === 'projects-tab') renderProjects();
         }
 
@@ -2513,7 +2441,7 @@
             talents[index].isFavorite = !talents[index].isFavorite;
             localStorage.setItem('talents', JSON.stringify(talents));
             renderTalents();
-            renderStats();
+
         }
 
         function toggleFavorite() {
@@ -2522,7 +2450,7 @@
                 localStorage.setItem('talents', JSON.stringify(talents));
                 updateFavoriteButton();
                 renderTalents();
-                renderStats();
+    
             }
         }
 
@@ -3321,7 +3249,7 @@
                 localStorage.setItem('projects', JSON.stringify(projects));
                 closeProjectDetail();
                 renderProjects();
-                renderStats();
+    
             }
         }
         
@@ -3338,7 +3266,7 @@
                 projects.splice(index, 1);
                 localStorage.setItem('projects', JSON.stringify(projects));
                 renderProjects();
-                renderStats();
+    
             }
         }
         
@@ -3386,45 +3314,7 @@
             document.getElementById('project-form-container').style.display = 'block';
         }
 
-        function renderStats() {
-            const totalTalents = talents.length;
-            const totalProjects = projects.length;
-            const totalFavorites = talents.filter(t => t.isFavorite).length;
-            const avgPrice = totalTalents > 0 ? Math.round(talents.reduce((sum, t) => sum + (t.price || 0), 0) / totalTalents) : 0;
-            const completedProjects = projects.filter(p => p.endDate && new Date(p.endDate) < new Date()).length;
-            const ongoingProjects = projects.filter(p => !p.endDate || new Date(p.endDate) >= new Date()).length;
 
-            const maleCount = talents.filter(t => t.gender === 'Male').length;
-            const femaleCount = talents.filter(t => t.gender === 'Female').length;
-            const avgAge = totalTalents > 0 ? Math.round(talents.reduce((sum, t) => sum + (t.age || 0), 0) / totalTalents) : 0;
-            const upcomingProjects = projects.filter(p => p.startDate && new Date(p.startDate) > new Date()).length;
-            
-            // Calculate total revenue and net profit
-            const totalRevenue = projects.reduce((sum, p) => sum + (p.totalCost || 0), 0);
-            const totalBudget = projects.reduce((sum, p) => sum + (p.budget || 0), 0);
-            const netProfit = totalRevenue - totalBudget;
-
-            // Update dashboard elements with null checks
-            const dashElements = {
-                'dash-total-talents': totalTalents,
-                'dash-total-projects': totalProjects,
-                'dash-total-favorites': totalFavorites,
-                'dash-avg-age': avgAge,
-                'dash-male-count': maleCount,
-                'dash-female-count': femaleCount,
-                'dash-avg-price': avgPrice + ' KD',
-                'dash-completed-projects': completedProjects,
-                'dash-ongoing-projects': ongoingProjects,
-                'dash-upcoming-projects': upcomingProjects,
-                'dash-total-revenue': totalRevenue + ' KD',
-                'dash-net-profit': netProfit + ' KD'
-            };
-            
-            Object.entries(dashElements).forEach(([id, value]) => {
-                const element = document.getElementById(id);
-                if (element) element.textContent = value;
-            });
-        }
         
         function renderCalendar() {
             const calendarView = document.getElementById('calendar-view');
@@ -3854,7 +3744,7 @@
                         localStorage.setItem('projects', JSON.stringify(projects));
                         alert('Data imported successfully');
                         renderTalents();
-                        renderStats();
+            
                     } catch (err) {
                         alert('Error reading file');
                     }
