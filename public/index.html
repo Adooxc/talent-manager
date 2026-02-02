@@ -55,9 +55,23 @@
             --border: #475569;
         }
 
+        html, body {
+            height: 100%;
+            overflow-x: hidden;
+        }
+        
+        body {
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
         .container {
             display: flex;
             min-height: 100dvh;
+            padding-top: max(0px, env(safe-area-inset-top));
+            padding-bottom: max(0px, env(safe-area-inset-bottom));
+            padding-left: max(0px, env(safe-area-inset-left));
+            padding-right: max(0px, env(safe-area-inset-right));
         }
 
         .sidebar {
@@ -65,7 +79,7 @@
             background: var(--surface);
             border-right: 1px solid var(--border);
             padding: 24px;
-            overflow-y: auto;
+            overflow-y: visible;
             box-shadow: var(--shadow-sm);
             transition: all 0.3s ease;
             position: relative;
@@ -142,7 +156,8 @@
             flex: 1;
             display: flex;
             flex-direction: column;
-            overflow: hidden;
+            overflow: visible;
+            position: relative;
         }
 
         .header {
@@ -153,6 +168,8 @@
             justify-content: space-between;
             align-items: center;
             box-shadow: var(--shadow-sm);
+            flex-shrink: 0;
+            z-index: 100;
         }
 
         .header-title {
@@ -169,20 +186,21 @@
 
         .content {
             flex: 1;
-            overflow-y: auto;
+            overflow: visible;
             padding: 0px 32px 32px 32px;
-            -webkit-overflow-scrolling: touch;
-        }
-        
-        @supports (height: 100dvh) {
-            .content {
-                height: auto;
-            }
+            -webkit-user-select: text;
+            -webkit-touch-callout: none;
         }
         
         @media (max-width: 768px) {
             .content {
                 padding: 0px 16px 16px 16px;
+            }
+        }
+        
+        @media (max-height: 600px) {
+            .content {
+                padding: 0px 16px 8px 16px;
             }
         }
 
