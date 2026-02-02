@@ -2843,6 +2843,13 @@
         }
         
         function backToProjects() {
+            // Remove profit margin and final cost cards if they exist
+            const budgetContainer = document.querySelector('[style*="linear-gradient(135deg, var(--primary)"]')?.parentElement;
+            if (budgetContainer) {
+                const profitCards = budgetContainer.querySelectorAll('div[style*="#f59e0b"], div[style*="#8b5cf6"]');
+                profitCards.forEach(card => card.remove());
+            }
+            
             document.getElementById('project-details-page').style.display = 'none';
             document.getElementById('projects-tab').style.display = 'block';
             currentDetailProjectIndex = null;

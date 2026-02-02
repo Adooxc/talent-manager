@@ -172,3 +172,7 @@
 - [x] Final total price calculation (talent costs + profit margin)
 - [x] Beautiful gradient cards for profit margin and final price
 - [x] All project information displayed (companies, dates, notes, etc.)
+
+
+## Current Bugs - Dashboard
+- [x] Large gap/whitespace at top of Dashboard page above data cards
