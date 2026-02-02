@@ -2723,7 +2723,8 @@
         }
 
         function openCreateProjectModal() {
-            selectedProjectTalents = [];
+            // Preserve selected talents from talents list
+            selectedProjectTalents = [...selectedTalents];
             document.getElementById('editing-project-index').value = '';
             
             // Render form directly in create-project-form

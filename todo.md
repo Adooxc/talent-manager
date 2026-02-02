@@ -188,3 +188,9 @@
 - [x] Clicking on talent in project edit page should toggle selection (add/remove), not navigate to talent detail page
 - [x] Talent selection toggle working correctly in Select Models section
 - [x] Talent selection toggle working correctly in Manage Talents section
+
+
+## New Feature - Project Creation with Selected Talents
+- [ ] When creating new project, pre-select talents that were selected in talents list
+- [ ] Pass selected talents from talents tab to project creation form
+- [ ] Automatically populate project form with selected talents
